@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>uploading photo</title>
+	</head>
+	<body>
+		<h1>photo upload</h1>
+		<br>
+		<form method="post" enctype="multipart/form-data" action="/process/photo">
+			<table>
+				<tr>
+					<td><label>File : </label></td>
+					<td><input type="file" name="photo"></td>
+				</tr>
+			</table>
+			<input type="submit" value="업로드" name="submit">
+		</form>
+	</body>
+</html>
