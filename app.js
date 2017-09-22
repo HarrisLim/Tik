@@ -21,16 +21,22 @@ var MySQLStore = require('express-mysql-session')(session);
 
 // MySQL 데이터베이스를 사용할 수 있는 mysql 모듈 불러오기
 var mysql = require('mysql');
-
-// MySQL 데이터베이스 연결 설정
-var pool = mysql.createPool({
-	connectionLimit : 10,	// 커넥션 풀에서 만들 수 있는 최대 연결 개수를 설정합니다.
-	host : 'localhost',		// 연결할 호스트 이름을 설정합니다.
-	user : 'root',			// port : 데이터베이스가 사용하는 포트 번호를 설정합니다., // user : 데이터베이스 사용자 아이디를 설정합니다.
-	password : 'dksuek',	// 데이터베이스 사용자의 비밀번호를 설정합니다.
-	database : 'tik',		// 데이터베이스 이름을 설정합니다.
-	debug : false			// 데이터베이스 처리 과정을 로그로 남길 것인지 설정합니다.
+var conn = mysql.createConnection({
+	host : 'localhost',
+	user : 'root',
+	password : 'dksuek',
+	database : 'tik'
 });
+conn.connect();
+// // MySQL 데이터베이스 연결 설정
+// var pool = mysql.createPool({
+// 	connectionLimit : 10,	// 커넥션 풀에서 만들 수 있는 최대 연결 개수를 설정합니다.
+// 	host : 'localhost',		// 연결할 호스트 이름을 설정합니다.
+// 	user : 'root',			// port : 데이터베이스가 사용하는 포트 번호를 설정합니다., // user : 데이터베이스 사용자 아이디를 설정합니다.
+// 	password : 'dksuek',	// 데이터베이스 사용자의 비밀번호를 설정합니다.
+// 	database : 'tik',		// 데이터베이스 이름을 설정합니다.
+// 	debug : false			// 데이터베이스 처리 과정을 로그로 남길 것인지 설정합니다.
+// });
 
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
@@ -62,7 +68,7 @@ app.use(cookieParser());
 // session 설정
 app.use(session({
 	secret : 'my key',
-	resave : true,
+	resave : false,
 	saveUninitialized : true,
 	store: new MySQLStore({
 		host : 'localhost',
@@ -73,8 +79,8 @@ app.use(session({
 	})
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize());		// 패스포트 초기화하여 사용
+app.use(passport.session());		// 패스포트를 사용할 때 session을 사용한다.
 
 // 클라이언트에서 ajax로 요청헀을 때 CORS(다중 서버 접속) 지원
 app.use(cors());
@@ -98,132 +104,81 @@ var upload = multer({
 	}
 });
 
-// 사용자를 등록하는 함수
-var signUp = function(nickname, email, passwd, salt, country, agegroup, insid, callback) {
-	console.log('signUp 호출됨.');
-
-	// 커넥션 풀에서 연결 객체를 가져옵니다.
-	pool.getConnection(function(err, conn) {
-		if(err) {
-			if(conn) {
-			conn.release(); // 반드시 해제해야 합니다.
-			}
-
-			callback(err, null);
-			return;
-		}
-		console.log('데이터베이스 연결 스레드 아이디 : ' + conn.threadId);
-
-		// 데이터를 객체로 만듭니다.
-		var data = {nickname : nickname, email : email, passwd : passwd, salt : salt, country : country, agegroup : agegroup, insid : insid};
-
-		// SQL문을 실행합니다.
-		var exec = conn.query('insert into members set ?', data, function(err, result) {
-			conn.release();	// 반드시 해제해야 합니다.
-			console.log('실행 대상 SQL : ' + exec.sql);
-
-			if(err) {
-				console.log('SQL 실행 시 오류 발생함.');
-				console.dir(err);
-
-				callback(err, null);
-
-				return;
-			}
-
-			callback(null, result);
-		});
-	});
-};
-
-// 사용자를 인증하는 함수
-var authUser = function(email, password, callback) {
-	console.log('authUser 호출됨.');
-
-	// 커넥션 풀에서 연결 객체를 가져옵니다.
-	pool.getConnection(function(err, conn) {
-		if(err) {
-			if(conn) {
-				conn.release(); // 반드시 해제해야 합니다.
-			}
-			callback(err, null);
-			return;
-		}
-		console.log('데이터베이스 연결 스레드 아이디 : ' + conn.threadId);
-
-		var columns = ['nickname', 'email', 'country'];
-		var tablename = 'members';
-
-		// SQL문을 실행합니다.
-		var exec = conn.query("select ?? from ?? where email = ? and passwd = ?",[columns, tablename, email, password], function(err, rows) {
-			conn.release(); // 반드시 해제해야 합니다.
-			console.log('실행 대상 SQL : ' + exec.sql);
-
-			if(rows.length > 0) {
-				console.log('아이디 [%s], 패스워드 [%s]가 일치하는 사용자 찾음.', email, password);
-				callback(null, rows);
-			} else {
-				console.log('일치하는 사용자를 찾지 못함.');
-				callback(null, null);
-			}
-		});
-	});
-};
-
 app.post('/process/signup', function(req, res) {
-	hasher({paramPasswd : req.body.passwd}, function(err, pass, salt, hash){
-		console.log('/process/signup 호출됨.');
+	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
+		var member = {
+			nickname : req.body.nickname || req.query.nickname,
+			email : req.body.email || req.query.email,
+			passwd : hash,
+			salt : salt,
+			country : req.body.country || req.query.country,
+			agegroup : req.body.agegroup || req.query.agegroup,
+			insid : req.body.insid || req.query.insid
+		};
+		var sql = 'INSERT INTO members SET ?';
+		conn.query(sql, member, function(err, results) {
+			if(err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				req.login(member, function(err) {
+					req.session.save(function() {
+						res.redirect('/process/main');
+					});
+				});
+			}
+		});
+	});
+});
 
-		var paramNickname = req.body.nickname || req.query.nickname;
-		var paramEmail = req.body.email || req.query.email;
-		var paramPasswd = hash;
-		var salt = salt;
-		var paramCountry = req.body.country || req.query.country;
-		var paramAgegroup = req.body.agegroup || req.query.agegroup;
-		var paramInsid = req.body.insid || req.query.insid;
+passport.serializeUser(function(member, done) {
+	console.log('serializeUser', member);
+	done(null, member.email);
+});
 
-		console.log('요청 파라미터 : ' + paramNickname + ', ' + paramEmail + ', ' + paramPasswd + ', ' + paramCountry + ', ' + paramAgegroup + ', ' + paramInsid);
-
-		// pool 객체가 초기화된 경우, signup 함수 호출하여 사용자 추가
-		if(pool) {
-			signUp(paramNickname, paramEmail, paramPasswd, salt, paramCountry, paramAgegroup, paramInsid, function(err, addedUser) {
-				// 동일한 id로 추가할 때 오류 발생 - 클라이언트로 오류 전송
-				if(err) {
-					console.error('사용자 추가 중 오류 발생 : ' + err.stack);
-
-					res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-					res.write('<h2>사용자 추가 중 오류 발생</h2>');
-					res.write('<p>' + err.stack + '</p>');
-					res.end();
-
-					return;
-				}
-
-				// 결과 객체 있으면 성공 응답 전송
-				if(addedUser) {
-					console.dir(addedUser);
-
-					console.log('inserted ' + addedUser.affectedRows + ' rows');
-
-					var insertId = addedUser.insertId;
-					console.log('추가한 레코드의 아이디 : ' + insertId);
-
-					res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-					res.write('<h2>사용자 추가 성공</h2>');
-					res.end();
-				} else {
-					res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-					res.write('<h2>사용자 추가 실패</h2>');
-					res.end();
-				}
-			});
-		} else { // 데이터베이스 객체가 초기화되지 않은 경우 실패 응답 전송
-			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			res.write('<h2>데이터베이스 연결 실패</h2>');
-			res.end();
+passport.deserializeUser(function(id, done) {
+	console.log('deserializeUser', id);
+	var sql = 'SELECT * FROM members WHERE email=?';
+	conn.query(sql, [id], function(err, results) {
+		if(err){
+			console.log(err);
+			done('There is no member.');
+		} else {
+			done(null, results[0]);
 		}
 	});
 });
+
+passport.use(new LocalStrategy(
+	function(email, password, done) {
+		var paramEmail = email;
+		var paramPassword = password;
+		var sql = 'SELECT * FROM members WHERE email=?';
+		conn.query(sql, [paramEmail], function(err, results) {
+			console.log(results);
+			if(err) {
+				return done('There is no member.');
+			}
+			var member = results[0];
+			return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
+				if(hash === mamber.passwd) {
+					console.log('LocalStrategy', mamber);
+					done(null, mamber);
+				} else {
+					done(null, false);
+				}
+			});
+		});
+	}
+));
+
+app.get('/process/signin', 
+	passport.authenticate('local', { 
+		successRedirect: '/process/main', // 일단 photo로 놓고 나중에 메인 페이지로 바꾸자.
+        failureRedirect: '/public/signin.html',
+        failureFlash: false 
+    })
+);
 
 app.post('/process/signin', function(req, res) {
 	console.log('/process/signin 호출됨.');
@@ -234,34 +189,65 @@ app.post('/process/signin', function(req, res) {
 
 	console.log('요청 파라미터 : ' + paramEmail + ', ' + paramPassword);
 
-	// pool 객체가 초기화된 경우, authUser 함수 호출하여 사용자 인증
-	if(pool) {
-		authUser(paramEmail, paramPassword, function(err, rows) {
-			// 오류가 발생했을 때 클라이언트로 오류 전송
-			if(err) {
-				console.error('사용자 로그인 중 오류 발생 : ' + err.stack);
+	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+	res.write('<h1>로그인 성공</h1>');
+	res.write('<div><p>사용자 아이디 : ' + paramEmail + '</p></div>');
+	res.write("<br><br><a href='/public/signin.html'>로그아웃</a>");
+	res.end('');
+});
 
-				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-				res.write('<h2>사용자 로그인 중 오류 발생</h2>');
-				res.write('<p>' + err.stack + '</p>');
-				res.end();
+// app.post('/process/signin', function(req, res) {
+// 	console.log('/process/signin 호출됨.');
 
-				return;
-			}
+// 	// 요청 파라미터 확인
+// 	var paramEmail = req.body.email || req.query.email;
+// 	var paramPassword = req.body.passwd || req.query.passwd;
 
-			if(rows) {
+// 	console.log('요청 파라미터 : ' + paramEmail + ', ' + paramPassword);
 
-				var usernickname = rows[0].nickname;
-				req.session.userEmail = rows[0].email;
+// 	// pool 객체가 초기화된 경우, authUser 함수 호출하여 사용자 인증
+// 	if(pool) {
+// 		authUser(paramEmail, paramPassword, function(err, rows) {
+// 			// 오류가 발생했을 때 클라이언트로 오류 전송
+// 			if(err) {
+// 				console.error('사용자 로그인 중 오류 발생 : ' + err.stack);
 
-				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-				res.write('<h1>로그인 성공</h1>');
-				res.write('<div><p>사용자 아이디 : ' + paramEmail + '</p></div>');
-				res.write('<div><p>사용자 이름 : ' + usernickname + '</p></div>');
-				res.write("<br><br><a href='/public/signin.html'>로그아웃</a>");
-				res.end('');
-			}
-		});
+// 				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+// 				res.write('<h2>사용자 로그인 중 오류 발생</h2>');
+// 				res.write('<p>' + err.stack + '</p>');
+// 				res.end();
+
+// 				return;
+// 			}
+
+// 			if(rows) {
+
+// 				var usernickname = rows[0].nickname;
+// 				req.session.userEmail = rows[0].email;
+				
+// 				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+// 				res.write('<h1>로그인 성공</h1>');
+// 				res.write('<div><p>사용자 아이디 : ' + paramEmail + '</p></div>');
+// 				res.write('<div><p>사용자 이름 : ' + usernickname + '</p></div>');
+// 				res.write("<br><br><a href='/public/signin.html'>로그아웃</a>");
+// 				res.end('');
+// 			}
+// 		});
+// 	}
+// });
+
+app.get('/process/main', function(req, res){
+	if(req.user && req.user.email) {
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		res.write('<h1>Hello,'+ req.user.email +'</h1>');
+		res.write("<a href='/process/singout'>singout</a>");
+		res.end();
+	} else {
+		console.log(req.member + ', ' + req.member.eamil);
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		res.write('<a href="/public/signin.html">signin</a>');
+		res.write("<br><br><a href='/public/signup.html'>signup</a>");
+		res.end();
 	}
 });
 
@@ -317,31 +303,6 @@ app.post('/process/photo', upload.array('photo', 1), function(req, res) {
 		res.end();
 	} catch(err) {
 		console.dir(err.stack);
-	}
-});
-
-passport.serializeUser(function(user, done) {
-	console.log('serializeUser', user);
-	done(null, user.email);
-});
-
-passport.deserializeUser(function(id, done) {
-	console.log('deserializeUser', id);
-	for(var i = 0; i<members.length; i++) {
-		var user = members[i];
-		if(user.email === id) {
-			return done(null, user);
-			var sql = 'SELECT * FROM members WHERE email=?';
-			conn.query(sql, [id], function(err, results) {
-				if(err) {
-					console.log(err);
-					done('There is no user.');
-				} else {
-					done(null, results[0]);
-				}
-			})
-		done('There is no user.');
-		}
 	}
 });
 
