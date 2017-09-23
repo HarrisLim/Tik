@@ -28,15 +28,6 @@ var conn = mysql.createConnection({
 	database : 'tik'
 });
 conn.connect();
-// // MySQL 데이터베이스 연결 설정
-// var pool = mysql.createPool({
-// 	connectionLimit : 10,	// 커넥션 풀에서 만들 수 있는 최대 연결 개수를 설정합니다.
-// 	host : 'localhost',		// 연결할 호스트 이름을 설정합니다.
-// 	user : 'root',			// port : 데이터베이스가 사용하는 포트 번호를 설정합니다., // user : 데이터베이스 사용자 아이디를 설정합니다.
-// 	password : 'dksuek',	// 데이터베이스 사용자의 비밀번호를 설정합니다.
-// 	database : 'tik',		// 데이터베이스 이름을 설정합니다.
-// 	debug : false			// 데이터베이스 처리 과정을 로그로 남길 것인지 설정합니다.
-// });
 
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
@@ -50,6 +41,11 @@ var cors = require('cors');
 
 // 익스프레스 객체 생성
 var app = express();
+
+// 뷰 엔진 설정
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+console.log('뷰 엔진이 ejs로 설정되었습니다.');
 
 // 기본 속성 설정
 app.set('port', process.env.PORT || 10468);
@@ -104,6 +100,100 @@ var upload = multer({
 	}
 });
 
+app.get('/process/main', function(req, res){
+	if(req.user && req.user.email) {
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		res.write('<h1>Hello,'+ req.user.email +'</h1>');
+		res.write("<a href='/process/signout'>signout</a>");
+		res.end();
+	} else {
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		res.write('<a href="/process/signin">signin</a>');
+		res.write("<br><br><a href='/process/signup'>signup</a>");
+		res.end();
+	}
+});
+
+app.get('/process/signout', function(req, res) {
+	// delete req.session.userEmail;
+	req.logout();
+	req.session.save(function() {
+		res.redirect('/process/main')
+	})
+});
+
+passport.serializeUser(function(member, done) {
+	console.log('serializeUser', member);
+	done(null, member.email);
+});
+
+passport.deserializeUser(function(id, done) {
+	console.log('deserializeUser', id);	
+	var sql = 'SELECT * FROM members WHERE email=?';
+	conn.query(sql, [id], function(err, results) {
+		if(err){
+			console.log(err);
+			done('There is no member.');
+		} else {
+			done(null, results[0]);
+		}
+	});
+});
+
+passport.use(new LocalStrategy(
+	function(email, password, done) {
+		var paramEmail = email;
+		var paramPassword = password;
+		var sql = 'SELECT * FROM members WHERE email=?';
+		conn.query(sql, [paramEmail], function(err, results) {
+			console.log(results);
+			if(err) {
+				return done('There is no member.');
+			}
+			var member = results[0];
+			return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
+				if(hash === member.passwd) {
+					console.log('LocalStrategy', member);
+					done(null, member); // 이거면 serializeUser가 실행됨.
+				} else {
+					done(null, false); // 이거면 deserializeUser가 실행됨.
+				}
+			});
+		});
+	}
+));
+
+app.post('/process/signin', 
+	passport.authenticate('local', { 
+		successRedirect: '/process/main', // 일단 photo로 놓고 나중에 메인 페이지로 바꾸자.
+        failureRedirect: '/process/signin',
+        failureFlash: false 
+    })
+);
+
+app.get('/process/signin', function(req, res) {
+	var output = `
+	<h1>Login !</h1>
+		<br>
+		<form method="post" action="/process/signin">
+			<table>
+				<tr>
+					<td><label>Email : </label></td>
+					<td><input type="text" name="email"></td>
+				</tr>
+				<tr>
+					<td><label>Password : </label></td>
+					<td><input type="password" name="passwd"></td>
+				</tr>
+			</table>
+			<input type="submit" value="전송" name="">
+		</form>
+   `;
+   res.send(output);
+
+});
+
+
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
@@ -131,132 +221,61 @@ app.post('/process/signup', function(req, res) {
 	});
 });
 
-passport.serializeUser(function(member, done) {
-	console.log('serializeUser', member);
-	done(null, member.email);
+app.get('/process/signup', function(req, res) {
+	  var output = `
+	<h1>Welcome my new friend !</h1>
+	<h1>Tik sign up !</h1>
+   <br><br>
+		<form method="post" action="/process/signup">
+			<table>
+				<tr>
+					<td><label>Nickname : </label></td>
+					<td><input type="text" name="nickname"></td>
+				</tr>
+				<tr>
+					<td><label>Email : </label></td>
+					<td><input type="email" name="email"></td>
+					<td><input type="button" value="Verify Email"></td>
+				</tr>
+				<tr>
+					<td><label>Password : </label></td>
+					<td><input type="password"></td>
+				</tr>
+				<tr>
+					<td><label>Password (repeat) : </label></td>
+					<td><input type="password" name="passwd"></td>
+					<td><input type="button" value="Check password"></td>
+				</tr>
+				<tr>
+					<td><label>Country : </label></td>
+					<td><input type="text" name="country"></td>
+				</tr>
+				<tr>
+					<td><label>Age group : </label></td>
+					<td>
+						<input type="radio" name="agegroup"> 10s
+						<input type="radio" name="agegroup"> 20s
+						<input type="radio" name="agegroup"> 30s
+						<input type="radio" name="agegroup"> 40s
+						<input type="radio" name="agegroup"> 50s
+						<input type="radio" name="agegroup"> 60s
+						<input type="radio" name="agegroup"> 70s
+						<input type="radio" name="agegroup"> 80s
+						<input type="radio" name="agegroup"> 90s
+						<input type="radio" name="agegroup"> 100s
+					</td>
+				</tr>
+				<tr>
+					<td><label>Instagram ID : </label></td>
+					<td><input type="text" name="insid"></td>
+				</tr>
+			</table>
+			<input type="submit" value="Sign Up : )">
+			<input type="button" value="Cancle : (">
+		</form>
+   `;
+   res.send(output);
 });
-
-passport.deserializeUser(function(id, done) {
-	console.log('deserializeUser', id);
-	var sql = 'SELECT * FROM members WHERE email=?';
-	conn.query(sql, [id], function(err, results) {
-		if(err){
-			console.log(err);
-			done('There is no member.');
-		} else {
-			done(null, results[0]);
-		}
-	});
-});
-
-passport.use(new LocalStrategy(
-	function(email, password, done) {
-		var paramEmail = email;
-		var paramPassword = password;
-		var sql = 'SELECT * FROM members WHERE email=?';
-		conn.query(sql, [paramEmail], function(err, results) {
-			console.log(results);
-			if(err) {
-				return done('There is no member.');
-			}
-			var member = results[0];
-			return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
-				if(hash === mamber.passwd) {
-					console.log('LocalStrategy', mamber);
-					done(null, mamber);
-				} else {
-					done(null, false);
-				}
-			});
-		});
-	}
-));
-
-app.get('/process/signin', 
-	passport.authenticate('local', { 
-		successRedirect: '/process/main', // 일단 photo로 놓고 나중에 메인 페이지로 바꾸자.
-        failureRedirect: '/public/signin.html',
-        failureFlash: false 
-    })
-);
-
-app.post('/process/signin', function(req, res) {
-	console.log('/process/signin 호출됨.');
-
-	// 요청 파라미터 확인
-	var paramEmail = req.body.email || req.query.email;
-	var paramPassword = req.body.passwd || req.query.passwd;
-
-	console.log('요청 파라미터 : ' + paramEmail + ', ' + paramPassword);
-
-	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-	res.write('<h1>로그인 성공</h1>');
-	res.write('<div><p>사용자 아이디 : ' + paramEmail + '</p></div>');
-	res.write("<br><br><a href='/public/signin.html'>로그아웃</a>");
-	res.end('');
-});
-
-// app.post('/process/signin', function(req, res) {
-// 	console.log('/process/signin 호출됨.');
-
-// 	// 요청 파라미터 확인
-// 	var paramEmail = req.body.email || req.query.email;
-// 	var paramPassword = req.body.passwd || req.query.passwd;
-
-// 	console.log('요청 파라미터 : ' + paramEmail + ', ' + paramPassword);
-
-// 	// pool 객체가 초기화된 경우, authUser 함수 호출하여 사용자 인증
-// 	if(pool) {
-// 		authUser(paramEmail, paramPassword, function(err, rows) {
-// 			// 오류가 발생했을 때 클라이언트로 오류 전송
-// 			if(err) {
-// 				console.error('사용자 로그인 중 오류 발생 : ' + err.stack);
-
-// 				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-// 				res.write('<h2>사용자 로그인 중 오류 발생</h2>');
-// 				res.write('<p>' + err.stack + '</p>');
-// 				res.end();
-
-// 				return;
-// 			}
-
-// 			if(rows) {
-
-// 				var usernickname = rows[0].nickname;
-// 				req.session.userEmail = rows[0].email;
-				
-// 				res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-// 				res.write('<h1>로그인 성공</h1>');
-// 				res.write('<div><p>사용자 아이디 : ' + paramEmail + '</p></div>');
-// 				res.write('<div><p>사용자 이름 : ' + usernickname + '</p></div>');
-// 				res.write("<br><br><a href='/public/signin.html'>로그아웃</a>");
-// 				res.end('');
-// 			}
-// 		});
-// 	}
-// });
-
-app.get('/process/main', function(req, res){
-	if(req.user && req.user.email) {
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		res.write('<h1>Hello,'+ req.user.email +'</h1>');
-		res.write("<a href='/process/singout'>singout</a>");
-		res.end();
-	} else {
-		console.log(req.member + ', ' + req.member.eamil);
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		res.write('<a href="/public/signin.html">signin</a>');
-		res.write("<br><br><a href='/public/signup.html'>signup</a>");
-		res.end();
-	}
-});
-
-app.get('/process/singout', function(req, res) {
-	delete req.session.userEmail;
-	req.session.save(function() {
-		res.redirect('/public/signin.html')
-	})
-})
 
 app.post('/process/photo', upload.array('photo', 1), function(req, res) {
 	console.log('/process/photo 호출됨.');
