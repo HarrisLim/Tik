@@ -6,18 +6,18 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 
-// Express의 미들웨어 불러오기
-var bodyParser = require('body-parser');
+// Express의 미들웨어 불러오기;
 var static = require('serve-static');
 var cookieParser = require('cookie-parser');
 var bkfd2Password = require('pbkdf2-password');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var hasher = bkfd2Password();
 
 // Session 미들웨어 불러오기
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var hasher = bkfd2Password();
+var bodyParser = require('body-parser')
 
 // MySQL 데이터베이스를 사용할 수 있는 mysql 모듈 불러오기
 var mysql = require('mysql');
@@ -28,6 +28,8 @@ var conn = mysql.createConnection({
 	database : 'tik'
 });
 conn.connect();
+
+import alert from 'alert-node'
 
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
@@ -103,7 +105,7 @@ var upload = multer({
 app.get('/process/main', function(req, res){
 	if(req.user && req.user.email) {
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		res.write('<h1>Hello,'+ req.user.email +'</h1>');
+		res.write('<h1>Hello, '+ req.user.email +'</h1>');
 		res.write("<a href='/process/signout'>signout</a>");
 		res.end();
 	} else {
@@ -130,7 +132,7 @@ passport.serializeUser(function(member, done) {
 passport.deserializeUser(function(id, done) {
 	console.log('deserializeUser', id);	
 	var sql = 'SELECT * FROM members WHERE email=?';
-	conn.query(sql, [id], function(err, results) {
+	conn.query(sql, id, function(err, results) {
 		if(err){
 			console.log(err);
 			done('There is no member.');
@@ -141,37 +143,46 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use(new LocalStrategy(
-	function(email, password, done) {
-		var paramEmail = email;
+	function(username, password, done) {
+		var paramEmail = username;
 		var paramPassword = password;
 		var sql = 'SELECT * FROM members WHERE email=?';
-		conn.query(sql, [paramEmail], function(err, results) {
+		conn.query(sql, paramEmail, function(err, results) {
 			console.log(results);
 			if(err) {
+				console.log('err 잡았나 ?'); // email을 잘못쓰면 err로 잡아서 보내고 싶은데 안잡히고 Cannot read property 'salt' of undefined라는 에러만.
 				return done('There is no member.');
 			}
-			var member = results[0];
-			return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
-				if(hash === member.passwd) {
-					console.log('LocalStrategy', member);
-					done(null, member); // 이거면 serializeUser가 실행됨.
-				} else {
-					done(null, false); // 이거면 deserializeUser가 실행됨.
-				}
-			});
+			if(results[0] !== undefined){
+				var member = results[0];
+				return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
+					if(hash === member.passwd) {
+						console.log('LocalStrategy', member);
+						done(null, member); // 이거면 serializeUser가 실행됨.
+					} else {
+						console.log('비밀번호가 다릅니다.');
+						done(null, false); // 이거면 deserializeUser가 실행됨.
+					}
+				});
+			} else {
+				console.log("I can't find your email.");
+				alert('Check your Email.');
+				done();
+			}
 		});
 	}
 ));
 
 app.post('/process/signin', 
 	passport.authenticate('local', { 
-		successRedirect: '/process/main', // 일단 photo로 놓고 나중에 메인 페이지로 바꾸자.
+		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
         failureFlash: false 
     })
 );
 
 app.get('/process/signin', function(req, res) {
+	console.log('get.signin에 들어옴.');
 	var output = `
 	<h1>Login !</h1>
 		<br>
@@ -179,18 +190,17 @@ app.get('/process/signin', function(req, res) {
 			<table>
 				<tr>
 					<td><label>Email : </label></td>
-					<td><input type="text" name="email"></td>
+					<td><input type="text" name="username"></td> <!--name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. -->
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>
-					<td><input type="password" name="passwd"></td>
+					<td><input type="password" name="password"></td><!-- name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. -->
 				</tr>
 			</table>
-			<input type="submit" value="전송" name="">
+			<input type="submit" value="submit" name="">
 		</form>
    `;
    res.send(output);
-
 });
 
 
