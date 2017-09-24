@@ -1,7 +1,4 @@
-<snippet>
-  <content><![CDATA[
-
-# ${1:Project Title}
+# Project Title
 
 Tik(Talk in Korea)
 
@@ -26,6 +23,3 @@ Tik(Talk in Korea)
 
 * **Harris Lim** -[HarrisLim](https://github.com/HarrisLim)
 TODO: Write license
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
