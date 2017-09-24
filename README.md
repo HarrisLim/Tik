@@ -1,7 +1,7 @@
 <snippet>
   <content><![CDATA[
-  	
-# Project Title
+
+# ${1:Project Title}
 
 Tik(Talk in Korea)
 
