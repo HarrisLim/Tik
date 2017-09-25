@@ -9,7 +9,7 @@
 ## Built With
 
 * [HTML](https://www.w3.org/html/)
-* [CSS](https://www.w3.org/Style/CSS/) (Framework - [Bootstrap](https://getbootstrap.com/)
+* [CSS](https://www.w3.org/Style/CSS/) (Framework - [Bootstrap](https://getbootstrap.com/))
 * [Javascript](https://www.javascript.com/) (Library - [jQuery](https://jquery.com/), Framework - [Vue.js](https://vuejs.org/))
 * [node.js](https://nodejs.org/en/) - Server-side
 * [MySQL](https://www.mysql.com/) - Database
@@ -18,35 +18,41 @@
 ## AS IS
 
 * MySQL 연동
-* session처리
+* session 처리
 * passport.js로 로그인.
 *
 
 ## TO DO
 
 * main (글 목록, 등)<br>
-	해쉬태그 검색하는 기능 추가.<br>
-	gmail처럼 우측 하단에 메일 보내는 기능 or 페이스북 메신저처럼<br>
-	작게만 나와서 문의할 수 있게.(체크박스로 몇 명, 몇 박, 호텔 or 게스트하우스, 등등)
+	1. 해쉬태그 검색하는 기능 추가.<br>
+	2. gmail처럼 우측 하단에 메일 보내는 기능 or 페이스북 메신저처럼<br>
+	3. 작게만 나와서 문의할 수 있게.(체크박스로 몇 명, 몇 박, 호텔 or 게스트하우스, 등등)
 
 * signup<br>
-	이메일 허가<br>
-	패스워드 두 칸에 있는 것이 같은지 확인하는 버튼 기능<br>
-	10대 20대 버튼 클릭하면 그에 맞게 DB에 저장<br>
-	빈 칸이 있는데 signup 버튼을 누르면 빈 칸을 채우라는 alert창<br>
-	DB에 created_at이랑 updated_at이 자동으로 데이터가 안들어가는데 확인하자.
+	1. 이메일 허가<br>
+	2. 패스워드 두 칸에 있는 것이 같은지 확인하는 버튼 기능<br>
+	3. 10대 20대 버튼 클릭하면 그에 맞게 DB에 저장<br>
+	4. 빈 칸이 있는데 signup 버튼을 누르면 빈 칸을 채우라는 alert창<br>
+	5. DB에 created_at이랑 updated_at이 자동으로 데이터가 안들어가는데 확인하자.
 
 * signin
+	1. alert창을 띄우려고 하는데. 내 생각에는 html이나 get에서 또 넣는 거 같은데 ? 일단 보류. 
 
 * forgetemail, forgetpassword (Email이나 Password를 찾는 라우터)
 
 * addpost<br>
-	해쉬태그할 수 있는 공간 추가. - Tistory처럼
+	1. 해쉬태그할 수 있는 공간 추가. - Tistory처럼
 
 * showpost (main에서 글 목록 중 글을 클릭했을 때 보여주는 라우터)<br>
-	인스타아이디를 db에서 가져와서 누르면 글 작성자의 인스타페이지로 갈 수 있게 하자.
+	1. 인스타아이디를 db에서 가져와서 누르면 글 작성자의 인스타페이지로 갈 수 있게 하자.<br>
+	2. tik.postings에 아직 데이터가 없기 때문에, app.js에 그냥 넣으면 error다. 그러니까 postings에 넣고 난 후에 showpost.ejs에 있는 것 주석 풀자. 그리고 members에 있는 건 req.user로 잡으면 잡히는데 (ex)req.user.email) postings에 있는 것 어케 잡지 ?
 
 * edit (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)
+
+* MySQL (MySQL database)<br>
+	1. signup하면 created_at에 date가 안들어가. 어떻게 하는지 검색해서 넣자.
+
 
 * ETC<br>
 	카카오봇 만들어서 카카오로도 문의할 수 있도록 ? 하자.

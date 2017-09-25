@@ -18,6 +18,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var hasher = bkfd2Password();
 var bodyParser = require('body-parser')
+// var flash = require('connect-flash');
 
 // MySQL 데이터베이스를 사용할 수 있는 mysql 모듈 불러오기
 var mysql = require('mysql');
@@ -28,8 +29,6 @@ var conn = mysql.createConnection({
 	database : 'tik'
 });
 conn.connect();
-
-import alert from 'alert-node'
 
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
@@ -77,6 +76,7 @@ app.use(session({
 	})
 }));
 
+// app.use(flash());
 app.use(passport.initialize());		// 패스포트 초기화하여 사용
 app.use(passport.session());		// 패스포트를 사용할 때 session을 사용한다.
 
@@ -105,14 +105,24 @@ var upload = multer({
 app.get('/process/main', function(req, res){
 	if(req.user && req.user.email) {
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		res.write('<h1>Hello, '+ req.user.email +'</h1>');
-		res.write("<a href='/process/signout'>signout</a>");
-		res.end();
+		var context = {email : req.user.email, nickname : req.user.nickname};
+		req.app.render('postlist', context, function(err, html) {
+			if(err) {
+				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				})
+			}
+			console.log('rendered : ' + html);
+
+			res.end(html);
+		});
 	} else {
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		res.write('<a href="/process/signin">signin</a>');
-		res.write("<br><br><a href='/process/signup'>signup</a>");
-		res.end();
+		req.app.render('index', function(err, html) {
+		res.end(html);
+		})
 	}
 });
 
@@ -142,7 +152,7 @@ passport.deserializeUser(function(id, done) {
 	});
 });
 
-passport.use(new LocalStrategy(
+passport.use(new LocalStrategy( //{passReqToCallback : true},
 	function(username, password, done) {
 		var paramEmail = username;
 		var paramPassword = password;
@@ -158,16 +168,15 @@ passport.use(new LocalStrategy(
 				return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
 					if(hash === member.passwd) {
 						console.log('LocalStrategy', member);
-						done(null, member); // 이거면 serializeUser가 실행됨.
+						return done(null, member); // 이거면 serializeUser가 실행됨.
 					} else {
 						console.log('비밀번호가 다릅니다.');
-						done(null, false); // 이거면 deserializeUser가 실행됨.
+						return done(null, false); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
 				console.log("I can't find your email.");
-				alert('Check your Email.');
-				done();
+				return done(null, false);
 			}
 		});
 	}
@@ -177,9 +186,50 @@ app.post('/process/signin',
 	passport.authenticate('local', { 
 		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
-        failureFlash: false 
+        failureFlash: true 
     })
 );
+
+// pp.get('/process/main', function(req, res){
+// 	if(req.user && req.user.email) {
+// 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+// 		var context = {email : req.user.email, nickname : req.user.nickname};
+// 		req.app.render('postlist', context, function(err, html) {
+// 			if(err) {
+// 				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+// 				req.app.render('error', function(err, html) {
+// 					res.end(html);
+// 				})
+// 			}
+// 			console.log('rendered : ' + html);
+
+// 			res.end(html);
+// 		});
+// 	} else {
+// 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+// 		req.app.render('index', function(err, html) {
+// 		res.end(html);
+// 		})
+// 	}
+// });
+
+app.get('/view/showpost', function(req, res){
+	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+	var context = {flagpath : req.user.flagpath, nickname : req.user.nickname, insid : req.user.insid};
+	req.app.render('showpost', context, function(err, html) {
+		if(err) {
+			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+			req.app.render('error', function(err, html) {
+				res.end(html);
+			});
+		}
+		console.log('rendered : ' + html);
+
+		res.end(html);
+	});
+});
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
