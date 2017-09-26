@@ -121,7 +121,7 @@ app.get('/process/main', function(req, res){
 	} else {
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
 		req.app.render('index', function(err, html) {
-		res.end(html);
+			res.end(html);
 		})
 	}
 });
@@ -190,46 +190,36 @@ app.post('/process/signin',
     })
 );
 
-// pp.get('/process/main', function(req, res){
-// 	if(req.user && req.user.email) {
-// 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-// 		var context = {email : req.user.email, nickname : req.user.nickname};
-// 		req.app.render('postlist', context, function(err, html) {
-// 			if(err) {
-// 				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
-
-// 				req.app.render('error', function(err, html) {
-// 					res.end(html);
-// 				})
-// 			}
-// 			console.log('rendered : ' + html);
-
-// 			res.end(html);
-// 		});
-// 	} else {
-// 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-// 		req.app.render('index', function(err, html) {
-// 		res.end(html);
-// 		})
-// 	}
-// });
-
-app.get('/view/showpost', function(req, res){
-	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-	var context = {flagpath : req.user.flagpath, nickname : req.user.nickname, insid : req.user.insid};
-	req.app.render('showpost', context, function(err, html) {
+/*  이것은 글 하나 쓰는 거 만든 다음에, 글 쓰고나서 해야겠어. 쓴 글에 nickname을 넣어놓고 하는게 좋을 거 같아.
+app.get('/process/showpost', function(req, res){ 
+	var paramNickname = 
+	var sql = 'SELECT * FROM members WHERE nickname=?';
+	conn.query(sql, paramNickname, function(err, results) {
 		if(err) {
-			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
-
-			req.app.render('error', function(err, html) {
-				res.end(html);
-			});
+			console.log('err다.');
+			return done('There is no member.');
 		}
-		console.log('rendered : ' + html);
-
-		res.end(html);
+		if(results[0] !== undefined){
+			var member = results[1];
+			res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+				var context = {flagpath : member.flagpath, nickname : member.nickname, insid : member.insid};
+				req.app.render('showpost', context, function(err, html) {
+					if(err) {
+						console.log('오류 발생.');
+						req.app.render('error', function(err, html) {
+							res.send(html);
+					});
+					}
+					console.log('rendered : ' + html);
+					res.end(html);
+				});
+			console.dir('results[0] ? ' + member.email);
+			console.log('됐따 ? ');
+		} else{
+			console.log('되었냐 ?');
+		}
 	});
-});
+});*/
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
@@ -252,7 +242,6 @@ app.get('/process/signin', function(req, res) {
    `;
    res.send(output);
 });
-
 
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
@@ -335,6 +324,32 @@ app.get('/process/signup', function(req, res) {
 		</form>
    `;
    res.send(output);
+});
+
+f(req.user && req.user.email) {
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		var context = {email : req.user.email, nickname : req.user.nickname};
+		req.app.render('postlist', context, function(err, html) {
+			if(err) {
+				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				})
+			}
+			console.log('rendered : ' + html);
+
+			res.end(html);
+		});
+	} else {
+		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		req.app.render('index', function(err, html) {
+			res.end(html);
+		})
+	}
+app.get('/process/addpost', function(req, res) {
+	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+	var context = {post: req.user.post, view: req.user.views, getwant: req.user.getwant, hashtag: req.user.hashtag}
 });
 
 app.post('/process/photo', upload.array('photo', 1), function(req, res) {

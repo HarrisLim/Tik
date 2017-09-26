@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Add Post</title>
+	</head>
+	<body>
+		<h1>add Post !</h1>
+		<h3> Written by <%= flagpath%><%= nickname%>!</h3> <!-- flagpath와 nickname은 members(db) data -->
+	   	<br><br>
+		<table>
+			<tr>
+				<td><label>post : </label></td>
+				<td><input type="text" name="post"></td>
+			</tr>
+			<tr>
+				<td><label>view : </label></td>
+				<td><input type="text" name="views"></td>
+			</tr>
+			<tr>
+				<td><label>I wanna go : </label></td> <!-- 이거는 버튼을 누르면 숫자가 하나 올라가게.-->
+				<td><input type="button" name="getwant"></td>
+			</tr>
+			<tr>
+				<td><label>add hashtag : </label></td> <!-- hashtag 하나씩 추가할 수 있게. -->
+				<td><input type="text" name="hashtag"></td>
+			</tr>
+			<tr>
+				<td><label>Instagram ID : <%= insid%> </label></td> <!-- members에 있는 데이터. -->
+			</tr>
+		</table>
+		<input type="submit" value="Sign Up : )">
+		<input type="button" value="Cancle : (">
+	</body>
+</html>
