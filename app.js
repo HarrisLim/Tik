@@ -122,7 +122,7 @@ app.get('/process/main', function(req, res){
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
 		req.app.render('index', function(err, html) {
 			res.end(html);
-		})
+		});
 	}
 });
 
@@ -326,30 +326,77 @@ app.get('/process/signup', function(req, res) {
    res.send(output);
 });
 
-f(req.user && req.user.email) {
+// app.post('/process/signup', function(req, res) {
+// 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
+// 		var member = {
+// 			nickname : req.body.nickname || req.query.nickname,
+// 			email : req.body.email || req.query.email,
+// 			passwd : hash,
+// 			salt : salt,
+// 			country : req.body.country || req.query.country,
+// 			agegroup : req.body.agegroup || req.query.agegroup,
+// 			insid : req.body.insid || req.query.insid
+// 		};
+// 		var sql = 'INSERT INTO members SET ?';
+// 		conn.query(sql, member, function(err, results) {
+// 			if(err) {
+// 				console.log(err);
+// 				res.status(500);
+// 			} else {
+// 				req.login(member, function(err) {
+// 					req.session.save(function() {
+// 						res.redirect('/process/main');
+// 					});
+// 				});
+// 			}
+// 		});
+// 	});
+// });
+
+app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+	var sql = 'SELECT * from members';
+	conn.query(sql, function(err, results) {
+		var member = {
+			flagpath : results
+		}
+	})
+	var posting = {
+		picpath : req.body.picpath || req.query.picpath,
+		post : req.body.post || req.query.post,
+		view : req.body.views || req.query.views,
+		getwant : req.body.getwant || req.query.getwant,
+		hashtag : req.body.hashtag || req.query.hashtag
+	};
+	var sql = 'INSERT INTO postings SET ?';
+	conn.query(sql, posting, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		}
+	});
+});
+
+app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, picpath도 넣자.
+	if(req.user && req.user.email){
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		var context = {email : req.user.email, nickname : req.user.nickname};
-		req.app.render('postlist', context, function(err, html) {
+		var context = {picpath : req.user.picpath, post: req.user.post, views: req.user.views, getwant: req.user.getwant, hashtag: req.user.hashtag};
+		req.app.render('addpost', context, function(err, html) {
 			if(err) {
-				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
 
 				req.app.render('error', function(err, html) {
 					res.end(html);
-				})
+				});
 			}
-			console.log('rendered : ' + html);
-
+			console.log('rendered : ' + html)
 			res.end(html);
 		});
 	} else {
 		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		req.app.render('index', function(err, html) {
+		req.app.render('main', function(err, html) {
 			res.end(html);
-		})
+		});
 	}
-app.get('/process/addpost', function(req, res) {
-	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-	var context = {post: req.user.post, view: req.user.views, getwant: req.user.getwant, hashtag: req.user.hashtag}
 });
 
 app.post('/process/photo', upload.array('photo', 1), function(req, res) {

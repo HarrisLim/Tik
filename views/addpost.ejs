@@ -6,15 +6,19 @@
 	</head>
 	<body>
 		<h1>add Post !</h1>
-		<h3> Written by <%= flagpath%><%= nickname%>!</h3> <!-- flagpath와 nickname은 members(db) data -->
+		<h3> Written by <%= nickname%>!</h3> <!-- flagpath와 nickname은 members(db) data -->
 	   	<br><br>
 		<table>
+			<tr>
+				<td><label>picpath : </label></td> <!-- 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.-->
+				<td><input type="text" name="picpath"></td>
+			</tr>
 			<tr>
 				<td><label>post : </label></td>
 				<td><input type="text" name="post"></td>
 			</tr>
 			<tr>
-				<td><label>view : </label></td>
+				<td><label>views : </label></td>
 				<td><input type="text" name="views"></td>
 			</tr>
 			<tr>
