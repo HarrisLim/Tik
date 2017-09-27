@@ -25,6 +25,7 @@
 * MySQL 연동
 * session 처리
 * passport.js로 로그인.
+* ejs(뷰 템플릿) 설정.
 * 
 
 ## TO DO

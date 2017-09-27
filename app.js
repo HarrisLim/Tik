@@ -115,7 +115,8 @@ app.get('/process/main', function(req, res){
 				})
 			}
 			console.log('rendered : ' + html);
-
+			app.set('signinNickname', req.user.nickname);
+			console.log('signinNickname --> ' + req.user.nickname);
 			res.end(html);
 		});
 	} else {
@@ -223,24 +224,19 @@ app.get('/process/showpost', function(req, res){
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
-	var output = `
-	<h1>Login !</h1>
-		<br>
-		<form method="post" action="/process/signin">
-			<table>
-				<tr>
-					<td><label>Email : </label></td>
-					<td><input type="text" name="username"></td> <!--name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. -->
-				</tr>
-				<tr>
-					<td><label>Password : </label></td>
-					<td><input type="password" name="password"></td><!-- name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. -->
-				</tr>
-			</table>
-			<input type="submit" value="submit" name="">
-		</form>
-   `;
-   res.send(output);
+
+	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+	var context = {email : req.body.username, nickname : req.body.nickname};
+	req.app.render('signin', context, function(err, html) {
+		if(err) {
+			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+			req.app.render('error', function(err, html) {
+				res.end(html);
+			});
+		}
+		console.log('rendered : ' + html);
+		res.end(html);
+	});
 });
 
 app.post('/process/signup', function(req, res) {
@@ -326,77 +322,47 @@ app.get('/process/signup', function(req, res) {
    res.send(output);
 });
 
-// app.post('/process/signup', function(req, res) {
-// 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
-// 		var member = {
-// 			nickname : req.body.nickname || req.query.nickname,
-// 			email : req.body.email || req.query.email,
-// 			passwd : hash,
-// 			salt : salt,
-// 			country : req.body.country || req.query.country,
-// 			agegroup : req.body.agegroup || req.query.agegroup,
-// 			insid : req.body.insid || req.query.insid
-// 		};
-// 		var sql = 'INSERT INTO members SET ?';
-// 		conn.query(sql, member, function(err, results) {
-// 			if(err) {
-// 				console.log(err);
-// 				res.status(500);
-// 			} else {
-// 				req.login(member, function(err) {
-// 					req.session.save(function() {
-// 						res.redirect('/process/main');
-// 					});
-// 				});
-// 			}
-// 		});
-// 	});
-// });
-
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
-	var sql = 'SELECT * from members';
-	conn.query(sql, function(err, results) {
-		var member = {
-			flagpath : results
-		}
-	})
 	var posting = {
 		picpath : req.body.picpath || req.query.picpath,
 		post : req.body.post || req.query.post,
-		view : req.body.views || req.query.views,
+		views : req.body.views || req.query.views,
 		getwant : req.body.getwant || req.query.getwant,
-		hashtag : req.body.hashtag || req.query.hashtag
+		hashtag : req.body.hashtag || req.query.hashtag,
+		members_id : app.get('membersId')
 	};
 	var sql = 'INSERT INTO postings SET ?';
 	conn.query(sql, posting, function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
+		} else {
+			res.redirect('/process/main');
 		}
 	});
 });
 
 app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, picpath도 넣자.
-	if(req.user && req.user.email){
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		var context = {picpath : req.user.picpath, post: req.user.post, views: req.user.views, getwant: req.user.getwant, hashtag: req.user.hashtag};
-		req.app.render('addpost', context, function(err, html) {
-			if(err) {
-				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+	// if(req.user && req.user.email){
+		var sql = 'SELECT * FROM members WHERE nickname=?';
+		conn.query(sql, app.get('signinNickname'), function(err, results) {
+			console.log('results --> ' + results[0].email);
+			app.set('membersId', results[0].id);
+			console.log('membersId ---> ' + app.get('membersId'));
+			res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+			var context = {results : results[0]};
+			req.app.render('addpost', context,  function(err, html) {
+				if(err) {
+					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
 
-				req.app.render('error', function(err, html) {
-					res.end(html);
-				});
-			}
-			console.log('rendered : ' + html)
-			res.end(html);
+					req.app.render('error', function(err, html) {
+						res.end(html);
+					});
+				}
+				console.log('rendered : ' + html)
+				res.end(html);
+			});
 		});
-	} else {
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		req.app.render('main', function(err, html) {
-			res.end(html);
-		});
-	}
 });
 
 app.post('/process/photo', upload.array('photo', 1), function(req, res) {
