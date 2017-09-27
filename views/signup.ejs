@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Add Post</title>
+	</head>
+	<body>
+		<h1>Welcome my new friend !</h1>
+	<h1>Tik sign up !</h1>
+   <br><br>
+		<form method="post" action="/process/signup">
+			<table>
+				<tr>
+					<td><label>Nickname : </label></td>
+					<td><input type="text" name="nickname"></td>
+				</tr>
+				<tr>
+					<td><label>Email : </label></td>
+					<td><input type="email" name="email"></td>
+					<td><input type="button" value="Verify Email"></td>
+				</tr>
+				<tr>
+					<td><label>Password : </label></td>
+					<td><input type="password"></td>
+				</tr>
+				<tr>
+					<td><label>Password (repeat) : </label></td>
+					<td><input type="password" name="passwd"></td>
+					<td><input type="button" value="Check password"></td>
+				</tr>
+				<tr>
+					<td><label>Country : </label></td>
+					<td><input type="text" name="country"></td>
+				</tr>
+				<tr>
+					<td><label>Age group : </label></td>
+					<td>
+						<input type="radio" name="agegroup"> 10s
+						<input type="radio" name="agegroup"> 20s
+						<input type="radio" name="agegroup"> 30s
+						<input type="radio" name="agegroup"> 40s
+						<input type="radio" name="agegroup"> 50s
+						<input type="radio" name="agegroup"> 60s
+						<input type="radio" name="agegroup"> 70s
+						<input type="radio" name="agegroup"> 80s
+						<input type="radio" name="agegroup"> 90s
+						<input type="radio" name="agegroup"> 100s
+					</td>
+				</tr>
+				<tr>
+					<td><label>Instagram ID : </label></td>
+					<td><input type="text" name="insid"></td>
+				</tr>
+			</table>
+			<input type="submit" value="Sign Up : )">
+			<input type="button" value="Cancle : (">
+		</form>
+	</body>
+</html>

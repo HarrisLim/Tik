@@ -12,12 +12,16 @@
 				var curInsid = results.insid;
 			%>
 		
-		<h3> Written by <%= curFlagpath%> <%= curNickname%></h3> <!-- flagpath와 nickname은 members(db) data, -->
+		<h3> Written by <%= curFlagpath%> <%= curNickname%></h3> <%# flagpath와 nickname은 members(db) data %>
 	   	<br><br>
 	   	<form method="post" action="/process/addpost">
 			<table>
 				<tr>
-					<td><label>picpath : </label></td> <!-- 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.-->
+					<td><label>title : </label></td>
+					<td><input type="text" name="title"></td>
+				</tr>
+				<tr>
+					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
 					<td><input type="text" name="picpath"></td>
 				</tr>
 				<tr>
@@ -29,15 +33,15 @@
 					<td><input type="text" name="views"></td>
 				</tr>
 				<tr>
-					<td><label>I wanna go : </label></td> <!-- 이거는 버튼을 누르면 숫자가 하나 올라가게.-->
+					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
 					<td><input type="button" name="getwant" value="WANNA GO"></td>
 				</tr>
 				<tr>
-					<td><label>add hashtag : </label></td> <!-- hashtag 하나씩 추가할 수 있게. -->
+					<td><label>add hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
 					<td><input type="text" name="hashtag"></td>
 				</tr>
 				<tr>
-					<td><label>Instagram ID : <%= curInsid %> </label></td> <!-- members에 있는 데이터. -->
+					<td><label>Instagram ID : <a href="https://www.instagram.com/"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
 				</tr>
 			</table>
 			<input type="submit" value="add Post : )">

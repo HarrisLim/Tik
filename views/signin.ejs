@@ -7,15 +7,15 @@
 	<body>
 		<h1>Login !</h1>
 		<br>
-		<form method="post" action="/process/addpost">
+		<form method="post" action="/process/signin">
 			<table>
 				<tr>
 					<td><label>Email : </label></td>
-					<td><input type="text" name="username"></td> <!--name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. -->
+					<td><input type="text" name="username"></td> <%# name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. %>
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>
-					<td><input type="password" name="password"></td><!-- name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. -->
+					<td><input type="password" name="password"></td> <%# name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. %>
 				</tr>
 			</table>
 			<input type="submit" value="submit" name="">

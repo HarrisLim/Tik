@@ -102,9 +102,30 @@ var upload = multer({
 	}
 });
 
+// var sql = 'SELECT * FROM members WHERE nickname=?';
+// 	conn.query(sql, app.get('signinNickname'), function(err, results) {
+// 		console.log('results --> ' + results[0].email);
+// 		app.set('membersId', results[0].id);
+// 		app.set('addpostNickname', results[0].nickname);
+// 		console.log('membersId ---> ' + app.get('membersId'));
+// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+// 		var context = {results : results[0]};
+// 		req.app.render('addpost', context,  function(err, html) {
+// 			if(err) {
+// 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+// 				req.app.render('error', function(err, html) {
+// 					res.end(html);
+// 				});
+// 			}
+// 			console.log('rendered : ' + html)
+// 			res.end(html);
+// 		});
+// 	});
+
 app.get('/process/main', function(req, res){
 	if(req.user && req.user.email) {
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {email : req.user.email, nickname : req.user.nickname};
 		req.app.render('postlist', context, function(err, html) {
 			if(err) {
@@ -120,9 +141,14 @@ app.get('/process/main', function(req, res){
 			res.end(html);
 		});
 	} else {
-		res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-		req.app.render('index', function(err, html) {
-			res.end(html);
+		var sql = 'SELECT * FROM postings';
+		conn.query(sql, function(err, results) {
+			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+			var context = {results : results};
+			req.app.render('index', context, function(err, html) {
+				console.log('rendered : ' + html);
+				res.end(html);
+			});
 		});
 	}
 });
@@ -190,19 +216,19 @@ app.post('/process/signin',
         failureFlash: true 
     })
 );
+/* 이것은 postlist, index.ejs에 글 목록을 불러오는 것 처리하고 나서 하자. app.set('addpostNickname', results[0].nickname); <- 이것 활용하자.
 
-/*  이것은 글 하나 쓰는 거 만든 다음에, 글 쓰고나서 해야겠어. 쓴 글에 nickname을 넣어놓고 하는게 좋을 거 같아.
 app.get('/process/showpost', function(req, res){ 
-	var paramNickname = 
 	var sql = 'SELECT * FROM members WHERE nickname=?';
-	conn.query(sql, paramNickname, function(err, results) {
+	console.log('addpostNickname --> '+ app.get('addpostNickname'));
+	conn.query(sql, app.get('addpostNickname'), function(err, results) {
 		if(err) {
 			console.log('err다.');
 			return done('There is no member.');
 		}
 		if(results[0] !== undefined){
 			var member = results[1];
-			res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 				var context = {flagpath : member.flagpath, nickname : member.nickname, insid : member.insid};
 				req.app.render('showpost', context, function(err, html) {
 					if(err) {
@@ -220,12 +246,13 @@ app.get('/process/showpost', function(req, res){
 			console.log('되었냐 ?');
 		}
 	});
-});*/
+});
+*/
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
 
-	res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
+	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 	var context = {email : req.body.username, nickname : req.body.nickname};
 	req.app.render('signin', context, function(err, html) {
 		if(err) {
@@ -267,63 +294,23 @@ app.post('/process/signup', function(req, res) {
 });
 
 app.get('/process/signup', function(req, res) {
-	  var output = `
-	<h1>Welcome my new friend !</h1>
-	<h1>Tik sign up !</h1>
-   <br><br>
-		<form method="post" action="/process/signup">
-			<table>
-				<tr>
-					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname"></td>
-				</tr>
-				<tr>
-					<td><label>Email : </label></td>
-					<td><input type="email" name="email"></td>
-					<td><input type="button" value="Verify Email"></td>
-				</tr>
-				<tr>
-					<td><label>Password : </label></td>
-					<td><input type="password"></td>
-				</tr>
-				<tr>
-					<td><label>Password (repeat) : </label></td>
-					<td><input type="password" name="passwd"></td>
-					<td><input type="button" value="Check password"></td>
-				</tr>
-				<tr>
-					<td><label>Country : </label></td>
-					<td><input type="text" name="country"></td>
-				</tr>
-				<tr>
-					<td><label>Age group : </label></td>
-					<td>
-						<input type="radio" name="agegroup"> 10s
-						<input type="radio" name="agegroup"> 20s
-						<input type="radio" name="agegroup"> 30s
-						<input type="radio" name="agegroup"> 40s
-						<input type="radio" name="agegroup"> 50s
-						<input type="radio" name="agegroup"> 60s
-						<input type="radio" name="agegroup"> 70s
-						<input type="radio" name="agegroup"> 80s
-						<input type="radio" name="agegroup"> 90s
-						<input type="radio" name="agegroup"> 100s
-					</td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : </label></td>
-					<td><input type="text" name="insid"></td>
-				</tr>
-			</table>
-			<input type="submit" value="Sign Up : )">
-			<input type="button" value="Cancle : (">
-		</form>
-   `;
-   res.send(output);
+	 console.log('signup 호출.');
+	 res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+	 req.app.render('signup', function(err, html) {
+	 	if(err) {
+	 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+	 		req.app.render('error', function(err, html) {
+	 			res.end(html);
+	 		});
+	 	}
+	 	console.log('rendered : ' + html);
+	 	res.end(html);
+	 });
 });
 
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var posting = {
+		title : req.body.title || req.query.title,
 		picpath : req.body.picpath || req.query.picpath,
 		post : req.body.post || req.query.post,
 		views : req.body.views || req.query.views,
@@ -343,26 +330,25 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 });
 
 app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, picpath도 넣자.
-	// if(req.user && req.user.email){
-		var sql = 'SELECT * FROM members WHERE nickname=?';
-		conn.query(sql, app.get('signinNickname'), function(err, results) {
-			console.log('results --> ' + results[0].email);
-			app.set('membersId', results[0].id);
-			console.log('membersId ---> ' + app.get('membersId'));
-			res.writeHead('200', {'Countent-Type':'text/html;charset=utf8'});
-			var context = {results : results[0]};
-			req.app.render('addpost', context,  function(err, html) {
-				if(err) {
-					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+	var sql = 'SELECT * FROM members WHERE nickname=?';
+	conn.query(sql, app.get('signinNickname'), function(err, results) {
+		console.log('results --> ' + results[0].email);
+		app.set('membersId', results[0].id);
+		app.set('addpostNickname', results[0].nickname);
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {results : results[0]};
+		req.app.render('addpost', context,  function(err, html) {
+			if(err) {
+				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
 
-					req.app.render('error', function(err, html) {
-						res.end(html);
-					});
-				}
-				console.log('rendered : ' + html)
-				res.end(html);
-			});
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				});
+			}
+			console.log('rendered : ' + html)
+			res.end(html);
 		});
+	});
 });
 
 app.post('/process/photo', upload.array('photo', 1), function(req, res) {

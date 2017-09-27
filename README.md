@@ -12,6 +12,7 @@
 * [CSS](https://www.w3.org/Style/CSS/) (Framework - [Bootstrap](https://getbootstrap.com/))
 * [Javascript](https://www.javascript.com/) (Library - [jQuery](https://jquery.com/), Framework - [Vue.js](https://vuejs.org/))
 * [node.js](https://nodejs.org/en/) - Server-side
+* [EJS](http://www.embeddedjs.com/) - Javascript View Template
 * [MySQL](https://www.mysql.com/) - Database
 * [Sublime Text 2](http://www.sublimetext.com/2) - Text Editor
 
@@ -49,8 +50,12 @@
 * forgetemail, forgetpassword (Email이나 Password를 찾는 라우터)
 
 * addpost<br>
-	1. 해쉬태그할 수 있는 공간 추가. - Tistory처럼
-	2. addphoto는 어떻게 하지 ? 
+	1. 해쉬태그할 수 있는 공간 추가. - Tistory처럼 or 인스타처럼 그냥 #을 쓰면 해쉬태그로 변경.
+	2. addphoto는 어떻게 하지 ?, picpath포함. 
+	3. 글 조회가 되면 views +1 되게 하자.
+	4. WANNA GO 버튼을 누르면 +1 되게 하자.
+	5. 인스타그램 아이디 a 태그에 넣기.
+
 
 * showpost (main에서 글 목록 중 글을 클릭했을 때 보여주는 라우터)<br>
 	1. 인스타아이디를 db에서 가져와서 누르면 글 작성자의 인스타페이지로 갈 수 있게 하자.<br>
