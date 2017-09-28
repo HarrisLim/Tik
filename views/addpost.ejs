@@ -11,11 +11,16 @@
 				var curNickname = results.nickname;
 				var curInsid = results.insid;
 			%>
-		
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<hr>
 		<h3> Written by <%= curFlagpath%> <%= curNickname%></h3> <%# flagpath와 nickname은 members(db) data %>
 	   	<br><br>
 	   	<form method="post" action="/process/addpost">
 			<table>
+				<tr>
+					<td><label>how many days : </label></td>
+					<td><input type="text" name="howmanydays"></td>
+				</tr>
 				<tr>
 					<td><label>title : </label></td>
 					<td><input type="text" name="title"></td>

@@ -31,6 +31,9 @@
 
 ## TO DO
 
+* Tik's logo
+	태극기를 들고 익살스러운 얼굴로 찍은 셀카를 드로잉화 시킨 후 머리 뒤에 배경으로 Talk Tik이라는 단어를 넣자.
+
 * main (글 목록, 등)<br>
 	1. 해쉬태그 검색하는 기능 추가.<br>
 	2. gmail처럼 우측 하단에 메일 보내는 기능 or 페이스북 메신저처럼<br>
@@ -56,7 +59,6 @@
 	4. WANNA GO 버튼을 누르면 +1 되게 하자.
 	5. 인스타그램 아이디 a 태그에 넣기.
 
-
 * showpost (main에서 글 목록 중 글을 클릭했을 때 보여주는 라우터)<br>
 	1. 인스타아이디를 db에서 가져와서 누르면 글 작성자의 인스타페이지로 갈 수 있게 하자.<br>
 	2. tik.postings에 아직 데이터가 없기 때문에, app.js에 그냥 넣으면 error다. 그러니까 postings에 넣고 난 후에 showpost.ejs에 있는 것 주석 풀자. 그리고 members에 있는 건 req.user로 잡으면 잡히는데 (ex)req.user.email) postings에 있는 것 어케 잡지 ?
@@ -68,7 +70,7 @@
 
 
 * ETC<br>
-	카카오봇 만들어서 카카오로도 문의할 수 있도록 ? 하자.
+	1. 카카오봇 만들어서 카카오로도 문의할 수 있도록 ? 하자.
 ## Author
 
 * [HarrisLim](https://github.com/HarrisLim)<br><br>

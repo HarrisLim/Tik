@@ -5,13 +5,16 @@
 		<title>Main</title>
 	</head>
 	<body>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<hr>
 		<h1>Welcome tik !</h1>
 		<a href="/process/signin">signin</a>
 		<br><br><a href='/process/signup'>signup</a>
 		<br><br><%# 밑에 flagpath도 가져와서 타이틀 옆에 보이게하자.%>
 		<%
 			for(var i =0; i < results.length; i++) { 
-				var curTitle = results[i].title; %>
+				var curTitle = results[i].title;
+				var curMemberId = results[i].members_id %>
 			<li>#<%= i%> - Title : <a href="/process/showpost"><%= curTitle %></a></li><br>
 		<% } %>
 	</body>
