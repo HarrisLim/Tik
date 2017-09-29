@@ -2,6 +2,10 @@
 
 외국인을 위한 무료 여행플래너. 무료로 여행 플랜을 세워주지만, 후기를 올려주는 것을 약속한다.<br> 예약같은 것은 하지 않고 정보만 알려준다. 플랜 A와 플랜 B, 2가지를 준다.
 
+## What's different from another travel planner
+
+* 
+
 ## Project Period
 
 * 2017.09.18(Mon) ~ ing
@@ -45,7 +49,7 @@
 	3. 10대 20대 버튼 클릭하면 그에 맞게 DB에 저장<br>
 	4. 빈 칸이 있는데 signup 버튼을 누르면 빈 칸을 채우라는 alert창<br>
 	5. DB에 created_at이랑 updated_at이 자동으로 데이터가 안들어가는데 확인하자.
-	6. nickname 중복검사.
+	6. nickname, email 중복검사.
 
 * `signin`
 	1. alert창을 띄우려고 하는데. 내 생각에는 html이나 get에서 또 넣는 거 같은데 ? 일단 보류. 

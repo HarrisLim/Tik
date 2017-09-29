@@ -3,6 +3,17 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Main</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+			function view(num) {
+				 alert(num); 
+
+				document.getElementById('num').value=num;
+
+				$('#frm').submit();
+
+			}
+		</script>
 	</head>
 	<body>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
@@ -11,11 +22,15 @@
 		<a href="/process/signin">signin</a>
 		<br><br><a href='/process/signup'>signup</a>
 		<br><br><%# 밑에 flagpath도 가져와서 타이틀 옆에 보이게하자.%>
-		<%
-			for(var i =0; i < results.length; i++) { 
-				var curTitle = results[i].title;
-				var curMemberId = results[i].members_id %>
-			<li>#<%= i%> - Title : <a href="/process/showpost"><%= curTitle %></a></li><br>
-		<% } %>
+		
+		<form name="frm" id="frm" action="/process/view" method="post">
+			<input type="text" name="num" id="num"> 
+		</form>
+			<%
+				for(var i =0; i < results.length; i++) { 
+					var curTitle = results[i].title;
+					var curMemberId = results[i].members_id %>
+				<li>#<%= results[i].id%> - Title : <a href="#" onclick="view(<%= results[i].id%>)" return false><%= curTitle %></a></li><br>
+			<% } %>
 	</body>
 </html>

@@ -132,11 +132,36 @@ app.get('/process/main', function(req, res){
 			app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
 				console.log('rendered : ' + html);
+				console.log('clicked -> ' + req.cur);
 				res.end(html);
 			});
 		});
 	}
 });
+
+app.post('/process/view', function(req, res) {
+ 	console.log('num --->> ' + req.body.num);
+
+ 	var num = req.body.num;
+
+ 	var sqlPosting = 'SELECT * FROM postings WHERE id=?';
+ 	conn.query(sqlPosting, num, function(err, results) {
+		res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+		var context = {results : results};
+		req.app.render('showpost', context,  function(err, html) {
+		 	if(err) {
+		 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+		 		req.app.render('error', function(err, html) {
+		 			res.end(html);
+		 		});
+		 	}
+		 	console.log('results --> ' + results[0].title);
+		 	console.log('rendered : ' + html);
+ 			res.end(html);	
+		});
+	});
+});
+
 
 app.get('/process/signout', function(req, res) {
 	// delete req.session.userEmail;
@@ -274,6 +299,7 @@ app.post('/process/signup', function(req, res) {
 	});
 });
 
+
 app.get('/process/signup', function(req, res) {
 	 console.log('signup 호출.');
 	 res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -291,6 +317,7 @@ app.get('/process/signup', function(req, res) {
 
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var posting = {
+		id : req.body.id,
 		howmanydays : req.body.howmanydays || req.query.howmanydays,
 		title : req.body.title || req.query.title,
 		picpath : req.body.picpath || req.query.picpath,
