@@ -5,11 +5,39 @@
 		<title>Show post</title>
 	</head>
 	<body>
+		<%
+			var curId = results[0].id;
+			var curMemberId = results[0].members_id;
+			var curFlagpath = results[0].flagpath;
+			var curNickname = results[0].nickname;
+			var curInsid = results[0].insid;
+			var curCreated_at = results[0].created_at;
+			var curTitle = results[0].title;
+			var curPicpath = results[0].picpath;
+			var curPost = results[0].post;
+			var curGetwant = results[0].getwant;
+			var curHashTage = results[0].hashtag;
+		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<h1>Written by  !</h1>
-		<%= results[0].title%>
-		<p>
+		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
+		Created_Date : <%= curCreated_at %><p>
+		Title : <%= curTitle%><p>
+		Picpath : <%= curPicpath%><p>
+		this is post : <%= curPost%><p>
+		I wanna go : <%= curGetwant%><p> <%# 이 곳은 버튼을 누르면 getwant가 올라가게.%>
+		HashTag : <%= curHashTage%><p> <%# 이 6줄 모두 tik.postings이다. postings 등록하고 app.js에 showpost를 수정하자. %>
+		Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid%></a><p> <%# tik.members %>
+		<p><br>
 		<a href="/process/main">to main</a>
+		<% for(var i = 0; i < results.length; i++) {
+				console.log("results[i].members_id --> " + results[i].members_id);
+				console.log("results[i].id --> " + results[i].id);
+
+				if(curId == results[i].members_id) { %>
+					<a href="/process/postedit">Edit</a>
+				<% }%>
+			<% } %>
+		<% } %>
 	</body>
 </html>

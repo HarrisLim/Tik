@@ -123,29 +123,27 @@ app.get('/process/main', function(req, res){
 			});
 		});
 	} else { // before Signin
-		var sqlPosting = 'SELECT * FROM postings';
-		var sqlMember = 'SELECT * FROM members';
-		conn.query(sqlPosting, function(err, results) {
+		var sql = 'SELECT * FROM postings';
+		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var context = {results : results};
 			console.log('results[0].members_id -->' + results[0].members_id);
-			app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
+			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
 				console.log('rendered : ' + html);
-				console.log('clicked -> ' + req.cur);
 				res.end(html);
 			});
 		});
 	}
 });
 
-app.post('/process/view', function(req, res) {
- 	console.log('num --->> ' + req.body.num);
+app.post('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
+ 	console.log('postnum --->> ' + req.body.postnum);
+ 	var postnum = req.body.postnum;
 
- 	var num = req.body.num;
-
- 	var sqlPosting = 'SELECT * FROM postings WHERE id=?';
- 	conn.query(sqlPosting, num, function(err, results) {
+ 	var sql = 'SELECT members.id, members.nickname, members.flagpath, members.insid, postings.title, postings.picpath, postings.created_at, postings.getwant, postings.hashtag, postings.members_id FROM members JOIN postings ON members.id = postings.members_id;';
+ 	conn.query(sql, function(err, results) {
+ 		console.log('results[0].id  -> ' + results[1].members_id);
 		res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results};
 		req.app.render('showpost', context,  function(err, html) {
@@ -155,13 +153,18 @@ app.post('/process/view', function(req, res) {
 		 			res.end(html);
 		 		});
 		 	}
-		 	console.log('results --> ' + results[0].title);
+		 	// console.log('results --> ' + results[0].title);
+		 	// app.set('showpostMembersId', results[0].members_id);
 		 	console.log('rendered : ' + html);
- 			res.end(html);	
+		 	console.log('req.user.id --> ' + req.user.id);
+		 	console.log('req.body.memberId --> ' + req.body.memberId);
+		 // 	if(req.user.id == req.body.memberId){
+			// 	console.log('글 수정 가능.');
+			// }
+ 			res.end(html);
 		});
 	});
 });
-
 
 app.get('/process/signout', function(req, res) {
 	// delete req.session.userEmail;
@@ -227,34 +230,6 @@ app.post('/process/signin',
     })
 );
 
-// 이것은 postlist, index.ejs에 글 목록을 불러오는 것 처리하고 나서 하자. app.set('addpostNickname', results[0].nickname); <- 이것 활용하자.
-app.get('/process/showpost', function(req, res){ 
-	var sql = 'SELECT * FROM members WHERE id=?';
-	conn.query(sql, app.get('mainMembersId'), function(err, results) { //app.set('mainxxx')을 results[0]으로 헀는데, 그러면 안돼. 클릭 받은 값으로 해야돼.
-		if(err) {
-			console.log('err다.');
-			return console.log('There is no post.');
-		}
-		if(results[0] !== undefined){
-			console.log('results[0] -> ' + results[0].email);
-			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			var context = {results : results[0]}; // results[0]으로 하면 안돼. 클릭한 값을 받아와야하는데 어렵네.
-			req.app.render('showpost', context, function(err, html) {
-				if(err) {
-					console.log('오류 발생.');
-					req.app.render('error', function(err, html) {
-						res.send(html);
-				});
-				}
-				console.log('rendered : ' + html);
-				res.end(html);
-			});
-		} else{
-			console.log('여기 수정해. results[0]으로 받아올 거 아니니까 글 목록 잘 받아오게 되면 수정.');
-		}
-	});
-});
-
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
 
@@ -270,6 +245,91 @@ app.get('/process/signin', function(req, res) {
 		console.log('rendered : ' + html);
 		res.end(html);
 	});
+});
+
+// app.post('/process/showpost', function(req, res) {
+//  	console.log('postnum --->> ' + req.body.postnum);
+
+//  	var postnum = req.body.postnum;
+
+//  	var sql = 'select * from members join postings on members.id = postings.members_id and postnum=?';
+//  	conn.query(sql, postnum, function(err, results) {
+// 		res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+// 		var context = {results : results[0]};
+// 		req.app.render('showpost', context,  function(err, html) {
+// 		 	if(err) {
+// 		 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+// 		 		req.app.render('error', function(err, html) {
+// 		 			res.end(html);
+// 		 		});
+// 		 	}
+// 		 	console.log('results --> ' + results[0].title);
+// 		 	// app.set('showpostMembersId', results[0].members_id);
+// 		 	console.log('rendered : ' + html);
+//  			res.end(html);
+// 		});
+// 	});
+// });
+
+// if(req.user && req.user.email) { // after Signin
+// 		var sql = 'SELECT * FROM postings';
+// 		conn.query(sql, function(err, results) {
+// 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+// 			var context = {email : req.user.email, nickname : req.user.nickname, results : results};
+// 			req.app.render('postlist', context, function(err, html) {
+// 				if(err) {
+// 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+// 					req.app.render('error', function(err, html) {
+// 						res.end(html);
+// 					});
+// 				}
+// 				console.log('rendered : ' + html);
+// 				app.set('signinNickname', req.user.nickname);
+// 				console.log('signinNickname --> ' + req.user.nickname);
+// 				res.end(html);
+// 			});
+// 		});
+
+app.get('/process/mypost', function(req, res) {
+	console.log('here is mypost.');
+	if(req.user && req.user.email){ // check sign in
+		console.log('req.user.email --> ' + req.user.email);
+		// console.log('memberId ---> ' + req.query.members_id);
+
+		var memberId = req.user.id;
+		// var sql = 'SELECT * FROM members JOIN postings ON members.id = postings.members_id AND members_id=?'
+		sql = 'select * from members join postings on members.id = postings.members_id AND members_id=?';
+		conn.query(sql, memberId, function(err, results){
+			if(results[0] === undefined) {
+				console.log('there is no posting');
+				req.app.render('error', function(err, html) { // 이거 글이 없다는 에러 페이지로 바꾸자. - 2017.09.30
+					res.end(html);
+				});
+			}
+			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+			console.log('myPost results --> ' + req.user.id);
+			console.log('myPost results.postnum --> ' + results[0].postnum);
+			var context = {results : results};
+			req.app.render('mypost', context, function(err, html) {
+				if(err) {
+					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+					req.app.render('error', function(err, html) {
+						res.end(html);
+					});
+				}
+				console.log('results --> ' + results[0].title);
+				console.log('rendered : ' + html);
+				res.end(html);
+			});
+		});
+	} else { // check sign in - here is not sign in
+		console.log('should sign in.')
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		req.app.render('error', function(err, html) { // 로그인해야 가능하다는 페이지로 바꾸자. - 2017.09.30
+			res.end(html);
+		})
+	}
 });
 
 app.post('/process/signup', function(req, res) {
@@ -325,7 +385,7 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 		views : req.body.views || req.query.views,
 		getwant : req.body.getwant || req.query.getwant,
 		hashtag : req.body.hashtag || req.query.hashtag,
-		members_id : app.get('membersId')
+		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?';
 	conn.query(sql, posting, function(err, results) {
@@ -342,7 +402,7 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 	var sql = 'SELECT * FROM members WHERE nickname=?';
 	conn.query(sql, app.get('signinNickname'), function(err, results) {
 		console.log('results --> ' + results[0].email);
-		app.set('membersId', results[0].id);
+		// app.set('showpostMembersId', results[0].id);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results[0]};
 		req.app.render('addpost', context,  function(err, html) {
