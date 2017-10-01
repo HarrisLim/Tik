@@ -5,10 +5,11 @@
 		<title>Main</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script>
-			function view(num) {
+			function view(num, id) {
 				<%# alert(num); %>
 
 				$('#postnum').val(num);
+				$('#memberId').val(id);
 
 				$('#frm').submit();
 
@@ -24,14 +25,15 @@
 		<br><br><%# 밑에 flagpath도 가져와서 타이틀 옆에 보이게하자.%>
 		
 		<form name="frm" id="frm" action="/process/showpost" method="post">
-			<input type="hidden" name="postnum" id="postnum"> 
+			<input type="hidden" name="postnum" id="postnum">
+			<input type="hidden" name="memberId" id="memberId">
 		</form>
 		<%
 			for(var i =0; i < results.length; i++) { 
 				var curTitle = results[i].title;
 				var curMemberId = results[i].members_id;
 				var curPostnum = results[i].postnum; %>
-			<li>#<%= curPostnum%> - Title : <a href="#" onclick="view(<%= curPostnum%>)" return false><%= curTitle %></a></li><br>
+			<li>#<%= curPostnum%> - Title : <a href="#" onclick="view(<%= curPostnum%>, <%= curMemberId%>)" return false><%= curTitle %></a></li><br>
 		<% } %>
 	</body>
 </html>

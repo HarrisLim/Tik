@@ -7,7 +7,6 @@
 	<body>
 		<%
 			var curId = results[0].id;
-			var curMemberId = results[0].members_id;
 			var curFlagpath = results[0].flagpath;
 			var curNickname = results[0].nickname;
 			var curInsid = results[0].insid;
@@ -30,14 +29,10 @@
 		Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid%></a><p> <%# tik.members %>
 		<p><br>
 		<a href="/process/main">to main</a>
-		<% for(var i = 0; i < results.length; i++) {
-				console.log("results[i].members_id --> " + results[i].members_id);
-				console.log("results[i].id --> " + results[i].id);
-
-				if(curId == results[i].members_id) { %>
-					<a href="/process/postedit">Edit</a>
-				<% }%>
-			<% } %>
-		<% } %>
+		<% if(curSigninId !== false) { %>
+			<% if(curId == curSigninId) { %>
+				<a href="/process/postedit">Edit</a>
+			<% }%>
+		<% }%>
 	</body>
 </html>

@@ -6,10 +6,11 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 		<script>
-			function view(num) {
+			function view(num, id) {
 				<%# alert(num); %>
 
 				$('#postnum').val(num);
+				$('#memberId').val(id);
 
 				$('#frm').submit();
 
@@ -19,20 +20,21 @@
 	<body>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<br> <h2>Hello. <%= results[0].nickname%> !</h2>
+		<br> <h2>Hello. <%= curNickname%> !</h2>
 		<a href="/process/mypost">My post</a>
 		<br><br><a href='/process/Edit'>Edit</a>
 		<p>
 		<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">
+			<input type="hidden" name="memberId" id="memberId">
 		</form>
-		<% for(var i =0; i < results.length; i++) { 
+		<%
+			for(var i =0; i < results.length; i++) { 
 				var curTitle = results[i].title;
 				var curMemberId = results[i].members_id;
 				var curPostnum = results[i].postnum; %>
-			<li>#<%= curPostnum%> - Title : <a href="#" onclick="view(<%= curPostnum%>)" return false><%= curTitle %></a></li><br>
+			<li>#<%= curPostnum%> - Title : <a href="#" onclick="view(<%= curPostnum%>, <%= curMemberId%>)" return false><%= curTitle %></a></li><br>
 		<% } %>
-
 		<a href="/process/main">to main</a>
 	</body>
 </html>
