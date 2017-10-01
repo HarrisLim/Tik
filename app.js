@@ -161,7 +161,7 @@ app.post('/process/showpost', function(req, res) { // 여기에 자기 자신의
 	 			res.end(html);
 			});
 		});
- 	} else { // before Signin에 req.user.id를 못가져오기 때문에 else 처리.
+ 	} else { // Signin 전에 req.user.id를 못가져오기 때문에 else 처리.
 		console.log('postnum --->> ' + req.body.postnum);
 	 	var postnum = req.body.postnum;
 	 	var memberId = req.body.memberId;
@@ -277,9 +277,16 @@ app.get('/process/mypost', function(req, res) {
 		sql = 'select * from members join postings on members.id = postings.members_id AND members_id=?';
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
-				console.log('there is no posting');
-				var errContext = {curEmail : req.user.email, curNickname : req.user.nickname};
-				req.app.render('errnoposting', errContext, function(err, html) {
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				var context = {curNickname : req.user.nickname, results : results};
+				req.app.render('mypost', context, function(err, html) {
+					if(err) {
+						console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+						req.app.render('error', function(err, html) {
+							res.end(html);
+					});
+				}
+				console.log('rendered : ' + html);
 					res.end(html);
 				});
 			} else { // 글이 있다면
@@ -307,6 +314,30 @@ app.get('/process/mypost', function(req, res) {
 			res.end(html);
 		})
 	}
+});
+
+app.get('/process/myinfo', function(req, res) {
+	console.log("you're in myinfo");
+	console.log('req.user.email --> ' + req.user.email);
+	console.log('req.user.nickname --> ' + req.user.nickname);
+
+	var memberEmail = req.user.email;
+	console.log('email -> ' + req.user.email);
+	sql = 'SELECT * FROM members WHERE email=?';
+	conn.query(sql, memberEmail, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {curNickname : req.user.nickname, results : results[0]};
+		req.app.render('myinfo', context, function(err, html) {
+			if(err) {
+				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+				req.app.render('error', function(err, html){
+					res.end(html);
+				});
+			}
+			console.log('rendered : ' + html);
+			res.end(html);
+		});
+	});
 });
 
 app.post('/process/signup', function(req, res) {

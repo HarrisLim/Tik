@@ -33,6 +33,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * passport.js로 로그인.
 * ejs(뷰 템플릿) 설정.
 * 자신이 작성한 글만 edit 버튼 활성화.
+* 
 
 ## TO DO
 
@@ -71,7 +72,14 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	2. [해결] tik.postings에 아직 데이터가 없기 때문에, app.js에 그냥 넣으면 error다. 그러니까 postings에 넣고 난 후에 showpost.ejs에 있는 것 주석 풀자. 그리고 members에 있는 건 req.user로 잡으면 잡히는데 (ex)req.user.email) postings에 있는 것 어케 잡지 ?
 	3. signin 해야지만 comment 작성할 수 있게 하자. workbench에서 실선 -> 점선으로 수정하고 comments테이블 수정.
 
-* `edit (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`
+* `mypost (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`
+
+* `myinfo (내 정보)`
+	1. 여기도 signup과 마찬가지로 ageGroup에 있는 라디오버튼을 누르면 변경되게 하자 그리고 변경하는 것이니까 db의 값을 가져와서 나이대에 맞는 곳에 체크되어 있게 하자.
+
+* `editpost (글 정보 변경)`
+
+* `editaccount (계정 정보 변경)`
 
 * `MySQL (MySQL database)`<br>
 	1. signup하면 created_at에 date가 안들어가. 어떻게 하는지 검색해서 넣자.
