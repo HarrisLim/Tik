@@ -6,7 +6,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 		<script>
-			window.onload = function() {
+				var agegroupVal = $('input:radio[name="agegroup"]:checked').val();
 				function view(num, email) {
 					<%# alert(num); %>
 
@@ -16,13 +16,11 @@
 					$('#frm').submit();
 				}
 
-				var agegroupVal = $('input:radio[name="agegroup"]:checked').val();
-				function showagegroup(val) {
-					$('#age').val(agegroupVal);
+				function showagegroup(age) {
+					$('#age').val(age);
 
-					$('#frm').submit();
+					alert(age);
 				}
-			};
 		</script>
 	</head>
 	<body>
@@ -44,8 +42,8 @@
 		<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">
 			<input type="hidden" name="memberEmail" id="memberEmail">
-			<input type="text" name="age" id="age">
 		</form>
+		<input type="text" name="age" id="age">
 		<table>
 			<tr>
 				<td><label>Nickname : </label><input type="text" value=<%= curNickname%>></td>
@@ -65,8 +63,8 @@
 			<tr>
 				<td><label>Age group : </label></td>
 				<td>
-					<input type="radio" name="agegroup" value="10s"> 10s
-					<input type="radio" name="agegroup" value="20s"> 20s
+					<a href="#" onclick="showagegroup(agegroupVal)" return false><input type="radio" name="agegroup" value="10s"></a> 10s
+					<input type="radio" name="agegroup" value="20s" onclick="showagegroup()" return false> 20s
 					<input type="radio" name="agegroup" value="30s"> 30s
 					<input type="radio" name="agegroup" value="40s"> 40s
 					<input type="radio" name="agegroup" value="50s"> 50s
