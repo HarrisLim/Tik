@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>My info</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+		<script>
+			window.onload = function() {
+				function view(num, email) {
+					<%# alert(num); %>
+
+					$('#postnum').val(num);
+					$('#memberEmail').val(email);
+
+					$('#frm').submit();
+				}
+
+				var agegroupVal = $('input:radio[name="agegroup"]:checked').val();
+				function showagegroup(val) {
+					$('#age').val(agegroupVal);
+
+					$('#frm').submit();
+				}
+			};
+		</script>
+	</head>
+	<body>
+		<%
+			var curNickname = results.nickname;
+			var curEmail = results.email;
+			var curPassword = '';
+			var curFlagpath = results.flagpath;
+			var curCountry = results.country;
+			var curAgegroup = results.agegroup;
+			var curInsid = results.insid 
+		%>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<hr>
+		<br> <h2>Hello. <%= curNickname%> !</h2>
+		<a href="/process/mypost">My post</a>
+		<br><br><a href='/process/myinfo'>My info</a>
+		<p>
+		<form name="frm" id="frm" action="/process/showpost" method="post">
+			<input type="hidden" name="postnum" id="postnum">
+			<input type="hidden" name="memberEmail" id="memberEmail">
+			<input type="text" name="age" id="age">
+		</form>
+		<table>
+			<tr>
+				<td><label>Nickname : </label><input type="text" value=<%= curNickname%>></td>
+			</tr>
+			<tr>
+				<td><label>Email : </label><input type="text" value=<%= curEmail%>></td>
+			</tr>
+			<tr>
+				<td><label>Password : </label><input type="text"></td>
+			</tr>
+			<tr>
+				<td><label>Password (repeat) : </label><input type="text" value=<%= curPassword%>></td>
+			</tr>
+			<tr>
+				<td><label>Country : </label><input type="text" value=<%= curCountry%>></td>
+			</tr>
+			<tr>
+				<td><label>Age group : </label></td>
+				<td>
+					<input type="radio" name="agegroup" value="10s"> 10s
+					<input type="radio" name="agegroup" value="20s"> 20s
+					<input type="radio" name="agegroup" value="30s"> 30s
+					<input type="radio" name="agegroup" value="40s"> 40s
+					<input type="radio" name="agegroup" value="50s"> 50s
+					<input type="radio" name="agegroup" value="60s"> 60s
+					<input type="radio" name="agegroup" value="70s"> 70s
+					<input type="radio" name="agegroup" value="80s"> 80s
+					<input type="radio" name="agegroup" value="90s"> 90s
+					<input type="radio" name="agegroup" value="100s"> 100s
+				</td>
+			</tr>
+			<tr>
+				<td><label>Instagram ID : </label><input type="text" value=<%= curInsid%>></td>
+			</tr>
+		</table>
+		<p>
+		<a href="/process/main">to main</a>
+		<a href="/process/myinfo">submit</a>
+	</body>
+</html>

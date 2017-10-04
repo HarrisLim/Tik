@@ -340,6 +340,30 @@ app.get('/process/myinfo', function(req, res) {
 	});
 });
 
+app.get('/process/editinfo', function(req, res) {
+	console.log("you're in editinfo");
+	console.log('req.user.email --> ' + req.user.email);
+	console.log('req.user.nickname --> ' + req.user.nickname);
+
+	var memberEmail = req.user.email;
+	console.log('email -> ' + req.user.email);
+	sql = 'SELECT * FROM members WHERE email=?';
+	conn.query(sql, memberEmail, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {curNickname : req.user.nickname, results : results[0]};
+		req.app.render('editinfo', context, function(err, html) {
+			if(err) {
+				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+				req.app.render('error', function(err, html){
+					res.end(html);
+				});
+			}
+			console.log('rendered : ' + html);
+			res.end(html);
+		});
+	});
+});
+
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {

@@ -39,41 +39,26 @@
 		</form>
 		<table>
 			<tr>
-				<td><label>Nickname : </label><input type="text" value=<%= curNickname%>></td>
+				<td><label>Nickname : <%= curNickname%></label></td>
 			</tr>
 			<tr>
-				<td><label>Email : </label><input type="text" value=<%= curEmail%>></td>
+				<td><label>Email : <%= curEmail%></label></td>
 			</tr>
 			<tr>
-				<td><label>Password : </label><input type="text"></td>
+				<td><label>Password : ********</label></td>
 			</tr>
 			<tr>
-				<td><label>Password (repeat) : </label><input type="text" value=<%= curPassword%>></td>
-			</tr>
-			<tr>
-				<td><label>Country : </label><input type="text" value=<%= curCountry%>></td>
+				<td><label>Country : <%= curCountry%></label></td>
 			</tr>
 			<tr>
 				<td><label>Age group : </label></td>
-				<td>
-					<input type="radio" name="agegroup"> 10s
-					<input type="radio" name="agegroup"> 20s
-					<input type="radio" name="agegroup"> 30s
-					<input type="radio" name="agegroup"> 40s
-					<input type="radio" name="agegroup"> 50s
-					<input type="radio" name="agegroup"> 60s
-					<input type="radio" name="agegroup"> 70s
-					<input type="radio" name="agegroup"> 80s
-					<input type="radio" name="agegroup"> 90s
-					<input type="radio" name="agegroup"> 100s
-				</td>
 			</tr>
 			<tr>
-				<td><label>Instagram ID : </label><input type="text" value=<%= curInsid%>></td>
+				<td><label>Instagram ID : <%= curInsid%></label></td>
 			</tr>
 		</table>
 		<p>
 		<a href="/process/main">to main</a>
-		<a href="/process/myinfo">Change your info</a>
+		<a href="/process/editinfo">Change own info</a>
 	</body>
 </html>
