@@ -57,6 +57,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * `signin`
 	1. alert창을 띄우려고 하는데. 내 생각에는 html이나 get에서 또 넣는 거 같은데 ? 일단 보류. 
 	2. 이메일 대소문자 구분 x
+	3. 이메일 틀리거나 비밀번호 틀리면 alert창.
 
 * `forgetemail, forgetpassword (Email이나 Password를 찾는 라우터)`
 

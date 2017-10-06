@@ -137,16 +137,17 @@ app.get('/process/main', function(req, res){
 	}
 });
 
-app.get('/process/showpost/:id', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
+app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
-	 	console.log('postnum --->> ' + req.body.postnum);
-	 	var postnum = req.body.postnum;
-	 	var memberId = req.body.memberId;
+	 	var postnum = req.query.postnum;
+	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curPostnum', postnum);
+	 	console.log('req.params.postnum -> ' + req.params.postnum);
+	 	console.log('req.params.id -> ' + req.params.id);
 
-	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND members.id=? AND postnum=?';
-	 	conn.query(sql, [memberId, postnum], function(err, results) {
+	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	 	conn.query(sql, postnum, function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
 			var context = {curSigninId : req.user.id, results : results};
@@ -163,12 +164,11 @@ app.get('/process/showpost/:id', function(req, res) { // 여기에 자기 자신
 			});
 		});
  	} else { // Signin 전에 req.user.id를 못가져오기 때문에 else 처리.
-		console.log('postnum --->> ' + req.body.postnum);
-	 	var postnum = req.body.postnum;
-	 	var memberId = req.body.memberId;
+		console.log('postnum --->> ' + req.query.postnum);
+	 	var postnum = req.query.postnum;
 
-	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum FROM members JOIN postings ON members.id = postings.members_id AND members.id=? AND postnum=?';
-	 	conn.query(sql, [memberId, postnum], function(err, results) {
+	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	 	conn.query(sql, postnum, function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
 			var context = {curSigninId : false, results : results};
@@ -293,7 +293,7 @@ app.get('/process/mypost', function(req, res) {
 			} else { // 글이 있다면
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			console.log('myPost results --> ' + req.user.id);
-			console.log('myPost results.postnum --> ' + results[0].postnum);
+			// console.log('myPost results.postnum --> ' + results[0].postnum);
 			var context = {curNickname : req.user.nickname, results : results};
 			req.app.render('mypost', context, function(err, html) {
 				if(err) {
@@ -302,7 +302,7 @@ app.get('/process/mypost', function(req, res) {
 						res.end(html);
 					});
 				}
-				console.log('results --> ' + results[0].title);
+				// console.log('results --> ' + results[0].title);
 				console.log('rendered : ' + html);
 				res.end(html);
 			});
@@ -417,7 +417,7 @@ app.post('/process/editpost', function(req, res) {
 		} else {
 			console.log('post 변경');
 			backURL = req.header('Referer') || '/';
-			res.redirect('/process/mypost');
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
 
 		}
 	});

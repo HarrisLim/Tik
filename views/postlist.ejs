@@ -26,7 +26,7 @@
 		<br><br><a href="/process/signout">Sign out</a>
 		<br><br><a href="/process/mypost">My post</a>
 		<p>
-		<form name="frm" id="frm" action="/process/showpost" method="post">
+		<form name="frm" id="frm" action="/process/showpost" method="get">
 			<input type="hidden" name="postnum" id="postnum">
 			<input type="hidden" name="memberId" id="memberId">
 		</form>
@@ -35,7 +35,7 @@
 				var curTitle = results[i].title;
 				var curMemberId = results[i].members_id;
 				var curPostnum = results[i].postnum; %>
-			<li>#<%= curPostnum%> - Title : <a href="#" onclick="view(<%= curPostnum%>, <%= curMemberId%>)" return false><%= curTitle %></a></li><br>
+			<li>#<%= curPostnum%> - Title : <a href="/process/showpost?postnum=<%=curPostnum%>"><%= curTitle %></a></li><br>
 		<% } %>
 	</body>
 </html>
