@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>My info</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+		<script>
+			window.onload = function() {
+				var agegroupVal = document.getElementById('ages').value;
+				$('#ageSel').val(agegroupVal);
+			}
+
+			function view(num) {
+				<%# alert(num); %>
+
+				$('#postnum').val(num);
+
+				$('#frm').submit();
+
+			}
+		</script>
+	</head>
+	<body>
+		<%
+			var curHowmanydays = results.howmanydays;
+			var curFlagpath = results.flagpath;
+			var curNickname = results.nickname;
+			var curInsid = results.insid;
+			var curTitle = results.title;
+			var curPicpath = results.picpath;
+			var curPost = results.post;
+			var curGetwant = results.getwant;
+			var curHashTag = results.hashtag;
+			var curViews = results.views
+			var curCreated_at = results.created_at;
+			var curUpdated_at = results.updated_at;
+		%>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<hr>
+		<h1>Update post !</h1>
+		<h1> Written by <%= curFlagpath%> <%= curNickname%></h1> <%# flagpath와 nickname은 members(db) data %>
+	   	<br><br>
+	   	<form name="frm" id="frm" action="/process/showpost" method="post">
+			<input type="hidden" name="postnum" id="postnum">
+		</form>
+	   	<form method="post" action="/process/editpost">
+			<table>
+				<tr>
+					<td><label>Created_Date : </label></td>
+					<td><%= curCreated_at %></td>
+				</tr>
+				<tr>
+					<td><label>Last Updated_Date : </label></td>
+					<td><%= curUpdated_at %></td>
+				</tr>
+				<tr>
+					<td><label>views : </label></td>
+					<td><%= curViews%></td>
+				</tr>
+				<tr>
+					<td><label>how many days : </label></td>
+					<td><input type="text" name="howmanydays" placeholder="put in just number." value=<%= curHowmanydays%>></td>
+				</tr>
+				<tr>
+					<td><label>title : </label></td>
+					<td><input type="text" name="title" value=<%= curTitle%>></td>
+				</tr>
+				<tr>
+					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
+					<td><input type="text" name="picpath" value=<%= curPicpath%>></td>
+				</tr>
+				<tr>
+					<td><label>post : </label></td>
+					<td><input type="text" name="post" value=<%= curPost%>></td>
+				</tr>
+				<tr>
+					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
+					<td><input type="button" name="getwant" value="WANNA GO"></td>
+				</tr>
+				<tr>
+					<td><label>Hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
+					<td><input type="text" name="hashtag" value=<%= curHashTag%>></td>
+				</tr>
+				<tr>
+					<td><label>Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
+				</tr>
+			</table>
+			<input type="submit" value="Update : )">
+			<a href="/process/main"><input type="button" value="Cancle : )"></a>
+		</form>
+	</body>
+</html>

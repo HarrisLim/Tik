@@ -137,14 +137,15 @@ app.get('/process/main', function(req, res){
 	}
 });
 
-app.post('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
+app.get('/process/showpost/:id', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
 	 	console.log('postnum --->> ' + req.body.postnum);
 	 	var postnum = req.body.postnum;
 	 	var memberId = req.body.memberId;
 	 	console.log('req.user.id --> ' + req.user.id);
+	 	app.set('curPostnum', postnum);
 
-	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum FROM members JOIN postings ON members.id = postings.members_id AND members.id=? AND postnum=?';
+	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND members.id=? AND postnum=?';
 	 	conn.query(sql, [memberId, postnum], function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -369,7 +370,7 @@ app.post('/process/editinfo', function(req, res) {
 			}
 		});
 	});
-})
+});
 
 app.get('/process/editinfo', function(req, res) {
 	console.log("you're in editinfo");
@@ -392,6 +393,50 @@ app.get('/process/editinfo', function(req, res) {
 			}
 			console.log('rendered : ' + html);
 			console.log('results[0].agegroup -> ' + results[0].agegroup);
+			res.end(html);
+		});
+	});
+});
+
+app.post('/process/editpost', function(req, res) {
+	console.log("you're in editpost");
+		console.log('this is curPostnum --> ' + app.get('curPostnum'));
+
+	var posting = {
+		howmanydays : req.body.howmanydays || req.query.howmanydays,
+		title : req.body.title || req.query.title,
+		picpath : req.body.picpath || req.query.picpath,
+		post : req.body.post || req.query.post,
+		hashtag : req.body.hashtag || req.query.hashtag
+	};
+	var sql = 'UPDATE postings SET ? WHERE postnum=?';
+	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('post 변경');
+			backURL = req.header('Referer') || '/';
+			res.redirect('/process/mypost');
+
+		}
+	});
+});
+
+app.get('/process/editpost', function(req, res) {
+	console.log('this is curPostnum --> ' + app.get('curPostnum'));
+	var sql = 'SELECT members.flagpath, members.nickname, members.insid, postings.created_at, postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	conn.query(sql, app.get('curPostnum'), function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {results : results[0]};
+		req.app.render('editpost', context, function(err, html) {
+			if(err) {
+				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				});
+			}
+			console.log('rendered : ' + html)
 			res.end(html);
 		});
 	});
@@ -448,7 +493,6 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 		picpath : req.body.picpath || req.query.picpath,
 		post : req.body.post || req.query.post,
 		views : req.body.views || req.query.views,
-		getwant : req.body.getwant || req.query.getwant,
 		hashtag : req.body.hashtag || req.query.hashtag,
 		members_id : req.body.id
 	};
@@ -464,8 +508,8 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 });
 
 app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, picpath도 넣자.
-	var sql = 'SELECT * FROM members WHERE nickname=?';
-	conn.query(sql, app.get('signinNickname'), function(err, results) {
+	var sql = 'SELECT * FROM members WHERE email=?';
+	conn.query(sql, req.user.email, function(err, results) {
 		console.log('results --> ' + results[0].email);
 		// app.set('showpostMembersId', results[0].id);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});

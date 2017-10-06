@@ -5,7 +5,6 @@
 		<title>Add Post</title>
 	</head>
 	<body>
-		<h1>add Post !</h1>
 			<%
 				var curId = results.id;
 				var curFlagpath = results.flagpath;
@@ -14,14 +13,15 @@
 			%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<h3> Written by <%= curFlagpath%> <%= curNickname%></h3> <%# flagpath와 nickname은 members(db) data %>
+		<h1>Add post !</h1>
+		<h1> Written by <%= curFlagpath%> <%= curNickname%></h1> <%# flagpath와 nickname은 members(db) data %>
 	   	<br><br>
 	   	<form method="post" action="/process/addpost">
 	   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<table>
 				<tr>
 					<td><label>how many days : </label></td>
-					<td><input type="text" name="howmanydays"></td>
+					<td><input type="text" name="howmanydays" placeholder="put in just number."></td>
 				</tr>
 				<tr>
 					<td><label>title : </label></td>
@@ -38,10 +38,6 @@
 				<tr>
 					<td><label>views : </label></td>
 					<td><input type="text" name="views"></td>
-				</tr>
-				<tr>
-					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
-					<td><input type="button" name="getwant" value="WANNA GO"></td>
 				</tr>
 				<tr>
 					<td><label>add hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>

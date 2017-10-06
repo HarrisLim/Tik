@@ -11,23 +11,60 @@
 			var curNickname = results[0].nickname;
 			var curInsid = results[0].insid;
 			var curCreated_at = results[0].created_at;
+			var curUpdated_at = results[0].updated_at;
 			var curTitle = results[0].title;
 			var curPicpath = results[0].picpath;
 			var curPost = results[0].post;
 			var curGetwant = results[0].getwant;
-			var curHashTage = results[0].hashtag;
+			var curHashTag = results[0].hashtag;
+			var curViews = results[0].views;
+			var curHowmanydays = results[0].howmanydays;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
-		Created_Date : <%= curCreated_at %><p>
-		Title : <%= curTitle%><p>
-		Picpath : <%= curPicpath%><p>
-		this is post : <%= curPost%><p>
-		I wanna go : <%= curGetwant%><p> <%# 이 곳은 버튼을 누르면 getwant가 올라가게.%>
-		HashTag : <%= curHashTage%><p> <%# 이 6줄 모두 tik.postings이다. postings 등록하고 app.js에 showpost를 수정하자. %>
-		Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid%></a><p> <%# tik.members %>
-		<p><br>
+		<br><br>
+		<table>
+				<tr>
+					<td><label>Created_Date : </label></td>
+					<td><%= curCreated_at %></td>
+				</tr>
+				<tr>
+					<td><label>Last Updated_Date : </label></td>
+					<td><%= curUpdated_at %></td>
+				</tr>
+				<tr>
+					<td><label>views : </label></td>
+					<td><%= curViews%></td>
+				</tr>
+				<tr>
+					<td><label>how many days : </label></td>
+					<td><%= curHowmanydays%></td>
+				</tr>
+				<tr>
+					<td><label>title : </label></td>
+					<td><%= curTitle%></td>
+				</tr>
+				<tr>
+					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
+					<td><%= curPicpath%></td>
+				</tr>
+				<tr>
+					<td><label>post : </label></td>
+					<td><%= curPost%></td>
+				</tr>
+				<tr>
+					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
+					<td><input type="button" name="getwant" value="WANNA GO"></td>
+				</tr>
+				<tr>
+					<td><label>Hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
+					<td><%= curHashTag%></td>
+				</tr>
+				<tr>
+					<td><label>Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
+				</tr>
+			</table>
 		<a href="/process/main">to main</a>
 		<% if(curSigninId !== false) { %>
 			<% if(curId == curSigninId) { %>

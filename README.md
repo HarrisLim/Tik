@@ -33,7 +33,8 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * passport.js로 로그인.
 * ejs(뷰 템플릿) 설정.
 * 자신이 작성한 글만 edit 버튼 활성화.
-* 
+* edit에서 자신의 글, 정보 변경 가능.
+*
 
 ## TO DO
 
@@ -82,6 +83,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	4. nickname 변경할 시에 중복확인.
 
 * `editpost (글 정보 변경)`
+	1. update를 누르면 confirm(ok or cancle)창 뜨게 하자.
 
 * `editaccount (계정 정보 변경)`
 
