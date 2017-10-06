@@ -78,6 +78,8 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * `myinfo (내 정보)`
 	1. 여기도 signup과 마찬가지로 ageGroup에 있는 라디오버튼을 누르면 변경되게 하자 그리고 변경하는 것이니까 db의 값을 가져와서 나이대에 맞는 곳에 체크되어 있게 하자.
 	2. *****말고 password를 표현하는 다른 방법 생각해봐.
+	3. change own info를 누르면 password 확인하고 editinfo 페이지로 갈 수 있게 만들자. (passport를 이용해서 password비교해야 하는 것 같은데 어려워.)
+	4. nickname 변경할 시에 중복확인.
 
 * `editpost (글 정보 변경)`
 

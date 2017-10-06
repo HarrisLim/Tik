@@ -6,32 +6,20 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 		<script>
-				var agegroupVal = $('input:radio[name="agegroup"]:checked').val();
-				function view(num, email) {
-					<%# alert(num); %>
-
-					$('#postnum').val(num);
-					$('#memberEmail').val(email);
-
-					$('#frm').submit();
-				}
-
-				function showagegroup(age) {
-					$('#age').val(age);
-
-					alert(age);
-				}
+			window.onload = function() {
+				var agegroupVal = document.getElementById('ages').value;
+				$('#ageSel').val(agegroupVal);
+			}
 		</script>
 	</head>
 	<body>
 		<%
 			var curNickname = results.nickname;
 			var curEmail = results.email;
-			var curPassword = '';
 			var curFlagpath = results.flagpath;
 			var curCountry = results.country;
 			var curAgegroup = results.agegroup;
-			var curInsid = results.insid 
+			var curInsid = results.insid;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
@@ -42,45 +30,52 @@
 		<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">
 			<input type="hidden" name="memberEmail" id="memberEmail">
+			<input type="hidden" id="ages" value="<%= curAgegroup%>">
 		</form>
-		<input type="text" name="age" id="age">
-		<table>
-			<tr>
-				<td><label>Nickname : </label><input type="text" value=<%= curNickname%>></td>
-			</tr>
-			<tr>
-				<td><label>Email : </label><input type="text" value=<%= curEmail%>></td>
-			</tr>
-			<tr>
-				<td><label>Password : </label><input type="text"></td>
-			</tr>
-			<tr>
-				<td><label>Password (repeat) : </label><input type="text" value=<%= curPassword%>></td>
-			</tr>
-			<tr>
-				<td><label>Country : </label><input type="text" value=<%= curCountry%>></td>
-			</tr>
-			<tr>
-				<td><label>Age group : </label></td>
-				<td>
-					<a href="#" onclick="showagegroup(agegroupVal)" return false><input type="radio" name="agegroup" value="10s"></a> 10s
-					<input type="radio" name="agegroup" value="20s" onclick="showagegroup()" return false> 20s
-					<input type="radio" name="agegroup" value="30s"> 30s
-					<input type="radio" name="agegroup" value="40s"> 40s
-					<input type="radio" name="agegroup" value="50s"> 50s
-					<input type="radio" name="agegroup" value="60s"> 60s
-					<input type="radio" name="agegroup" value="70s"> 70s
-					<input type="radio" name="agegroup" value="80s"> 80s
-					<input type="radio" name="agegroup" value="90s"> 90s
-					<input type="radio" name="agegroup" value="100s"> 100s
-				</td>
-			</tr>
-			<tr>
-				<td><label>Instagram ID : </label><input type="text" value=<%= curInsid%>></td>
-			</tr>
-		</table>
-		<p>
-		<a href="/process/main">to main</a>
-		<a href="/process/myinfo">submit</a>
+		<form method="post" action="/process/editinfo">
+			<table>
+				<tr>
+					<td><label>Nickname : </label><input type="text" name="nickname" value=<%= curNickname%>> <- 이거 닉네임 중복확인해.</td>
+				</tr>
+				<tr>
+					<td><label>Email : <%= curEmail%></label></td>
+				</tr>
+				<tr>
+					<td><label>originPassword : </label><input type="password" value=<%= curEmail%>> <- 여기에 기존의 패스워드를 입력하고 그것을 확인한 후에 비밀번호 변경이 가능하게.</td> 
+				</tr>
+				<tr>
+					<td><label>Password : </label><input type="password"></td>
+				</tr>
+				<tr>
+					<td><label>Password (repeat) : </label><input type="password" name="passwd"></td>
+				</tr>
+				<tr>
+					<td><label>Country : </label><input type="text" name="country" value=<%= curCountry%>></td>
+				</tr>
+				<tr>
+					<td><label>Age group : </label></td>
+					<td>
+						<select name="agegroup" id="ageSel">
+							<option value="10s"> 10s</option>
+							<option value="20s"> 20s</option>
+							<option value="30s"> 30s</option>
+							<option value="40s"> 40s</option>
+							<option value="50s"> 50s</option>
+							<option value="60s"> 60s</option>
+							<option value="70s"> 70s</option>
+							<option value="80s"> 80s</option>
+							<option value="90s"> 90s</option>
+							<option value="100s"> 100s</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label>Instagram ID : </label><input type="text" name="insid" value=<%= curInsid%>></td>
+				</tr>
+			</table>
+			<p>
+			<a href="/process/main">to main</a>
+			<input type="submit" value="submit">
+		</form>
 	</body>
 </html>

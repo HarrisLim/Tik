@@ -340,12 +340,44 @@ app.get('/process/myinfo', function(req, res) {
 	});
 });
 
+/* 이렇게 ejs로 변수나 함수를 보낼 수 있음.
+	app.locals.somever = 'hello world'; 
+	app.locals.someHelper = function(name) {
+		return ('hello ' + name);
+	}
+	app.locals.useremail = req.user.email;
+*/
+
+app.post('/process/editinfo', function(req, res) {
+	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
+		var member = {
+			nickname : req.body.nickname || req.query.nickname,
+			passwd : hash,
+			salt : salt,
+			country : req.body.country || req.query.country,
+			agegroup : req.body.agegroup || req.query.agegroup,
+			insid : req.body.insid || req.query.insid
+		};
+		var sql = 'UPDATE members SET ? WHERE email = ?';
+		conn.query(sql, [member, req.user.email], function(err, results) {
+			if(err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				console.log('info 변경');
+				res.redirect('/process/myinfo');
+			}
+		});
+	});
+})
+
 app.get('/process/editinfo', function(req, res) {
 	console.log("you're in editinfo");
 	console.log('req.user.email --> ' + req.user.email);
 	console.log('req.user.nickname --> ' + req.user.nickname);
 
 	var memberEmail = req.user.email;
+	console.log("ageGV -> " + req.query.agegroup);
 	console.log('email -> ' + req.user.email);
 	sql = 'SELECT * FROM members WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
@@ -359,6 +391,7 @@ app.get('/process/editinfo', function(req, res) {
 				});
 			}
 			console.log('rendered : ' + html);
+			console.log('results[0].agegroup -> ' + results[0].agegroup);
 			res.end(html);
 		});
 	});

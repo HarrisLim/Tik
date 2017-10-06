@@ -7,14 +7,6 @@
 
 		<script>
 			function view(num, email) {
-				<%# alert(num); %>
-
-				$('#postnum').val(num);
-				$('#memberEmail').val(email);
-
-				$('#frm').submit();
-
-			}
 		</script>
 	</head>
 	<body>
@@ -51,7 +43,7 @@
 				<td><label>Country : <%= curCountry%></label></td>
 			</tr>
 			<tr>
-				<td><label>Age group : </label></td>
+				<td><label>Age group : <%= curAgegroup%></label></td>
 			</tr>
 			<tr>
 				<td><label>Instagram ID : <%= curInsid%></label></td>
