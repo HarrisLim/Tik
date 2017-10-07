@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>Show post</title>
 	</head>
 	<body>
@@ -63,7 +64,7 @@
 					<td><%= curHashTag%></td>
 				</tr>
 				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
+					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
 				</tr>
 			</table>
 		<a href="/process/main">to main</a>

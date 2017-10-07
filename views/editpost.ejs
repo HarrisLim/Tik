@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>My info</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -35,11 +36,12 @@
 			var curViews = results.views
 			var curCreated_at = results.created_at;
 			var curUpdated_at = results.updated_at;
+			var curPostnum = results.postnum;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Update post !</h1>
-		<h1> Written by <%= curFlagpath%> <%= curNickname%></h1> <%# flagpath와 nickname은 members(db) data %>
+		<h1> Written by <%= curFlagpath%> <%= curNickname%> !</h1> <%# flagpath와 nickname은 members(db) data %>
 	   	<br><br>
 	   	<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">
@@ -83,11 +85,11 @@
 					<td><input type="text" name="hashtag" value=<%= curHashTag%>></td>
 				</tr>
 				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
+					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
 				</tr>
 			</table>
 			<input type="submit" value="Update : )">
-			<a href="/process/main"><input type="button" value="Cancle : )"></a>
+			<a href="/process/showpost?postnum=<%=curPostnum%>"><input type="button" value="Cancle : )"></a>
 		</form>
 	</body>
 </html>

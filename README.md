@@ -70,9 +70,9 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	6. 달력으로 며칠부터 며칠까지인지 받아서 DB에 저장.
 
 * `showpost (main에서 글 목록 중 글을 클릭했을 때 보여주는 라우터)`<br>
-	1. 인스타아이디를 db에서 가져와서 누르면 글 작성자의 인스타페이지로 갈 수 있게 하자.<br>
+	1. 인스타그램 아이디를 인스타 app 이미지로 가져와서 그것을 누르면 사용자의 id로 가게.
 	2. [해결] tik.postings에 아직 데이터가 없기 때문에, app.js에 그냥 넣으면 error다. 그러니까 postings에 넣고 난 후에 showpost.ejs에 있는 것 주석 풀자. 그리고 members에 있는 건 req.user로 잡으면 잡히는데 (ex)req.user.email) postings에 있는 것 어케 잡지 ?
-	3. signin 해야지만 comment 작성할 수 있게 하자. workbench에서 실선 -> 점선으로 수정하고 comments테이블 수정.
+	3. signin 해야지만 comment 작성할 수 있게 하자. workbench에서 점선 -> 실선으로 수정하고 comments테이블 수정.
 	4. 로그인하고 mypost에서 나의 글을 누르면 tomain이 아니라 mypost로 가게. (edit 넣은 것 처럼 if 문으로 하면 될거야.)
 
 * `mypost (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`

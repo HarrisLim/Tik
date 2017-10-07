@@ -102,9 +102,9 @@ var upload = multer({
 	}
 });
 
-app.get('/process/main', function(req, res){
+app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // after Signin
-		var sql = 'SELECT * FROM postings';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var context = {email : req.user.email, nickname : req.user.nickname, results : results};
@@ -123,10 +123,16 @@ app.get('/process/main', function(req, res){
 			});
 		});
 	} else { // before Signin
-		var sql = 'SELECT * FROM postings';
+
+		var page = req.params.page;
+		var pagenum = 4;
+		console.log('page --> ' + req.params.page);
+
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
 		conn.query(sql, function(err, results) {
+			var leng = Object.keys(results).length-1;
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			var context = {results : results};
+			var context = {results : results, page : page, leng : leng, page_num : 4, pass : true};
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
@@ -146,7 +152,7 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 	 	console.log('req.params.postnum -> ' + req.params.postnum);
 	 	console.log('req.params.id -> ' + req.params.id);
 
-	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -167,9 +173,9 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 
-	 	var sql = 'SELECT members.id, members.flagpath, members.nickname, members.insid, postings.created_at, postings.updated_at ,postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
-	 		console.log('results[0].id  -> ' + results[0].members_id);
+	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
 			var context = {curSigninId : false, results : results};
 			req.app.render('showpost', context,  function(err, html) {
@@ -179,7 +185,7 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 			 			res.end(html);
 			 		});
 			 	}
-			 	console.log('results --> ' + results[0].title);
+			 	// console.log('results --> ' + results[0].title);
 			 	console.log('rendered : ' + html);
 	 			res.end(html);
 			});
@@ -275,7 +281,7 @@ app.get('/process/mypost', function(req, res) {
 		console.log('req.user.nickname --> ' + req.user.nickname);
 
 		var memberId = req.user.id;
-		sql = 'select * from members join postings on members.id = postings.members_id AND members_id=?';
+		sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id AND members_id=?';
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -308,7 +314,7 @@ app.get('/process/mypost', function(req, res) {
 			});
 		}
 		});
-	} else { // check sign in - here is not sign in
+	} else { // check sign in - here is sign in before
 		console.log('should sign in.')
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		req.app.render('errsignin', function(err, html) {
@@ -425,7 +431,7 @@ app.post('/process/editpost', function(req, res) {
 
 app.get('/process/editpost', function(req, res) {
 	console.log('this is curPostnum --> ' + app.get('curPostnum'));
-	var sql = 'SELECT members.flagpath, members.nickname, members.insid, postings.created_at, postings.title, postings.picpath, postings.post, postings.getwant, postings.hashtag, postings.postnum, postings.views, postings.howmanydays FROM members JOIN postings ON members.id = postings.members_id AND postnum=?';
+	var sql = 'SELECT m.flagpath, m.nickname, m.insid, p.created_at, p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	conn.query(sql, app.get('curPostnum'), function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results[0]};
