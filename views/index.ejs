@@ -13,36 +13,20 @@
 		<a href="/process/signin">signin</a>
 		<br><br><a href='/process/signup'>signup</a>
 		<br><br><%# 밑에 flagpath도 가져와서 타이틀 옆에 보이게하자.%>
-
-		<% for(var i=(page*page_num)-page_num); i<(page*page_num); i++) {
-		if(i > leng) {
-			i++;
-		} else {
-			var item = results[i];
-		%>
-			<tr>
-				<td><%= i+1 %></td>
-				<td><%= item.create_name %></td>
-				<td><a href="/process/main"><%= item.title%></a></td>
-				<td><%=item.hit%></td>
-				<td><%=item.createdate%></td>
-			</tr>
+		
 		<%
-			}
-		}
+			for(var i =0; i < results.length; i++) { 
+				var curTitle = results[i].title;
+				var curPostnum = results[i].postnum;
+				var curFlagpath = results[i].flagpath;
+				var curCreated_at = results[i].created_at;
+				var curViews = results[i].views;
+				var curGetwant = results[i].getwant;
+				var curNickname = results[i].nickname;
+				var curPicpath = results[i].picpath;
 		%>
-
-		<tr>
-			<td colspan="5">
-				<%
-					for(var j=0; j<rows.length/4; j++) {
-				%>
-					[ <a href="/process/main/<%=j+1 %>"><%= j+1%></a>]
-				<%
-					}
-				%>
-			</td>
-		</tr>
+			<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= curCreated_at%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
+		<% } %>
 
 	</body>
 </html>

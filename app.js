@@ -102,7 +102,7 @@ var upload = multer({
 	}
 });
 
-app.get('/process/main/:page', function(req, res){
+app.get('/process/main', function(req, res){
 	if(req.user && req.user.email) { // after Signin
 		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
 		conn.query(sql, function(err, results) {
@@ -124,15 +124,10 @@ app.get('/process/main/:page', function(req, res){
 		});
 	} else { // before Signin
 
-		var page = req.params.page;
-		var pagenum = 4;
-		console.log('page --> ' + req.params.page);
-
 		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
 		conn.query(sql, function(err, results) {
-			var leng = Object.keys(results).length-1;
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			var context = {results : results, page : page, leng : leng, page_num : 4, pass : true};
+			var context = {results : results};
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
