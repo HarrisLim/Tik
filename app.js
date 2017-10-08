@@ -124,14 +124,20 @@ app.get('/process/main', function(req, res){
 		});
 	} else { // before Signin
 
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC LIMIT 0, 4';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			var context = {results : results};
+			var leng = Object.keys(results).length -1;
+			var pagenum = Math.ceil(leng / 4);
+
+			var context = {results : results, leng : leng, pagenum : pagenum};
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
 				console.log('rendered : ' + html);
+				console.log('Object xxx --> ' + leng); //<-- 글 목록 개수.
+				console.log('pagenum  -- > ' + pagenum);
+				console.log('page --> ' + req.params.page);
 				res.end(html);
 			});
 		});

@@ -13,7 +13,8 @@
 		<a href="/process/signin">signin</a>
 		<br><br><a href='/process/signup'>signup</a>
 		<br><br><%# 밑에 flagpath도 가져와서 타이틀 옆에 보이게하자.%>
-		
+		<input type="text" value='글 목록 수 --> <%=leng%>'>
+		<input type="text" value='페이지 넘버 --> <%=pagenum%>'>
 		<%
 			for(var i =0; i < results.length; i++) { 
 				var curTitle = results[i].title;
@@ -27,6 +28,7 @@
 		%>
 			<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= curCreated_at%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
 		<% } %>
+		<br>
 
 	</body>
 </html>
