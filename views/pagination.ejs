@@ -1,0 +1,18 @@
+<%
+	for(var i =(page * pagenum) - pagenum; i < (page * pagenum); i++) { 
+		if(i > leng) {
+			i++;
+		} else {
+			var curTitle = results[i].title;
+			var curPostnum = results[i].postnum;
+			var curFlagpath = results[i].flagpath;
+			var curCreated_at = results[i].created_at;
+			var curViews = results[i].views;
+			var curGetwant = results[i].getwant;
+			var curNickname = results[i].nickname;
+			var curPicpath = results[i].picpath;
+%>
+	<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= curCreated_at%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
+<%		} 
+	}
+%>

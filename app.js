@@ -103,11 +103,19 @@ var upload = multer({
 });
 
 app.get('/process/main', function(req, res){
+	res.redirect('/process/main/1');
+});
+
+app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // after Signin
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results};
+			var page = req.params.page;
+			var leng = Object.keys(results).length -1;
+			var pagenum = 4;
+
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -124,13 +132,14 @@ app.get('/process/main', function(req, res){
 		});
 	} else { // before Signin
 
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum ASC LIMIT 0, 4';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+			var page = req.params.page;
 			var leng = Object.keys(results).length -1;
-			var pagenum = Math.ceil(leng / 4);
+			var pagenum = 4;
 
-			var context = {results : results, leng : leng, pagenum : pagenum};
+			var context = {results : results, leng : leng, pagenum : pagenum, page : page};
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
@@ -276,13 +285,17 @@ app.get('/process/signin', function(req, res) {
 });
 
 app.get('/process/mypost', function(req, res) {
+	res.redirect('/process/mypost/1');
+});
+
+app.get('/process/mypost/:page', function(req, res) {
 	console.log('here is mypost.');
 	if(req.user && req.user.email){ // check sign in
 		console.log('req.user.email --> ' + req.user.email);
 		console.log('req.user.nickname --> ' + req.user.nickname);
 
 		var memberId = req.user.id;
-		sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id AND members_id=?';
+		sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id AND members_id=? ORDER BY p.postnum DESC';
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -300,8 +313,11 @@ app.get('/process/mypost', function(req, res) {
 			} else { // 글이 있다면
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			console.log('myPost results --> ' + req.user.id);
-			// console.log('myPost results.postnum --> ' + results[0].postnum);
-			var context = {curNickname : req.user.nickname, results : results};
+			var page = req.params.page;
+			var leng = Object.keys(results).length -1;
+			var pagenum = 4;
+
+			var context = {curNickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page};
 			req.app.render('mypost', context, function(err, html) {
 				if(err) {
 					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
