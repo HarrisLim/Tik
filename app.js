@@ -153,20 +153,38 @@ app.get('/process/main/:page', function(req, res){
 	}
 });
 
+
+app.post('/process/addcomment', function(req, res) {
+	console.log('nickname ->' + req.body.nickname);
+	var comment = {
+		nickname : req.body.nickname,
+		comment : req.body.comment,
+		postings_postnum : req.body.postnum,
+		members_id : req.body.id
+	};
+	var sql = 'INSERT INTO comments SET ?';
+	conn.query(sql, comment, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+		}
+	});
+});
+
 app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
 	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curPostnum', postnum);
-	 	console.log('req.params.postnum -> ' + req.params.postnum);
-	 	console.log('req.params.id -> ' + req.params.id);
 
 	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results};
+			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -187,7 +205,7 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results};
+			var context = {curSigninId : false, results : results[0]};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -441,7 +459,6 @@ app.post('/process/editpost', function(req, res) {
 			console.log('post 변경');
 			backURL = req.header('Referer') || '/';
 			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
-
 		}
 	});
 });

@@ -6,15 +6,18 @@
 		<title>Main</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script>
-			function view(num, id, leng) {
-				<%# alert(num); %>
 
-				$('#postnum').val(num);
-				$('#memberId').val(id);
+			<%# 이거 클라이언트에서 서버로 데이터 보낼 때 사용. 병기가 알려준 것. 밑에 form 태그와 함께.
+				function view(num, id, leng) {
+					alert(num);
 
-				$('#frm').submit();
+					$('#postnum').val(num);
+					$('#memberId').val(id);
 
-			}
+					$('#frm').submit();
+
+				}%>
+
 		</script>
 	</head>
 	<body>
@@ -27,10 +30,14 @@
 		<br><br><a href="/process/signout">Sign out</a>
 		<br><br><a href="/process/mypost">My post</a>
 		<p>
-		<form name="frm" id="frm" action="/process/showpost" method="get">
-			<input type="hidden" name="postnum" id="postnum">
-			<input type="hidden" name="memberId" id="memberId">
-		</form>
+
+		<%# 병기가 알려준 것.
+			<form name="frm" id="frm" action="/process/showpost" method="get">
+				<input type="hidden" name="postnum" id="postnum">
+				<input type="hidden" name="memberId" id="memberId">
+			</form>
+		%>
+		
 		<%- include pagination.ejs%>
 		<br>
 		<tr>
