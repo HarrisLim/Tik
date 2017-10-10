@@ -157,7 +157,7 @@ app.get('/process/main/:page', function(req, res){
 app.post('/process/addcomment', function(req, res) {
 	console.log('nickname ->' + req.body.nickname);
 	var comment = {
-		nickname : req.body.nickname,
+		c_nickname : req.body.nickname,
 		comment : req.body.comment,
 		postings_postnum : req.body.postnum,
 		members_id : req.body.id
@@ -176,15 +176,17 @@ app.post('/process/addcomment', function(req, res) {
 app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
+	 	console.log(req.query.postnum);
 	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curPostnum', postnum);
 
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.c_nickname ,c.comment FROM (members m JOIN postings p ON m.id = p.members_id) JOIN comments c ON c.postings_postnum = p.postnum AND p.postnum=?';
+	 	// var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
-	 		console.log('results[0].id  -> ' + results[0].members_id);
+	 		console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -201,11 +203,11 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.comment FROM (members m JOIN postings p ON m.id = p.members_id) JOIN comments c ON c.postings_postnum = p.postnum AND postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results[0]};
+			var context = {curSigninId : false, results : results};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

@@ -7,20 +7,20 @@
 	</head>
 	<body>
 		<%
-			var curId = results.id;
-			var curFlagpath = results.flagpath;
-			var curNickname = results.nickname;
-			var curInsid = results.insid;
-			var curCreated_at = results.created_at;
-			var curUpdated_at = results.updated_at;
-			var curTitle = results.title;
-			var curPicpath = results.picpath;
-			var curPost = results.post;
-			var curGetwant = results.getwant;
-			var curHashTag = results.hashtag;
-			var curViews = results.views;
-			var curHowmanydays = results.howmanydays;
-			var curPostnum = results.postnum;
+			var curId = results[0].id;
+			var curFlagpath = results[0].flagpath;
+			var curNickname = results[0].nickname;
+			var curInsid = results[0].insid;
+			var curCreated_at = results[0].created_at;
+			var curUpdated_at = results[0].updated_at;
+			var curTitle = results[0].title;
+			var curPicpath = results[0].picpath;
+			var curPost = results[0].post;
+			var curGetwant = results[0].getwant;
+			var curHashTag = results[0].hashtag;
+			var curViews = results[0].views;
+			var curHowmanydays = results[0].howmanydays;
+			var curPostnum = results[0].postnum;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
@@ -76,7 +76,14 @@
 		<hr> 
 			<%# comments %>
 		<br>
-		
+		- comments - <p>
+		<% for(var i=0; i<results.length; i++) {
+			var curComment = results[i].comment;
+			var curCNickname = results[i].c_nickname;
+		%>
+			<%= curComment%> - Written by <%= curCNickname%> <br>
+		<% } %>
+
 		<br><br>
 		<form method="post" action="/process/addcomment">
 		<input type="text" name="nickname" value=<%= signNick%>>
