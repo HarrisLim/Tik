@@ -4,6 +4,9 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>Show post</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+		</script>
 	</head>
 	<body>
 		<%
@@ -80,27 +83,35 @@
 		<% for(var i=0; i<results.length; i++) {
 			var curComment = results[i].comment;
 			var curCNickname = results[i].c_nickname;
-		%>
-			<%= curComment%> - Written by <%= curCNickname%> <br>
+		%>	
+			<% if(results[0].comment !== null) {%>	
+				<%= curComment%> - Written by <%= curCNickname%> <br>
+			<% } %>
 		<% } %>
-
-		<br><br>
 		<form method="post" action="/process/addcomment">
-		<input type="text" name="nickname" value=<%= signNick%>>
-		<input type="text" name="postnum" value=<%= curPostnum%>>
-		<input type="text" name="id" value=<%= curId%>>
+			<% if(notSign === false) { %>
+				<input type="hidden" name="nickname" value=<%= signNick%>>
+				<input type="hidden" name="postnum" value=<%= curPostnum%>>
+				<input type="hidden" name="id" value=<%= curId%>>
+			<% } %>
 			<table>
 				<tr>
-					<td>Written by : <%= curFlagpath%><%= signNick%></td>
+					<td><label>- add comment -</label></td>
 				</tr>
 				<tr>
-					<td><label>comment</label></td>
+					<% if(notSign === false) { %>
+						<td>Written by : <%= curFlagpath%><%= signNick%></td>	
+					<% } %>
 				</tr>
 				<tr>
 					<td><textarea name="comment"></textarea></td>
 				</tr>
 			</table>
-			<input type="submit" value="add comment : ) ">
+			<% if(notSign === true) { %>
+				<a href="#" onClick='alert("need Signining")'><input type="button" value="add comment : ) "></a>
+			<% } else { %>
+				<input type="submit" value="add comment : ) ">
+			<% } %>
 		</form>
 
 	</body>
