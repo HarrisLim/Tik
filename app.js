@@ -175,6 +175,9 @@ app.post('/process/addcomment', function(req, res) {
 
 app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
+ 		
+			 	app.set('curFlag', req.query.curFlag);
+			 	console.log('curFlag -> ' + req.query.curFlag);
 	 	var postnum = req.query.postnum;
 	 	var notSign = false;
 	 	console.log(req.query.postnum);
@@ -230,6 +233,25 @@ app.get('/process/signout', function(req, res) {
 	req.session.save(function() {
 		res.redirect('/process/main')
 	})
+});
+
+app.post('/process/delete', function(req, res) {
+	console.log('here is delete.');
+	var curPostnum = app.get('curPostnum');
+	// var curFlag = app.get('curFlag');
+
+		
+	console.log('curFlag ->' + curFlag);
+	// var sql = 'INSERT INTO postings SET flag=? WHERE postnum=?'
+	// conn.query(sql, [curFlag, curPostnum], function(err, results) {
+	// 	if(err) {
+	// 		console.log(err);
+	// 		res.status(500);
+	// 	} else {
+	// 		console.log('delete post');
+	// 		res.redirect('/process/main');
+	// 	}
+	// });
 });
 
 passport.serializeUser(function(member, done) {

@@ -28,6 +28,14 @@
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
+		<% if(curId == curSigninId) { %>
+			<form method="post" action="/process/delete">
+				<input type="submit" value="delete">
+				<input type="text" value='deleted' name="curFlag"> 
+			</form>
+		<% } else { %>
+			<input type="button" value="delete" onClick='alert("you cant delete.")'>
+		<% } %>
 		<br><br>
 		<table>
 				<tr>
@@ -108,7 +116,7 @@
 				</tr>
 			</table>
 			<% if(notSign === true) { %>
-				<a href="#" onClick='alert("need Signining")'><input type="button" value="add comment : ) "></a>
+				<input type="button" value="add comment : ) " onClick='alert("need Signining")'>
 			<% } else { %>
 				<input type="submit" value="add comment : ) ">
 			<% } %>
