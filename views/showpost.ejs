@@ -5,7 +5,16 @@
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>Show post</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 		<script>
+		function button_delete() {
+			if(confirm("Really want to delete this post ?") == true) {
+				alert('true');
+			} else {
+				alert('flase');
+			}
+		};
+
 		</script>
 	</head>
 	<body>
@@ -28,10 +37,9 @@
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
-		<% if(curId == curSigninId) { %>
+		<% if(curId == curSigninId) { %> <%# If sign in %>
 			<form method="post" action="/process/delete">
-				<input type="submit" value="delete">
-				<input type="text" value='deleted' name="curFlag"> 
+				<input type="submit" value="delete" onClick="button_delete();">
 			</form>
 		<% } else { %>
 			<input type="button" value="delete" onClick='alert("you cant delete.")'>
