@@ -9,9 +9,9 @@
 		<script>
 		function button_delete() {
 			if(confirm("Really want to delete this post ?") == true) {
-				alert('true');
+				$("#button_del").submit();
 			} else {
-				alert('flase');
+				return;
 			}
 		};
 
@@ -38,8 +38,8 @@
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
 		<% if(curId == curSigninId) { %> <%# If sign in %>
-			<form method="post" action="/process/delete">
-				<input type="submit" value="delete" onClick="button_delete();">
+			<input type="submit" value="delete" onClick="button_delete();">
+			<form method="post" action="/process/delete" id="button_del">
 			</form>
 		<% } else { %>
 			<input type="button" value="delete" onClick='alert("you cant delete.")'>
@@ -104,7 +104,7 @@
 				<%= curComment%> - Written by <%= curCNickname%> <br>
 			<% } %>
 		<% } %>
-		<form method="post" action="/process/addcomment">
+		<form method="post" action="/process/addcomment" id="button_comm">
 			<% if(notSign === false) { %>
 				<input type="hidden" name="nickname" value=<%= signNick%>>
 				<input type="hidden" name="postnum" value=<%= curPostnum%>>

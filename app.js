@@ -235,7 +235,7 @@ app.get('/process/signout', function(req, res) {
 app.post('/process/delete', function(req, res) {
 	console.log('here is delete.');
 	var curPostnum = app.get('curPostnum');
-	var sql = 'DELETE postings, comments FROM postings JOIN comments WHERE postings.postnum = comments.postings_postnum AND postings.postnum = ?';
+	var sql = "DELETE p, c FROM postings p LEFT JOIN comments c ON p.postnum = c.postings_postnum WHERE p.postnum = ?";
 	conn.query(sql, [curPostnum, curPostnum], function(err, results) {
 		if(err) {
 			console.log(err);
