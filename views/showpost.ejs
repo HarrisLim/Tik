@@ -7,9 +7,18 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 		<script>
-		function button_delete() {
+		function button_delPost() {
 			if(confirm("Really want to delete this post ?") == true) {
-				$("#button_del").submit();
+				$("#button_delPost").submit();
+			} else {
+				return;
+			}
+		};
+
+		function button_delComm(id) {
+			if(confirm('Really want to delete this comment ?') == true) {
+				$("#c_id").val(id);
+				$("#button_delComm").submit();
 			} else {
 				return;
 			}
@@ -33,13 +42,14 @@
 			var curViews = results[0].views;
 			var curHowmanydays = results[0].howmanydays;
 			var curPostnum = results[0].postnum;
+			var curP_MembersId = results[0].members_id;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
 		<% if(curId == curSigninId) { %> <%# If sign in %>
-			<input type="submit" value="delete" onClick="button_delete();">
-			<form method="post" action="/process/delete" id="button_del">
+			<input type="submit" value="delete" onClick="button_delPost();">
+			<form method="post" action="/process/deletepost" id="button_delPost">
 			</form>
 		<% } else { %>
 			<input type="button" value="delete" onClick='alert("you cant delete.")'>
@@ -99,12 +109,25 @@
 		<% for(var i=0; i<results.length; i++) {
 			var curComment = results[i].comment;
 			var curCNickname = results[i].c_nickname;
-		%>	
-			<% if(results[0].comment !== null) {%>	
-				<%= curComment%> - Written by <%= curCNickname%> <br>
+			var curMembersId = results[i].c_members_id;
+			var curC_id = results[i].c_id;
+
+			if(results[0].comment !== null) {%>
+				<%= curComment%> - Written by <%= curCNickname%>
+				<input type="text" name="" value=<%= curC_id%>>
+				<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
+					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)">
+					<form method="post" action="/process/deletecomm" id="button_delComm">
+						<input type="text" name="c_id" id="c_id">
+					</form>
+				<% } else { %>
+					<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+				<% } %>
 			<% } %>
 		<% } %>
-		<form method="post" action="/process/addcomment" id="button_comm">
+		<input type="hidden" name="nickname" value=<%= curMembersId%>>
+		<input type="hidden" name="postnum" value=<%= curSigninId%>>
+		<form method="post" action="/process/addcomment">
 			<% if(notSign === false) { %>
 				<input type="hidden" name="nickname" value=<%= signNick%>>
 				<input type="hidden" name="postnum" value=<%= curPostnum%>>
@@ -116,7 +139,7 @@
 				</tr>
 				<tr>
 					<% if(notSign === false) { %>
-						<td>Written by : <%= curFlagpath%><%= signNick%></td>	
+						<td>Written by : <%= curFlagpath%><%= signNick%></td>
 					<% } %>
 				</tr>
 				<tr>

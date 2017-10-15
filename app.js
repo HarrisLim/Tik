@@ -160,7 +160,8 @@ app.post('/process/addcomment', function(req, res) {
 		c_nickname : req.body.nickname,
 		comment : req.body.comment,
 		postings_postnum : req.body.postnum,
-		members_id : req.body.id
+		c_members_id : app.get('curId'),
+		members_id : app.get('curId')
 	};
 	var sql = 'INSERT INTO comments SET ?';
 	conn.query(sql, comment, function(err, results) {
@@ -180,9 +181,10 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 	 	console.log(req.query.postnum);
 	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
+	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
 
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.c_nickname ,c.comment FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -194,8 +196,9 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 			 			res.end(html);
 			 		});
 			 	}
-			 	console.log('results --> ' + results[0].title);
-			 	console.log('rendered : ' + html);
+			 	console.log('curGisninID --> ' + req.user.id);
+			 	console.log('results --> ' + results[0].id);
+			 	console.log('*** rendered, /process/showpost ***');
 	 			res.end(html);
 			});
 		});
@@ -232,17 +235,35 @@ app.get('/process/signout', function(req, res) {
 	})
 });
 
-app.post('/process/delete', function(req, res) {
-	console.log('here is delete.');
+app.post('/process/deletepost', function(req, res) {
+	console.log('here is deletepost.');
 	var curPostnum = app.get('curPostnum');
 	var sql = "DELETE p, c FROM postings p LEFT JOIN comments c ON p.postnum = c.postings_postnum WHERE p.postnum = ?";
-	conn.query(sql, [curPostnum, curPostnum], function(err, results) {
+	conn.query(sql, curPostnum, function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
 		} else {
 			console.log('delete post');
 			res.redirect('/process/main');
+		}
+	});
+});
+
+app.post('/process/deletecomm', function(req, res) {
+	console.log('here is deletecomm.');
+	
+	var curC_id = req.body.c_id;
+	console.log('delete c_id --> ' + curC_id);
+	var curPostnum = app.get('curPostnum');
+	var sql = "DELETE FROM comments WHERE c_id=?";
+	conn.query(sql, curC_id, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('delete post');
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
 		}
 	});
 });
