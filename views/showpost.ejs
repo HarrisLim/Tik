@@ -106,6 +106,7 @@
 			<%# comments %>
 		<br>
 		- comments - <p>
+		
 		<% for(var i=0; i<results.length; i++) {
 			var curComment = results[i].comment;
 			var curCNickname = results[i].c_nickname;
@@ -114,17 +115,16 @@
 
 			if(results[0].comment !== null) {%>
 				<%= curComment%> - Written by <%= curCNickname%>
-				<input type="text" name="" value=<%= curC_id%>>
 				<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
-					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)">
-					<form method="post" action="/process/deletecomm" id="button_delComm">
-						<input type="text" name="c_id" id="c_id">
-					</form>
+					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
 				<% } else { %>
 					<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 				<% } %>
 			<% } %>
 		<% } %>
+		<form method="post" action="/process/deletecomm" id="button_delComm">
+			<input type="hidden" name="c_id" id="c_id">
+		</form>
 		<input type="hidden" name="nickname" value=<%= curMembersId%>>
 		<input type="hidden" name="postnum" value=<%= curSigninId%>>
 		<form method="post" action="/process/addcomment">
