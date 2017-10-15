@@ -174,6 +174,26 @@ app.post('/process/addcomment', function(req, res) {
 	});
 });
 
+app.post('/process/addsecomment', function(req, res) {
+	console.log('nickname ->' + req.body.nickname);
+	var comment = {
+		c_nickname : req.body.nickname,
+		comment : req.body.comment,
+		postings_postnum : req.body.postnum,
+		c_members_id : app.get('curId'),
+		members_id : app.get('curId')
+	};
+	var sql = 'INSERT INTO comments SET ?';
+	conn.query(sql, comment, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+		}
+	});
+});
+
 app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;

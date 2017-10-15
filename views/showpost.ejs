@@ -24,6 +24,16 @@
 			}
 		};
 
+		function showSC(i) {
+			$('#SC'+i).css('display','');
+		};
+		function hideSC(i) {
+			$('#SC'+i).css('display','none');
+		};
+
+		window.onload = function() {
+		}
+
 		</script>
 	</head>
 	<body>
@@ -44,7 +54,7 @@
 			var curPostnum = results[0].postnum;
 			var curP_MembersId = results[0].members_id;
 		%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <%=curNickname%>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
 		<% if(curId == curSigninId) { %> <%# If sign in %>
@@ -116,9 +126,24 @@
 			if(results[0].comment !== null) {%>
 				<%= curComment%> - Written by <%= curCNickname%>
 				<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
-					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
+					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)">
 				<% } else { %>
-					<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+					<input type="button" value="delete" onClick='alert("you can not delete.")'>
+				<% } %> 
+				<% if(notSign === false) { %>
+					<input type="button" value="comment" id="showSC" onClick="showSC(<%=i%>)"><br>
+				<% } else {%>
+					<input type="button" value="comment" onClick='alert("you need to Sign in.")'><br>
+				<% } %>
+				<% if(notSign === false) { %>
+					<div id='SC<%=i%>' style="display:none">
+						<form method="post" action="/process/addsecomment">
+							Written by : <%= curFlagpath%><%= signNick%>
+							<textarea name="secomment"></textarea>
+							<input type="submit" value="submit">
+							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
+						</form>
+					</div>
 				<% } %>
 			<% } %>
 		<% } %>
