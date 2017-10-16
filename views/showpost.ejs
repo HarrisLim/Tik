@@ -53,8 +53,13 @@
 			var curHowmanydays = results[0].howmanydays;
 			var curPostnum = results[0].postnum;
 			var curP_MembersId = results[0].members_id;
+			var curPostings_postnum = results[0].postings_postnum;
 		%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <%=curNickname%>
+		<% if(notSign === false) {%>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <%=signNick%>
+		<% } else { %>
+			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<% } %>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
 		<% if(curId == curSigninId) { %> <%# If sign in %>
@@ -115,43 +120,56 @@
 		<hr> 
 			<%# comments %>
 		<br>
-		- comments - <p>
-		
+		- comments - <br><br>
+
 		<% for(var i=0; i<results.length; i++) {
 			var curComment = results[i].comment;
 			var curCNickname = results[i].c_nickname;
 			var curMembersId = results[i].c_members_id;
 			var curC_id = results[i].c_id;
 
-			if(results[0].comment !== null) {%>
-				<%= curComment%> - Written by <%= curCNickname%>
-				<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
-					<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)">
-				<% } else { %>
-					<input type="button" value="delete" onClick='alert("you can not delete.")'>
-				<% } %> 
-				<% if(notSign === false) { %>
-					<input type="button" value="comment" id="showSC" onClick="showSC(<%=i%>)"><br>
-				<% } else {%>
-					<input type="button" value="comment" onClick='alert("you need to Sign in.")'><br>
+			if(results[0].comment !== null) {%> 
+				<%= curCNickname%> : <%= curComment%>
+				<div style="float:right"> <%# comment and delete button %>
+					<% if(notSign === false) { %>
+						<input type="button" value="comment" onClick="showSC(<%=i%>)">
+					<% } else {%>
+						<input type="button" value="comment" onClick='alert("you need to Sign in.")'>
+					<% } %>
+					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
+						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
+					<% } else { %>
+						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+					<% } %>
+				</div> 
+				<% if(results[i].c_id === results[i].comments_c_id) {%> <%# show 대댓글 %>
+					<div>
+						<% var curSeComment = results[i].secomment;
+						var curSCNickname = results[i].sc_nickname; %>
+						&emsp; <%= curSCNickname%> : <%= curSeComment%>
+					</div>
 				<% } %>
-				<% if(notSign === false) { %>
-					<div id='SC<%=i%>' style="display:none">
+				<% if(notSign === false) { %> <%# 대댓글 추가. %>
+					<div id='SC<%=i%>' style="display:none"> 
 						<form method="post" action="/process/addsecomment">
-							Written by : <%= curFlagpath%><%= signNick%>
+							<%= curFlagpath%><%= signNick%> : 
 							<textarea name="secomment"></textarea>
+							<input type="hidden" name="nickname" value=<%= signNick%>>
+							<input type="hidden" name="postnum" value=<%= curPostnum%>>
+							<input type="hidden" name="c_id" value=<%= curC_id%>>
+							<input type="hidden" name="postings_postnum" value=<%= curPostings_postnum%>>
+							<input type="hidden" name="cMembersId" value=<%= curMembersId%>>
+							<input type="hidden" name="" value=<%= curSigninId%>>
 							<input type="submit" value="submit">
 							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
 						</form>
 					</div>
 				<% } %>
-			<% } %>
-		<% } %>
+			<% } %><hr>
+		<% } %><br>
 		<form method="post" action="/process/deletecomm" id="button_delComm">
 			<input type="hidden" name="c_id" id="c_id">
 		</form>
-		<input type="hidden" name="nickname" value=<%= curMembersId%>>
-		<input type="hidden" name="postnum" value=<%= curSigninId%>>
 		<form method="post" action="/process/addcomment">
 			<% if(notSign === false) { %>
 				<input type="hidden" name="nickname" value=<%= signNick%>>
@@ -164,10 +182,8 @@
 				</tr>
 				<tr>
 					<% if(notSign === false) { %>
-						<td>Written by : <%= curFlagpath%><%= signNick%></td>
+						<td><%= curFlagpath%><%= signNick%> : </td>
 					<% } %>
-				</tr>
-				<tr>
 					<td><textarea name="comment"></textarea></td>
 				</tr>
 			</table>

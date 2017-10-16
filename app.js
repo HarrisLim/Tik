@@ -124,7 +124,7 @@ app.get('/process/main/:page', function(req, res){
 						res.end(html);
 					});
 				}
-				console.log('rendered : ' + html);
+				console.log('*** rendered, /process/main(postlist) ***');
 				app.set('signinNickname', req.user.nickname);
 				console.log('signinNickname --> ' + req.user.nickname);
 				res.end(html);
@@ -143,7 +143,7 @@ app.get('/process/main/:page', function(req, res){
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
-				console.log('rendered : ' + html);
+				console.log('*** rendered, /process/main(index) ***');
 				console.log('Object xxx --> ' + leng); //<-- 글 목록 개수.
 				console.log('pagenum  -- > ' + pagenum);
 				console.log('page --> ' + req.params.page);
@@ -163,7 +163,7 @@ app.post('/process/addcomment', function(req, res) {
 		c_members_id : app.get('curId'),
 		members_id : app.get('curId')
 	};
-	var sql = 'INSERT INTO comments SET ?';
+	var sql = 'INSERT INTO comments SET ?, created_at = now()';
 	conn.query(sql, comment, function(err, results) {
 		if(err) {
 			console.log(err);
@@ -176,15 +176,20 @@ app.post('/process/addcomment', function(req, res) {
 
 app.post('/process/addsecomment', function(req, res) {
 	console.log('nickname ->' + req.body.nickname);
-	var comment = {
-		c_nickname : req.body.nickname,
-		comment : req.body.comment,
-		postings_postnum : req.body.postnum,
-		c_members_id : app.get('curId'),
-		members_id : app.get('curId')
+	console.log('secomment ->' + req.body.secomment);
+	console.log('postnum ->' + req.body.postnum);
+	console.log('id ->' + req.body.c_id);
+	var secomment = {
+		sc_nickname : req.body.nickname,
+		secomment : req.body.secomment,
+		sc_members_id : req.body.cMembersId,
+		members_id : app.get('curId'),
+		comments_c_id : req.body.c_id,
+		comments_postings_postnum : req.body.postings_postnum
 	};
-	var sql = 'INSERT INTO comments SET ?';
-	conn.query(sql, comment, function(err, results) {
+	console.log('Hi --> ' + req.body.cMembersId + ', ' + secomment.members_id);
+	var sql = 'INSERT INTO secomments SET ?, created_at = now()';
+	conn.query(sql, secomment, function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
@@ -194,7 +199,7 @@ app.post('/process/addsecomment', function(req, res) {
 	});
 });
 
-app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 글이면 edit가능하게 하자.
+app.get('/process/showpost', function(req, res) { 
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
 	 	var notSign = false;
@@ -203,12 +208,14 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
-
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
+		
+	 	// var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, sc.sc_id, sc.sc_nickname, sc.secomment, sc.sc_members_id, sc.members_id, sc.comments_c_id, sc.comments_postings_postnum FROM ((members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum) LEFT JOIN secomments sc ON sc.comments_c_id = c.c_id WHERE p.postnum=? ORDER BY c.c_id ASC, sc.sc_id ASC';
 	 	conn.query(sql, postnum, function(err, results) {
+			var leng = Object.keys(results).length -1;
 	 		console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, notSign : notSign};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, notSign : notSign, leng : leng};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -226,7 +233,8 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var notSign = true;
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.c_nickname ,c.comment FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
+	 	// var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.c_nickname ,c.comment FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, sc.sc_id, sc.sc_nickname, sc.secomment, sc.sc_members_id, sc.members_id, sc.comments_c_id, sc.comments_postings_postnum FROM ((members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum) LEFT JOIN secomments sc ON sc.comments_c_id = c.c_id WHERE p.postnum=? ORDER BY c.c_id ASC, sc.sc_id ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -239,7 +247,7 @@ app.get('/process/showpost', function(req, res) { // 여기에 자기 자신의 
 			 		});
 			 	}
 			 	// console.log('results --> ' + results[0].title);
-			 	console.log('rendered : ' + html);
+				console.log('*** rendered, /process/showpost ***');
 			 	console.log('resutls.commentlength ->' + results[0].comment);
 	 			res.end(html);
 			});
@@ -356,7 +364,7 @@ app.get('/process/signin', function(req, res) {
 				res.end(html);
 			});
 		}
-		console.log('rendered : ' + html);
+		console.log('*** rendered, /process/signin ***');
 		res.end(html);
 	});
 });
@@ -384,7 +392,7 @@ app.get('/process/mypost/:page', function(req, res) {
 							res.end(html);
 					});
 				}
-				console.log('rendered : ' + html);
+				console.log('*** rendered, /process/mypage ***');
 					res.end(html);
 				});
 			} else { // 글이 있다면
@@ -403,7 +411,7 @@ app.get('/process/mypost/:page', function(req, res) {
 					});
 				}
 				// console.log('results --> ' + results[0].title);
-				console.log('rendered : ' + html);
+				console.log('*** rendered, /process/mypage ***');
 				res.end(html);
 			});
 		}
@@ -435,7 +443,7 @@ app.get('/process/myinfo', function(req, res) {
 					res.end(html);
 				});
 			}
-			console.log('rendered : ' + html);
+			console.log('*** rendered, /process/myinfo ***');
 			res.end(html);
 		});
 	});
@@ -459,7 +467,7 @@ app.post('/process/editinfo', function(req, res) {
 			agegroup : req.body.agegroup || req.query.agegroup,
 			insid : req.body.insid || req.query.insid
 		};
-		var sql = 'UPDATE members SET ? WHERE email = ?';
+		var sql = 'UPDATE members SET ?, updated_at = now() WHERE email = ?';
 		conn.query(sql, [member, req.user.email], function(err, results) {
 			if(err) {
 				console.log(err);
@@ -491,7 +499,7 @@ app.get('/process/editinfo', function(req, res) {
 					res.end(html);
 				});
 			}
-			console.log('rendered : ' + html);
+			console.log('*** rendered, /process/editinfo ***');
 			console.log('results[0].agegroup -> ' + results[0].agegroup);
 			res.end(html);
 		});
@@ -509,7 +517,7 @@ app.post('/process/editpost', function(req, res) {
 		post : req.body.post || req.query.post,
 		hashtag : req.body.hashtag || req.query.hashtag
 	};
-	var sql = 'UPDATE postings SET ? WHERE postnum=?';
+	var sql = 'UPDATE postings SET ?, updated_at = now() WHERE postnum=?';
 	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
 		if(err) {
 			console.log(err);
@@ -535,7 +543,7 @@ app.get('/process/editpost', function(req, res) {
 					res.end(html);
 				});
 			}
-			console.log('rendered : ' + html)
+			console.log('*** rendered, /process/editpost ***');
 			res.end(html);
 		});
 	});
@@ -552,7 +560,7 @@ app.post('/process/signup', function(req, res) {
 			agegroup : req.body.agegroup || req.query.agegroup,
 			insid : req.body.insid || req.query.insid
 		};
-		var sql = 'INSERT INTO members SET ?';
+		var sql = 'INSERT INTO members SET ?, created_at = now()';
 		conn.query(sql, member, function(err, results) {
 			if(err) {
 				console.log(err);
@@ -579,7 +587,7 @@ app.get('/process/signup', function(req, res) {
 	 			res.end(html);
 	 		});
 	 	}
-	 	console.log('rendered : ' + html);
+	 	console.log('*** rendered, /process/signup ***');
 	 	res.end(html);
 	 });
 });
@@ -595,7 +603,7 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 		hashtag : req.body.hashtag || req.query.hashtag,
 		members_id : req.body.id
 	};
-	var sql = 'INSERT INTO postings SET ?';
+	var sql = 'INSERT INTO postings SET ?, created_at = now()';
 	conn.query(sql, posting, function(err, results) {
 		if(err) {
 			console.log(err);
@@ -621,7 +629,7 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 					res.end(html);
 				});
 			}
-			console.log('rendered : ' + html)
+			console.log('*** rendered, /process/addpost ***');
 			res.end(html);
 		});
 	});
