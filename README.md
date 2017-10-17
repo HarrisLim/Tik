@@ -21,11 +21,6 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * [MySQL](https://www.mysql.com/) - Database
 * [Sublime Text 2](http://www.sublimetext.com/2) - Text Editor
 
-
-## Work in progress
-
-*  각 라우터를 만들고 db연결.
-
 ## AS IS
 
 * MySQL 연동

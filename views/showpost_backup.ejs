@@ -127,16 +127,20 @@
 			var curCNickname = results[i].c_nickname;
 			var curMembersId = results[i].c_members_id;
 			var curC_id = results[i].c_id;
-			var curDepth = results[i].depth;
-			var curGroupnum = results[i].groupnum;
 
 			if(results[0].comment !== null) {%> 
-				<%# if(results[i].groupnum === ) { %>
-					<%= curCNickname%> : <%= curComment%>
-				<%# } else {%>
-					
-				<%# } %>
-
+				<%= curCNickname%> : <%= curComment%>
+				<% if(results[i].c_id === results[i].comments_c_id) {%> <%# show 대댓글 %>
+					<% for(var b= i-1; b <= leng; b++) { %>
+						<% if(results[i].comments_c_id === results[b].comments_c_id) {%>
+							<% commLeng++; %>
+								<% var curSeComment = results[i].secomment;
+								var curSCNickname = results[i].sc_nickname; %><br>
+								&emsp; <%= curSCNickname%> : <%= curSeComment%>, when under 1EA, <%= commLeng %>
+						<% } %>
+					<% } %>
+					<% commLeng = 0;%>
+				<% } %>
 				<div style="float:right"> <%# comment and delete button %>
 					<% if(notSign === false) { %>
 						<input type="button" value="comment" onClick="showSC(<%=i%>)">
@@ -159,17 +163,13 @@
 							<input type="hidden" name="c_id" value=<%= curC_id%>>
 							<input type="hidden" name="postings_postnum" value=<%= curPostings_postnum%>>
 							<input type="hidden" name="cMembersId" value=<%= curMembersId%>>
-							<input type="hidden" name="curDepth" value=<%= curDepth%>>
-							<input type="hidden" name="curGroupnum" value=<%= curGroupnum%>>
+							<input type="hidden" name="" value=<%= curSigninId%>>
 							<input type="submit" value="submit">
 							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
 						</form>
 					</div>
 				<% } %>
 			<% } %><hr>
-			<% if(results[i].groupnum !== null){ %>
-				<% var maxGroupnum = results[i].groupnum%>
-			<%}%>
 		<% } %><br>
 		<form method="post" action="/process/deletecomm" id="button_delComm">
 			<input type="hidden" name="c_id" id="c_id">
@@ -179,7 +179,6 @@
 				<input type="hidden" name="nickname" value=<%= signNick%>>
 				<input type="hidden" name="postnum" value=<%= curPostnum%>>
 				<input type="hidden" name="id" value=<%= curId%>>
-				<input type="hidden" name="maxGroupnum" value=<%=maxGroupnum%>>
 			<% } %>
 			<table>
 				<tr>
