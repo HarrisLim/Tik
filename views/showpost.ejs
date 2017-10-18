@@ -34,6 +34,9 @@
 		window.onload = function() {
 		}
 
+		function cc(cc) {
+			console.log(Math.max.apply(null, cc));
+		}
 		</script>
 	</head>
 	<body>
@@ -129,10 +132,11 @@
 			var curC_id = results[i].c_id;
 			var curDepth = results[i].depth;
 			var curGroupnum = results[i].groupnum;
+			var curGrconum = results[i].grconum;
 
 			if(results[0].comment !== null) {%> 
-					<%= curCNickname%> : <%= curComment%>
-
+				<% if(curGrconum <= 1) {%>
+					<%= curFlagpath%><%= signNick%> : <%= curComment%> 
 				<div style="float:right"> <%# comment and delete button %>
 					<% if(notSign === false) { %>
 						<input type="button" value="comment" onClick="showSC(<%=i%>)">
@@ -145,7 +149,19 @@
 						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 					<% } %>
 				</div>
+				<% } else { %>
+					&emsp;<%= curFlagpath%><%= signNick%> : <%= curComment%>
+
+					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
+						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
+					<% } else { %>
+						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+					<% } %>
+				<% } %>
 				<% if(notSign === false) { %> <%# 대댓글 추가. %>
+
+
+
 					<div id='SC<%=i%>' style="display:none"> 
 						<form method="post" action="/process/addsecomment">
 							<%= curFlagpath%><%= signNick%> : 
@@ -157,6 +173,7 @@
 							<input type="hidden" name="cMembersId" value=<%= curMembersId%>>
 							<input type="hidden" name="curDepth" value=<%= curDepth%>>
 							<input type="hidden" name="curGroupnum" value=<%= curGroupnum%>>
+							<input type="hidden" name="curGrconum" value=<%= curGrconum%>>
 							<input type="submit" value="submit">
 							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
 						</form>
@@ -164,8 +181,12 @@
 				<% } %>
 			<% } %><hr>
 			<% if(results[i].groupnum !== null){ %>
-				<% var maxGroupnum = results[i].groupnum%>
+				<% var countGroupnum = results[i].groupnum; %>
 			<%}%>
+			<% if(results[i].groupnum === null){ %>
+				<% var countGroupnum = 0; %>
+			<%}%>
+
 		<% } %><br>
 		<form method="post" action="/process/deletecomm" id="button_delComm">
 			<input type="hidden" name="c_id" id="c_id">
@@ -175,7 +196,8 @@
 				<input type="hidden" name="nickname" value=<%= signNick%>>
 				<input type="hidden" name="postnum" value=<%= curPostnum%>>
 				<input type="hidden" name="id" value=<%= curId%>>
-				<input type="hidden" name="maxGroupnum" value=<%=maxGroupnum%>>
+				<input type="hidden" name="maxGroupnum" value=<%=countGroupnum%>>
+				<input type="hidden" name="nonGroupnum" value=<%=countGroupnum%>>
 			<% } %>
 			<table>
 				<tr>

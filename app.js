@@ -164,9 +164,11 @@ app.post('/process/addcomment', function(req, res) {
 		postings_postnum : req.body.postnum,
 		c_members_id : app.get('curId'),
 		members_id : app.get('curId'),
-		groupnum : maxGroupnum + 1
+		groupnum : maxGroupnum + 1,
+		grconum : 1,
+		depth : 1
 	};
-	var sql = 'INSERT INTO comments SET ?, created_at = now(), depth = 1';
+	var sql = 'INSERT INTO comments SET ?, created_at = now()';
 	conn.query(sql, comment, function(err, results) {
 		if(err) {
 			console.log(err);
@@ -181,6 +183,22 @@ app.post('/process/addsecomment', function(req, res) {
 	var curDepth = parseInt(req.body.curDepth);
 	console.log('curDepth -> ' + curDepth)
 	var curGroupnum = parseInt(req.body.curGroupnum);
+	var curGrconum = parseInt(req.body.curGrconum);
+	var MaxGrconum = parseInt(req.body.MaxGrconum);	
+	// var cc = req.body.cc;	
+	// var c = Math.max.apply(null, cc);
+	// console.log('cc- >' + cc.replace(/^ /i, ","));
+	// console.log('length- >' + cc.length)
+	// console.log('c- >' + c);
+	// var arr = [1,2,4,2,1];
+	// console.log('cc is array ? ' + Array.isArray(cc));
+	// console.log('cc is array ? ' + Array.isArray(arr));
+	// var maxArr = Math.max.apply(null, arr);
+	// console.log('arr-> ' + arr);
+	// console.log('arr-> ' + maxArr);
+
+	console.log('curGroupnum ->', curGroupnum);
+	console.log('curGrconum ->', curGrconum);
 	var comment = {
 		c_nickname : req.body.nickname,
 		comment : req.body.secomment,
@@ -188,17 +206,18 @@ app.post('/process/addsecomment', function(req, res) {
 		c_members_id : app.get('curId'),
 		members_id : app.get('curId'),
 		groupnum : curGroupnum,
-		depth : 2
+		depth : 2,
+		grconum : MaxGrconum + 1
 	};
-	var sql = 'INSERT INTO comments SET ?, created_at = now()';
-	conn.query(sql, comment, function(err, results) {
-		if(err) {
-			console.log(err);
-			res.status(500);
-		} else {
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
-		}
-	});
+	// var sql = 'INSERT INTO comments SET ?, created_at = now()';
+	// conn.query(sql, [comment, curGroupnum], function(err, results) {
+	// 	if(err) {
+	// 		console.log(err);
+	// 		res.status(500);
+	// 	} else {
+	// 		res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+	// 	}
+	// });
 });
 
 
@@ -237,7 +256,7 @@ app.get('/process/showpost', function(req, res) {
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
 		
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.c_id ASC;';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	// var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, sc.sc_id, sc.sc_nickname, sc.secomment, sc.sc_members_id, sc.members_id, sc.comments_c_id, sc.comments_postings_postnum FROM ((members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum) LEFT JOIN secomments sc ON sc.comments_c_id = c.c_id WHERE p.postnum=? ORDER BY c.c_id ASC, sc.sc_id ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 			var leng = Object.keys(results).length -1;
@@ -262,7 +281,7 @@ app.get('/process/showpost', function(req, res) {
 	 	var postnum = req.query.postnum;
 	 	var notSign = true;
 	 	// var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, c.c_nickname ,c.comment FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=?';
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, sc.sc_id, sc.sc_nickname, sc.secomment, sc.sc_members_id, sc.members_id, sc.comments_c_id, sc.comments_postings_postnum FROM ((members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum) LEFT JOIN secomments sc ON sc.comments_c_id = c.c_id WHERE p.postnum=? ORDER BY c.c_id ASC, sc.sc_id ASC';
+	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
