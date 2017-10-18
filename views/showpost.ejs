@@ -24,6 +24,30 @@
 			}
 		};
 
+		function updaComment() {
+			$("#curComm").css("display", "none");
+			$("#updaText").css("display", "");
+			$("#showUpdaButton").css("display", "none");
+			$("#updaButton").css("display", "");
+			$("#updaCancel").css("display", "");
+		};
+
+		function updaCancel() {
+			$("#curComm").css("display", "");
+			$("#updaText").css("display", "none");
+			$("#showUpdaButton").css("display", "");
+			$("#updaButton").css("display", "none");
+			$("#updaCancel").css("display", "none");
+		};
+
+		function updaSubmit() {
+			if(confirm('Really want to update this comment ?') == true) {
+				$("#updaSubmit").submit();
+			} else {
+				return;
+			}
+		};
+
 		function showSC(i) {
 			$('#SC'+i).css('display','');
 		};
@@ -32,10 +56,6 @@
 		};
 
 		window.onload = function() {
-		}
-
-		function cc(cc) {
-			console.log(Math.max.apply(null, cc));
 		}
 		</script>
 	</head>
@@ -135,22 +155,41 @@
 			var curGrconum = results[i].grconum;
 
 			if(results[0].comment !== null) {%> 
-				<% if(curGrconum <= 1) {%>
-					<%= curFlagpath%><%= signNick%> : <%= curComment%> 
-				<div style="float:right"> <%# comment and delete button %>
+
+				<% if(curGrconum <= 1) {%> <%# 댓글 이라면%>
+				<form method="post" action="/process/updatecomment" id="updaSubmit">
+					<input type="text" name="updacomment" id="updaText" value="<%=curComment%>" style="display:none">
+					<input type="hidden" name="updaC_id" value="<%=curC_id%>">
+				</form> 
+				<%= curFlagpath%><%= curCNickname%> : <span id="curComm" style="display:"><%= curComment%>
+				</span>
+				
+				<div style="float:right">
+						<%# reply button %>
 					<% if(notSign === false) { %>
-						<input type="button" value="comment" onClick="showSC(<%=i%>)">
+					<span>
+						<input type="button" value="update" id="updaButton" onClick="updaSubmit()" style="display:none">
+						<input type="button" value="cancle" id="updaCancel" onClick="updaCancel()" style="display:none">
+					</span>
+						<input type="button" value="reply" onClick="showSC(<%=i%>)">
 					<% } else {%>
-						<input type="button" value="comment" onClick='alert("you need to Sign in.")'>
+						<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
 					<% } %>
+						<%# update button %>
+						<% if(curMembersId == curSigninId) { %>
+							<input type="button" value="update" onClick="updaComment()" id="showUpdaButton" style="display:">
+						<% } else { %>
+							<input type="button" value="update" onClick='alert("you can not update.")'>
+						<% } %>
+						<%# delete button %>
 					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
 						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
 					<% } else { %>
 						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 					<% } %>
 				</div>
-				<% } else { %>
-					&emsp;<%= curFlagpath%><%= signNick%> : <%= curComment%>
+				<% } else { %> <%# 대댓글 이라면 %>
+					&emsp;&emsp;<%= curFlagpath%><%= curCNickname%> : <%= curComment%>
 
 					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
 						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
@@ -160,20 +199,27 @@
 				<% } %>
 				<% if(notSign === false) { %> <%# 대댓글 추가. %>
 
-
+				<% var maxGrconum = []; %> <%# grconum의 max값 구하기. app.js에서 helper사용. %>
+				<% for(var j =0; j < results.length; j++) {%>
+					<% 
+					var arrGrconum = [];
+						arrGrconum.push(results[j].grconum);
+						maxGrconum.push(arrGrconum);
+					%>
+				<% } %>
 
 					<div id='SC<%=i%>' style="display:none"> 
 						<form method="post" action="/process/addsecomment">
 							<%= curFlagpath%><%= signNick%> : 
 							<textarea name="secomment"></textarea>
-							<input type="hidden" name="nickname" value=<%= signNick%>>
-							<input type="hidden" name="postnum" value=<%= curPostnum%>>
-							<input type="hidden" name="c_id" value=<%= curC_id%>>
-							<input type="hidden" name="postings_postnum" value=<%= curPostings_postnum%>>
-							<input type="hidden" name="cMembersId" value=<%= curMembersId%>>
-							<input type="hidden" name="curDepth" value=<%= curDepth%>>
-							<input type="hidden" name="curGroupnum" value=<%= curGroupnum%>>
-							<input type="hidden" name="curGrconum" value=<%= curGrconum%>>
+							<input type="hidden" name="nickname" value="<%= signNick%>">
+							<input type="hidden" name="postnum" value="<%= curPostnum%>">
+							<input type="hidden" name="c_id" value="<%= curC_id%>">
+							<input type="hidden" name="postings_postnum" value="<%= curPostings_postnum%>">
+							<input type="hidden" name="cMembersId" value="<%= curMembersId%>">
+							<input type="hidden" name="curDepth" value="<%= curDepth%>">
+							<input type="hidden" name="curGroupnum" value="<%= curGroupnum%>">
+							<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
 							<input type="submit" value="submit">
 							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
 						</form>
@@ -193,11 +239,11 @@
 		</form>
 		<form method="post" action="/process/addcomment">
 			<% if(notSign === false) { %>
-				<input type="hidden" name="nickname" value=<%= signNick%>>
-				<input type="hidden" name="postnum" value=<%= curPostnum%>>
-				<input type="hidden" name="id" value=<%= curId%>>
-				<input type="hidden" name="maxGroupnum" value=<%=countGroupnum%>>
-				<input type="hidden" name="nonGroupnum" value=<%=countGroupnum%>>
+				<input type="hidden" name="nickname" value="<%= signNick%>">
+				<input type="hidden" name="postnum" value="<%= curPostnum%>">
+				<input type="hidden" name="id" value="<%= curId%>">
+				<input type="hidden" name="maxGroupnum" value="<%=countGroupnum%>">
+				<input type="hidden" name="nonGroupnum" value="<%=countGroupnum%>">
 			<% } %>
 			<table>
 				<tr>
