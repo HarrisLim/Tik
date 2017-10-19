@@ -194,7 +194,7 @@ app.post('/process/updatecomment', function(req, res) {
 			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
 		}
 	});
-})
+});
 
 app.locals.maxHelper = function(arr) { // showpost에서 grconum의 max값을 구하기 위해.
 	var maxarr = Math.max.apply(null, arr);
@@ -224,6 +224,23 @@ app.post('/process/addsecomment', function(req, res) {
 			console.log(err);
 			res.status(500);
 		} else {
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+		}
+	});
+});
+
+app.post('/process/updatesecomment', function(req, res) {
+	var secomment = req.body.updaSecomment;
+	console.log(secomment);
+	var c_id = req.body.updaSeC_id;
+	var sql = 'UPDATE comments SET comment = ?, updated_at = now() WHERE c_id=?';
+	conn.query(sql, [secomment, c_id], function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('post 변경');
+			backURL = req.header('Referer') || '/';
 			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
 		}
 	});
@@ -307,6 +324,24 @@ app.post('/process/deletepost', function(req, res) {
 });
 
 app.post('/process/deletecomm', function(req, res) {
+	console.log('here is deletecomm.');
+	
+	var curGroupnum = req.body.curGroupnum;
+	console.log('delete curGroupnum --> ' + curGroupnum);
+	var curPostnum = app.get('curPostnum');
+	var sql = "DELETE FROM comments WHERE groupnum=?";
+	conn.query(sql, curGroupnum, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('delete post');
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+		}
+	});
+});
+
+app.post('/process/deletesecomm', function(req, res) {
 	console.log('here is deletecomm.');
 	
 	var curC_id = req.body.c_id;

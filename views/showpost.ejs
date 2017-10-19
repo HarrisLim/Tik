@@ -15,34 +15,51 @@
 			}
 		};
 
-		function button_delComm(id) {
+		function button_delCommBu(groupnum) {
 			if(confirm('Really want to delete this comment ?') == true) {
-				$("#c_id").val(id);
+				$("#curGroupnum").val(groupnum);
 				$("#button_delComm").submit();
 			} else {
 				return;
 			}
 		};
 
-		function updaComment() {
-			$("#curComm").css("display", "none");
-			$("#updaText").css("display", "");
-			$("#showUpdaButton").css("display", "none");
-			$("#updaButton").css("display", "");
-			$("#updaCancel").css("display", "");
+		function button_delSeCommBu(id) {
+			if(confirm('Really want to delete this comment ?') == true) {
+				$("#c_id").val(id);
+				$("#button_delSeComm").submit();
+			} else {
+				return;
+			}
 		};
 
-		function updaCancel() {
-			$("#curComm").css("display", "");
-			$("#updaText").css("display", "none");
-			$("#showUpdaButton").css("display", "");
-			$("#updaButton").css("display", "none");
-			$("#updaCancel").css("display", "none");
+		function updaComment(i) {
+			$("#curComm"+i).css("display", "none");
+			$("#updaText"+i).css("display", "");
+			$("#showUpdaButton"+i).css("display", "none");
+			$("#updaButton"+i).css("display", "");
+			$("#updaCancel"+i).css("display", "");
 		};
 
-		function updaSubmit() {
+		function updaCancleBu(i) {
+			$("#curComm"+i).css("display", "");
+			$("#updaText"+i).css("display", "none");
+			$("#showUpdaButton"+i).css("display", "");
+			$("#updaButton"+i).css("display", "none");
+			$("#updaCancel"+i).css("display", "none");
+		};
+
+		function updaSubmit(i) {
 			if(confirm('Really want to update this comment ?') == true) {
-				$("#updaSubmit").submit();
+				$("#updaSubmit"+i).submit();
+			} else {
+				return;
+			}
+		};
+
+		function updaSeSubmit(i) {
+			if(confirm('Really want to update this comment ?') == true) {
+				$("#updaSeSubmit"+i).submit();
 			} else {
 				return;
 			}
@@ -157,45 +174,68 @@
 			if(results[0].comment !== null) {%> 
 
 				<% if(curGrconum <= 1) {%> <%# 댓글 이라면%>
-				<form method="post" action="/process/updatecomment" id="updaSubmit">
-					<input type="text" name="updacomment" id="updaText" value="<%=curComment%>" style="display:none">
-					<input type="hidden" name="updaC_id" value="<%=curC_id%>">
-				</form> 
-				<%= curFlagpath%><%= curCNickname%> : <span id="curComm" style="display:"><%= curComment%>
-				</span>
 				
-				<div style="float:right">
-						<%# reply button %>
-					<% if(notSign === false) { %>
-					<span>
-						<input type="button" value="update" id="updaButton" onClick="updaSubmit()" style="display:none">
-						<input type="button" value="cancle" id="updaCancel" onClick="updaCancel()" style="display:none">
-					</span>
-						<input type="button" value="reply" onClick="showSC(<%=i%>)">
-					<% } else {%>
-						<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
-					<% } %>
-						<%# update button %>
+				
+				<form method="post" action="/process/deletecomm" id="button_delComm">
+					<input type="hidden" name="curGroupnum" id="curGroupnum">
+				</form>
+				<form method="post" action="/process/updatecomment" id="updaSubmit<%=i%>">
+					<input type="hidden" name="updaC_id" value="<%=curC_id%>">
+					<%= curFlagpath%><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
+					<input type="text" name="updacomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
+					<div style="float:right">
+							<%# reply button %>
+						<% if(notSign === false) { %>
+							<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
+							<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
+							<input type="button" value="reply" onClick="showSC(<%=i%>)">
+						<% } else {%>
+							<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
+						<% } %>
+							<%# update button %>
+							<% if(curMembersId == curSigninId) { %>
+								<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
+							<% } else { %>
+								<input type="button" value="update" onClick='alert("you can not update.")'>
+							<% } %>
+							<%# delete button %>
+						<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
+							<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
+						<% } else { %>
+							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+						<% } %>
+					</div>
+				</form>
+				
+
+				
+				<% } else { %> <%# 대댓글 이라면 %>
+				<form method="post" action="/process/deletesecomm" id="button_delSeComm">
+					<input type="hidden" name="c_id" id="c_id">
+				</form>
+				<form method="post" action="/process/updatesecomment" id="updaSeSubmit<%=i%>">
+					<input type="hidden" name="updaSeC_id" value="<%=curC_id%>">
+					&emsp;&emsp;<%= curFlagpath%><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
+					<input type="text" name="updaSecomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
+					<div style="float:right">
+							<%# reply button %>
+						<% if(notSign === false) { %>
+							<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSeSubmit(<%=i%>)" style="display:none">
+							<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
+						<% } %>
+							<%# update button %>
 						<% if(curMembersId == curSigninId) { %>
-							<input type="button" value="update" onClick="updaComment()" id="showUpdaButton" style="display:">
+							<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:''">
 						<% } else { %>
 							<input type="button" value="update" onClick='alert("you can not update.")'>
 						<% } %>
-						<%# delete button %>
-					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
-						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
-					<% } else { %>
-						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-					<% } %>
-				</div>
-				<% } else { %> <%# 대댓글 이라면 %>
-					&emsp;&emsp;<%= curFlagpath%><%= curCNickname%> : <%= curComment%>
-
-					<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
-						<input type="submit" value="delete" onClick="button_delComm(<%= curC_id%>)"><br>
-					<% } else { %>
-						<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-					<% } %>
+							<%# delete button %>
+						<% if(curMembersId == curSigninId || curP_MembersId == curSigninId) { %>
+							<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
+						<% } else { %>
+							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+						<% } %>
+					</div>
 				<% } %>
 				<% if(notSign === false) { %> <%# 대댓글 추가. %>
 
@@ -208,7 +248,7 @@
 					%>
 				<% } %>
 
-					<div id='SC<%=i%>' style="display:none"> 
+					<div id='SC<%=i%>' style="display:none; padding-top:15px" > 
 						<form method="post" action="/process/addsecomment">
 							<%= curFlagpath%><%= signNick%> : 
 							<textarea name="secomment"></textarea>
@@ -220,8 +260,10 @@
 							<input type="hidden" name="curDepth" value="<%= curDepth%>">
 							<input type="hidden" name="curGroupnum" value="<%= curGroupnum%>">
 							<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
+							<div  style="float:right; padding-top:10px">
 							<input type="submit" value="submit">
 							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
+							</div>
 						</form>
 					</div>
 				<% } %>
@@ -232,11 +274,8 @@
 			<% if(results[i].groupnum === null){ %>
 				<% var countGroupnum = 0; %>
 			<%}%>
-
 		<% } %><br>
-		<form method="post" action="/process/deletecomm" id="button_delComm">
-			<input type="hidden" name="c_id" id="c_id">
-		</form>
+		
 		<form method="post" action="/process/addcomment">
 			<% if(notSign === false) { %>
 				<input type="hidden" name="nickname" value="<%= signNick%>">
