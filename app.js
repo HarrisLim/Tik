@@ -26,7 +26,8 @@ var conn = mysql.createConnection({
 	host : 'localhost',
 	user : 'root',
 	password : 'dksuek',
-	database : 'tik'
+	database : 'tik',
+	multipleStatements: true
 });
 conn.connect();
 
@@ -259,7 +260,7 @@ app.get('/process/showpost', function(req, res) {
 	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 			var leng = Object.keys(results).length -1;
-	 		console.log('results[0].id  -> ' + results[0].id);
+	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
 			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, notSign : notSign, leng : leng};
 			req.app.render('showpost', context,  function(err, html) {
@@ -270,7 +271,7 @@ app.get('/process/showpost', function(req, res) {
 			 		});
 			 	}
 			 	console.log('curGisninID --> ' + req.user.id);
-			 	console.log('results --> ' + results[0].id);
+			 	// console.log('results --> ' + results[0].id);
 			 	console.log('*** rendered, /process/showpost ***');
 	 			res.end(html);
 			});
@@ -411,7 +412,7 @@ app.post('/process/signin',
 	passport.authenticate('local', { 
 		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
-        failureFlash: true 
+        failureFlash: false 
     })
 );
 
@@ -520,6 +521,38 @@ app.get('/process/myinfo', function(req, res) {
 	app.locals.useremail = req.user.email;
 */
 
+app.post('/process/cancelmember', function(req, res) {
+	console.log("you're in cancelmember");
+	var curEmail = req.body.curEmail;
+	var cancelId = req.body.cancelId;
+	console.log('curEmail ->' + curEmail);
+	var member = {
+		email : null,
+		passwd : null,
+		salt : null,
+		flagpath : null,
+		country : null,
+		agegroup : null,
+		insid : null,
+		created_at : null,
+		updated_at : null,
+		flag : 'deleted'
+	}
+	var sql ="UPDATE members SET ? WHERE email=?; DELETE p, c FROM postings p LEFT JOIN comments c ON p.postnum = c.postings_postnum WHERE id = ?";
+	conn.query(sql, [member, curEmail, cancelId], function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('cancelmembership.');
+			req.logout();
+			req.session.save(function() {
+				res.redirect('/process/main');
+			})
+		}
+	})
+});
+
 app.post('/process/editinfo', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
@@ -551,10 +584,11 @@ app.get('/process/editinfo', function(req, res) {
 	var memberEmail = req.user.email;
 	console.log("ageGV -> " + req.query.agegroup);
 	console.log('email -> ' + req.user.email);
-	sql = 'SELECT * FROM members WHERE email=?';
+	sql = 'SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, results : results[0]};
+		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results};
+		app.set('postLeng', Object.keys(results).length);
 		req.app.render('editinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

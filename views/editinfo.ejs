@@ -7,24 +7,34 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 		<script>
+
+			function cancelMembership() {
+				if(confirm("Really want to cancel your membership ?") == true) {
+					$("#cancelMember").submit();
+				} else {
+					return;
+				}
+			};
+
 			window.onload = function() {
 				var agegroupVal = document.getElementById('ages').value;
 				$('#ageSel').val(agegroupVal);
-			}
+			};
 		</script>
 	</head>
 	<body>
 		<%
-			var curNickname = results.nickname;
-			var curEmail = results.email;
-			var curFlagpath = results.flagpath;
-			var curCountry = results.country;
-			var curAgegroup = results.agegroup;
-			var curInsid = results.insid;
+			var curNickname = results[0].nickname;
+			var curEmail = results[0].email;
+			var curFlagpath = results[0].flagpath;
+			var curCountry = results[0].country;
+			var curAgegroup = results[0].agegroup;
+			var curInsid = results[0].insid;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<br> <h2>Hello. <%= curNickname%> !</h2>
+		<br><br>
 		<a href="/process/mypost">My post</a>
 		<br><br><a href='/process/myinfo'>My info</a>
 		<p>
@@ -80,10 +90,17 @@
 					<td><label>Instagram ID : </label></td>
 					<td><input type="text" name="insid" value="<%= curInsid%>"></td>
 				</tr>
+				<tr>
+					<td><br><br><input type="button" value="Cancel my membership. : (" onClick="cancelMembership()"></td>
+				</tr>
 			</table>
-			<p>
+			<p><br>
 			<input type="submit" value="submit : )">
 			<a href="/process/myinfo"><input type="button" value="Cancle : )"></a>
+		</form>
+		<form method="post" action="/process/cancelmember" id="cancelMember">
+			<input type="hidden" name="curEmail" value="<%=curEmail%>">
+			<input type="hidden" name="cancelId" value="<%=results[0].id%>">
 		</form>
 	</body>
 </html>

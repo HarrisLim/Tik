@@ -38,6 +38,20 @@
 			var curUpdated_at = results.updated_at;
 			var curPostnum = results.postnum;
 		%>
+			<%# 이것은 date format을 바꿔주는 것. %>
+		<%
+			function formatDate(date) {
+		    var d = new Date(date),c                                                                                           
+		    month = '' + (d.getMonth() + 1),
+		    day = '' + d.getDate(),
+		    year = d.getFullYear();
+
+		    if (month.length < 2) month = '0' + month;
+		    if (day.length < 2) day = '0' + day;
+
+		    return [year, month, day].join('-');
+			};
+		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Update post !</h1>
@@ -50,11 +64,7 @@
 			<table>
 				<tr>
 					<td><label>Created_Date : </label></td>
-					<td><%= curCreated_at %></td>
-				</tr>
-				<tr>
-					<td><label>Last Updated_Date : </label></td>
-					<td><%= curUpdated_at %></td>
+					<td><%= formatDate(curCreated_at)%></td>
 				</tr>
 				<tr>
 					<td><label>views : </label></td>

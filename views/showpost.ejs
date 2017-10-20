@@ -33,6 +33,14 @@
 			}
 		};
 
+		function button_edit() {
+			if(confirm("Really want to edit this post ?") == true) {
+				location.href="http://localhost:10468/process/editpost";
+			} else {
+				return;
+			}
+		}
+
 		function updaComment(i) {
 			$("#curComm"+i).css("display", "none");
 			$("#updaText"+i).css("display", "");
@@ -103,22 +111,38 @@
 		<% } %>
 		<hr>
 		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
+		<% if(curSigninId !== false) { %>
+			<% if(curId == curSigninId) { %>
+				<input type="button" value="Edit" onClick="button_edit();">
+			<% }%>
+		<% }%>
 		<% if(curId == curSigninId) { %> <%# If sign in %>
 			<input type="submit" value="delete" onClick="button_delPost();">
 			<form method="post" action="/process/deletepost" id="button_delPost">
+				<input type="hidden" name="postnum" value="<%= curPostnum%>">
 			</form>
 		<% } else { %>
 			<input type="button" value="delete" onClick='alert("you cant delete.")'>
 		<% } %>
+		<%# 이것은 date format을 바꿔주는 것. %>
+		<%
+			function formatDate(date) {
+		    var d = new Date(date),c                                                                                           
+		    month = '' + (d.getMonth() + 1),
+		    day = '' + d.getDate(),
+		    year = d.getFullYear();
+
+		    if (month.length < 2) month = '0' + month;
+		    if (day.length < 2) day = '0' + day;
+
+		    return [year, month, day].join('-');
+			};
+		%>
 		<br><br>
 		<table>
 				<tr>
 					<td><label>Created_Date : </label></td>
-					<td><%= curCreated_at %></td>
-				</tr>
-				<tr>
-					<td><label>Last Updated_Date : </label></td>
-					<td><%= curUpdated_at %></td>
+					<td><%= formatDate(curCreated_at)%> </td>
 				</tr>
 				<tr>
 					<td><label>views : </label></td>
@@ -152,11 +176,6 @@
 					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
 				</tr>
 			</table>
-		<% if(curSigninId !== false) { %>
-			<% if(curId == curSigninId) { %>
-				<a href="/process/editpost">Edit</a>
-			<% }%>
-		<% }%>
 		<p>
 		<hr> 
 			<%# comments %>
