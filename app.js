@@ -108,11 +108,13 @@ app.get('/process/main', function(req, res){
 });
 
 app.get('/process/main/:page', function(req, res){
-	if(req.user && req.user.email) { // after Signin
+	if(req.user && req.user.email) { // Signin
 		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
+			console.log('page -> ' + page);
+			app.set('curPage', page);
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 
@@ -131,7 +133,7 @@ app.get('/process/main/:page', function(req, res){
 				res.end(html);
 			});
 		});
-	} else { // before Signin
+	} else { // not Signin
 
 		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
@@ -319,7 +321,7 @@ app.post('/process/deletepost', function(req, res) {
 			res.status(500);
 		} else {
 			console.log('delete post');
-			res.redirect('/process/main');
+			res.redirect('/process/main/'+app.get('curPage'));
 		}
 	});
 });
