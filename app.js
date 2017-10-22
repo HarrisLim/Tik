@@ -420,18 +420,27 @@ app.post('/process/signin',
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
-
-	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-	var context = {email : req.body.username, nickname : req.body.nickname};
-	req.app.render('signin', context, function(err, html) {
-		if(err) {
-			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
-			req.app.render('error', function(err, html) {
-				res.end(html);
-			});
+	var sql = 'SELECT m.nickname FROM members m';
+	conn.query(sql, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var nickLeng = results.length
+		var arrNick = [];
+		for(var i = 0; i < nickLeng; i++) {
+			arrNick.push(results[i].nickname);
 		}
-		console.log('*** rendered, /process/signin ***');
-		res.end(html);
+		console.log('arr -> ' + arrNick);
+		app.set('Nicklist', arrNick);
+		var context = {email : req.body.username, nickname : req.body.nickname, results : results, arrNick : arrNick};
+		req.app.render('signin', context, function(err, html) {
+			if(err) {
+				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				});
+			}
+			console.log('*** rendered, /process/signin ***');
+			res.end(html);
+		});
 	});
 });
 
@@ -582,6 +591,7 @@ app.get('/process/editinfo', function(req, res) {
 	console.log("you're in editinfo");
 	console.log('req.user.email --> ' + req.user.email);
 	console.log('req.user.nickname --> ' + req.user.nickname);
+	console.log('Nicklist ->' + app.get('Nicklist'));
 
 	var memberEmail = req.user.email;
 	console.log("ageGV -> " + req.query.agegroup);
@@ -589,7 +599,7 @@ app.get('/process/editinfo', function(req, res) {
 	sql = 'SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results};
+		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : app.get('Nicklist')};
 		app.set('postLeng', Object.keys(results).length);
 		req.app.render('editinfo', context, function(err, html) {
 			if(err) {
@@ -648,6 +658,27 @@ app.get('/process/editpost', function(req, res) {
 	});
 });
 
+// 이것은 nickname 중복검사. 근데 signup get방식으로 할 수 있을 거 같아.
+// app.get('/process/duchnickname', function(req, res) {
+// 	console.log('dd');
+// 	var sql = 'SELECT m.nickname FROM members m';
+// 	conn.query(sql, function(err, results) {
+// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+// 		var context = {results : results};
+// 		req.app.render('signup', context, function(err, html) {
+// 			if(err) {
+// 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+// 				req.app.render('error', function(err, html) {
+// 					res.end(html);
+// 				});
+// 			} else {
+// 				console.log('*** rendered, /process/duchnickname ***')
+// 				res.end(html);
+// 			}
+// 		})
+// 	});
+// });
+
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
@@ -677,18 +708,28 @@ app.post('/process/signup', function(req, res) {
 
 
 app.get('/process/signup', function(req, res) {
-	 console.log('signup 호출.');
-	 res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-	 req.app.render('signup', function(err, html) {
-	 	if(err) {
-	 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
-	 		req.app.render('error', function(err, html) {
-	 			res.end(html);
-	 		});
-	 	}
+	console.log('signup 호출.');
+	var sql = 'SELECT m.nickname FROM members m';
+	conn.query(sql, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var nickLeng = results.length
+		var arrNick = [];
+		for(var i = 0; i < nickLeng; i++) {
+			arrNick.push(results[i].nickname);
+		}
+		console.log('arr -> ' + arrNick);
+	 	var context = {results : results, arrNick : arrNick};
+	 	req.app.render('signup', context, function(err, html) {
+	 		if(err) {
+	 			console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
+	 			req.app.render('error', function(err, html) {
+	 				res.end(html);
+	 			});
+	 		}
 	 	console.log('*** rendered, /process/signup ***');
 	 	res.end(html);
-	 });
+		});
+	});
 });
 
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?

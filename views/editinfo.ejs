@@ -8,6 +8,8 @@
 
 		<script>
 
+			var checkNickBu = 0;
+
 			function cancelMembership() {
 				if(confirm("Really want to cancel your membership ?") == true) {
 					$("#cancelMember").submit();
@@ -20,6 +22,44 @@
 				var agegroupVal = document.getElementById('ages').value;
 				$('#ageSel').val(agegroupVal);
 			};
+
+			function duchNickname() {
+				var curNick = $('#nickname').val();
+				
+				var arrNick = [];
+				console.log("<%=arrNick%>")
+				arrNick = "<%=arrNick%>".split(',');
+
+				var nicks = arrNick;
+				if(curNick === "") {
+					alert('Fill box plz.');
+				} else if(nicks.indexOf(curNick) === -1) {
+					console.log('hi');
+					alert('OK.');
+					checkNickBu = 1;
+					console.log('checkNickBu-> ' + checkNickBu);
+
+				} else {
+					console.log('bye');
+					alert('already existed nickname.');
+					console.log('checkNickBu-> ' + checkNickBu);
+				}
+			};
+
+			function checkEmpty() {
+				var curNick = $('#nickname').val();
+				
+				if(curNick === "<%=curNickname%>") {
+					console.log('curNick -> ' + curNick);
+					console.log('curNickname -> ' + "<%=curNickname%>");
+					location.href="http://localhost:10468/process/myinfo";
+				} else if(checkNickBu === 0) {
+					alert('Push [Duplication check] button');
+				} else {
+					$("#editinfo").submit();
+				}
+			};
+
 		</script>
 	</head>
 	<body>
@@ -43,11 +83,13 @@
 			<input type="hidden" name="memberEmail" id="memberEmail">
 			<input type="hidden" id="ages" value="<%= curAgegroup%>">
 		</form>
-		<form method="post" action="/process/editinfo">
+		<form method="post" action="/process/editinfo" id="editinfo">
 			<table>
 				<tr>
 					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname" value="<%= curNickname%>"> <- 이거 닉네임 중복확인해.</td>
+					<td><input type="text" name="nickname" value="<%= curNickname%>" id="nickname"> <- 이거 닉네임 중복확인해.</td>
+					<td><input type="button" value="Duplication check" onClick="duchNickname()"></td>
+					<td><input type="text" name="1" value="<%= arrNick%>"> <- 이거 닉네임 중복확인해.</td>
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>
@@ -95,7 +137,7 @@
 				</tr>
 			</table>
 			<p><br>
-			<input type="submit" value="submit : )">
+			<input type="button" value="submit : )" onClick="checkEmpty()">
 			<a href="/process/myinfo"><input type="button" value="Cancle : )"></a>
 		</form>
 		<form method="post" action="/process/cancelmember" id="cancelMember">
