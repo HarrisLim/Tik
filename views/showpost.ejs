@@ -116,13 +116,17 @@
 				<input type="button" value="Edit" onClick="button_edit();">
 			<% }%>
 		<% }%>
-		<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
-			<input type="submit" value="delete" onClick="button_delPost();">
-			<form method="post" action="/process/deletepost" id="button_delPost">
-				<input type="hidden" name="postnum" value="<%= curPostnum%>">
-			</form>
+		<% if(notSign === false) { %>
+			<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
+				<input type="submit" value="delete" onClick="button_delPost();">
+				<form method="post" action="/process/deletepost" id="button_delPost">
+					<input type="hidden" name="postnum" value="<%= curPostnum%>">
+				</form>
+			<% } else { %>
+				<input type="button" value="delete" onClick='alert("you cant delete.")'>
+			<% } %>
 		<% } else { %>
-			<input type="button" value="delete" onClick='alert("you cant delete.")'>
+			<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 		<% } %>
 		<%# 이것은 date format을 바꿔주는 것. %>
 		<%
@@ -218,8 +222,12 @@
 								<input type="button" value="update" onClick='alert("you can not update.")'>
 							<% } %>
 							<%# delete button %>
-						<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-							<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
+						<% if(notSign === false) { %>
+							<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
+								<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
+							<% } else { %>
+								<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+							<% } %>
 						<% } else { %>
 							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 						<% } %>
@@ -249,8 +257,12 @@
 							<input type="button" value="update" onClick='alert("you can not update.")'>
 						<% } %>
 							<%# delete button %>
-						<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-							<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
+						<% if(notSign === false) { %>
+							<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
+								<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
+							<% } else { %>
+								<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+							<% } %>
 						<% } else { %>
 							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
 						<% } %>

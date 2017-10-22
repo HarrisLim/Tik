@@ -651,13 +651,13 @@ app.get('/process/editpost', function(req, res) {
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
-			nickname : req.body.nickname || req.query.nickname,
-			email : req.body.email || req.query.email,
+			nickname : req.body.nickname,
+			email : req.body.email,
 			passwd : hash,
 			salt : salt,
-			country : req.body.country || req.query.country,
-			agegroup : req.body.agegroup || req.query.agegroup,
-			insid : req.body.insid || req.query.insid
+			country : req.body.country,
+			agegroup : req.body.agegroup,
+			insid : req.body.insid
 		};
 		var sql = 'INSERT INTO members SET ?, created_at = now()';
 		conn.query(sql, member, function(err, results) {

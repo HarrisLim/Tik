@@ -4,6 +4,41 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>Add Post</title>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+
+			var checkPWBu = 0;
+
+			function checkPW() {
+				var firPW = $("#firPW").val();
+				var secPW = $("#secPW").val();
+
+				if((firPW || secPW) === "") {
+					alert('Check password again.');
+				} else if(firPW === secPW) {
+					alert('Chceked password.');
+
+					checkPWBu++;
+				} else {
+					alert('Check password again.');
+				}
+			};
+
+			function checkEmpty() {
+				var nickname = $("#nickname").val();
+				var email = $("#email").val();
+				var country = $("#country").val();
+
+				if(checkPWBu === 0) {
+					alert('Push [Check password] button first and then, \n Fill empty box except Instagram ID plz.');
+				} else if(nickname && email && country) {
+					$("#signup").submit();
+				} else {
+					alert('you need to fill empty box except Instagram ID.')
+				}
+			};
+		</script>
 	</head>
 	<body>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
@@ -11,29 +46,29 @@
 		<h1>Welcome my new friend !</h1>
 	<h1>Tik sign up !</h1>
    <br><br>
-		<form method="post" action="/process/signup">
+		<form method="post" action="/process/signup" id="signup">
 			<table>
 				<tr>
 					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname"></td>
+					<td><input type="text" name="nickname" id="nickname"></td>
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>
-					<td><input type="email" name="email"></td>
+					<td><input type="email" name="email" id="email"></td>
 					<td><input type="button" value="Verify Email"></td>
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>
-					<td><input type="password"></td>
+					<td><input type="password" id="firPW"></td>
 				</tr>
 				<tr>
 					<td><label>Password (repeat) : </label></td>
-					<td><input type="password" name="passwd"></td>
-					<td><input type="button" value="Check password"></td>
+					<td><input type="password" name="passwd" id="secPW"></td>
+					<td><input type="button" value="Check password" onClick="checkPW()"></td>
 				</tr>
 				<tr>
 					<td><label>Country : </label></td>
-					<td><input type="text" name="country"></td>
+					<td><input type="text" name="country" id="country"></td>
 				</tr>
 				<tr>
 					<td><label>Age group : </label></td>
@@ -57,7 +92,7 @@
 					<td><input type="text" name="insid"></td>
 				</tr>
 			</table>
-			<input type="submit" value="Sign Up : )">
+			<input type="button" value="Sign Up : )" onClick="checkEmpty()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>
 	</body>
