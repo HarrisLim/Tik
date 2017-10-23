@@ -296,7 +296,7 @@ app.get('/process/showpost', function(req, res) {
 			 	}
 			 	// console.log('results --> ' + results[0].title);
 				console.log('*** rendered, /process/showpost ***');
-			 	console.log('resutls.commentlength ->' + results[0].comment);
+			 	console.log('results.commentlength ->' + results[0].comment);
 	 			res.end(html);
 			});
 		});
@@ -420,28 +420,19 @@ app.post('/process/signin',
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
-	var sql = 'SELECT m.nickname FROM members m';
-	conn.query(sql, function(err, results) {
-		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var nickLeng = results.length
-		var arrNick = [];
-		for(var i = 0; i < nickLeng; i++) {
-			arrNick.push(results[i].nickname);
-		}
-		console.log('arr -> ' + arrNick);
-		app.set('Nicklist', arrNick);
-		var context = {email : req.body.username, nickname : req.body.nickname, results : results, arrNick : arrNick};
-		req.app.render('signin', context, function(err, html) {
-			if(err) {
-				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
-				req.app.render('error', function(err, html) {
-					res.end(html);
-				});
-			}
-			console.log('*** rendered, /process/signin ***');
-			res.end(html);
-		});
-	});
+ 
+ 	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+ 	var context = {email : req.body.username, nickname : req.body.nickname};
+ 	req.app.render('signin', context, function(err, html) {
+ 		if(err) {
+ 			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+ 			req.app.render('error', function(err, html) {
+ 				res.end(html);
+ 			});
+ 		}
+ 		console.log('*** rendered, /process/signin ***');
+ 		res.end(html);
+ 	});
 });
 
 app.get('/process/mypost', function(req, res) {
@@ -592,15 +583,23 @@ app.get('/process/editinfo', function(req, res) {
 	console.log('req.user.email --> ' + req.user.email);
 	console.log('req.user.nickname --> ' + req.user.nickname);
 	console.log('Nicklist ->' + app.get('Nicklist'));
-
 	var memberEmail = req.user.email;
 	console.log("ageGV -> " + req.query.agegroup);
 	console.log('email -> ' + req.user.email);
-	sql = 'SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?';
+	sql = "SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?; SELECT m.nickname FROM members m";
 	conn.query(sql, memberEmail, function(err, results) {
+
+		var nickLeng = results[1].length;
+		var arrNick = [];
+		for(var i = 0; i < nickLeng; i++) {
+			arrNick.push(results[1][i].nickname);
+		}
+		console.log('arr -> ' + arrNick);
+		console.log('nickLeng ->' + nickLeng);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : app.get('Nicklist')};
+		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : arrNick};
 		app.set('postLeng', Object.keys(results).length);
+		console.log('results[1] -> ' + results[1][1].nickname);
 		req.app.render('editinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

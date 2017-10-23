@@ -5,71 +5,18 @@
 		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
 		<title>My info</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 		<script>
-
-			var checkNickBu = 0;
-
-			function cancelMembership() {
-				if(confirm("Really want to cancel your membership ?") == true) {
-					$("#cancelMember").submit();
-				} else {
-					return;
-				}
-			};
-
-			window.onload = function() {
-				var agegroupVal = document.getElementById('ages').value;
-				$('#ageSel').val(agegroupVal);
-			};
-
-			function duchNickname() {
-				var curNick = $('#nickname').val();
-				
-				var arrNick = [];
-				console.log("<%=arrNick%>")
-				arrNick = "<%=arrNick%>".split(',');
-
-				var nicks = arrNick;
-				if(curNick === "") {
-					alert('Fill box plz.');
-				} else if(nicks.indexOf(curNick) === -1) {
-					console.log('hi');
-					alert('OK.');
-					checkNickBu = 1;
-					console.log('checkNickBu-> ' + checkNickBu);
-
-				} else {
-					console.log('bye');
-					alert('already existed nickname.');
-					console.log('checkNickBu-> ' + checkNickBu);
-				}
-			};
-
-			function checkEmpty() {
-				var curNick = $('#nickname').val();
-				
-				if(curNick === "<%=curNickname%>") {
-					console.log('curNick -> ' + curNick);
-					console.log('curNickname -> ' + "<%=curNickname%>");
-					location.href="http://localhost:10468/process/myinfo";
-				} else if(checkNickBu === 0) {
-					alert('Push [Duplication check] button');
-				} else {
-					$("#editinfo").submit();
-				}
-			};
-
+			<%- include editinfo_control.ejs%>
 		</script>
 	</head>
 	<body>
 		<%
-			var curNickname = results[0].nickname;
-			var curEmail = results[0].email;
-			var curFlagpath = results[0].flagpath;
-			var curCountry = results[0].country;
-			var curAgegroup = results[0].agegroup;
-			var curInsid = results[0].insid;
+			var curNickname = results[0][0].nickname;
+			var curEmail = results[0][0].email;
+			var curFlagpath = results[0][0].flagpath;
+			var curCountry = results[0][0].country;
+			var curAgegroup = results[0][0].agegroup;
+			var curInsid = results[0][0].insid;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
@@ -78,18 +25,18 @@
 		<a href="/process/mypost">My post</a>
 		<br><br><a href='/process/myinfo'>My info</a>
 		<p>
-		<form name="frm" id="frm" action="/process/showpost" method="post">
-			<input type="hidden" name="postnum" id="postnum">
-			<input type="hidden" name="memberEmail" id="memberEmail">
+		<form action="/process/showpost" method="post">
 			<input type="hidden" id="ages" value="<%= curAgegroup%>">
 		</form>
+		<input type="hidden" value="test" id="tempNick">
+		<input type="hidden" value="firPW" id="tempFirPW">
+		<input type="hidden" value="secPW" id="tempSecPW">
 		<form method="post" action="/process/editinfo" id="editinfo">
 			<table>
 				<tr>
 					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname" value="<%= curNickname%>" id="nickname"> <- 이거 닉네임 중복확인해.</td>
-					<td><input type="button" value="Duplication check" onClick="duchNickname()"></td>
-					<td><input type="text" name="1" value="<%= arrNick%>"> <- 이거 닉네임 중복확인해.</td>
+					<td><input type="text" name="nickname" value="<%= curNickname%>" id="nickname" placeholder="can not fill some special character.">
+					<input type="button" value="Duplication check" onClick="duchNickname()"></td>
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>
@@ -101,11 +48,11 @@
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>
-					<td><input type="password"></td>
+					<td><input type="password" id="firPW"></td>
 				</tr>
 				<tr>
 					<td><label>Password (repeat) : </label></td>
-					<td><input type="password" name="passwd"></td>
+					<td><input type="password" name="passwd" id="secPW"><input type="button" value="Check password" onClick="checkPW()"></td>
 				</tr>
 				<tr>
 					<td><label>Country : </label></td>
