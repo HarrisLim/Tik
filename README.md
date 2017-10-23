@@ -32,6 +32,8 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * pagination
 * 댓글, 대댓글 기능
 * 회원탈퇴
+* nickname 특수문자 입력 불가
+* nickname, email 중복 검사
 * 
 
 ## TO DO

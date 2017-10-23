@@ -7,77 +7,7 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script>
-
-			function checkPW() {
-				var firPW = $("#firPW").val();
-				var secPW = $("#secPW").val();
-
-				if((firPW || secPW) === "") {
-					alert('Check password again.');
-				} else if(firPW === secPW) {
-					alert('Chceked password.');
-					$("#tempFirPW").val(firPW);
-					$("#tempSecPW").val(secPW);
-				} else {
-					alert('Check password again.');
-				}
-			};
-
-			function duchNickname() {
-				var arrNick = [];
-				console.log("<%=arrNick%>")
-				arrNick = "<%=arrNick%>".split(',');
-
-				var curNick = $('#nickname').val();
-				var nicks = arrNick;
-				if(checkStringFormat(curNick) === false){
-					alert('Sorry, you can not put in some special character.\nex -> !, %, $, (, ), {, }, &, etc..');
-				} else if(curNick === "") {
-					alert('Fill box plz.');
-				} else if(nicks.indexOf(curNick) === -1) {
-					console.log('hi');
-					alert('OK.');
-					$("#tempNick").val(curNick);
-				} else {
-					alert('already existed nickname.');
-				}
-			};
-
-			function checkEmpty() {
-				var curNick = $("#nickname").val();
-				var tempNick = $("#tempNick").val();
-				var tempFirPW = $("#tempFirPW").val();
-				var tempSecPW = $("#tempSecPW").val();
-				var firPW = $("#firPW").val();
-				var secPW = $("#secPW").val();
-				var email = $("#email").val();
-				var country = $("#country").val();
-
-				if(tempNick !== curNick) {
-					alert('Push [Duplication check] button');
-				} else if(firPW !== secPW || (firPW === "") || (secPW === "")) {
-					alert('Push [Check password] button.');
-				} else if(nickname && email && country) {
-					$("#signup").submit();
-				} else {
-					alert('you need to fill empty box except Instagram ID.')
-				}
-			};
-
-			<%# 특수문자 체크 함 %>
-			function checkStringFormat(string) { 
-				var stringRegx = /[~!@\#$%<>^&*\()\-=+_\’'"{}[\]; ]/gi; 
-				var isValid = true; 
-				if(stringRegx.test(string)) { 
-					isValid = false; 
-				} 
-				return isValid; 
-			};
-
-			$(function() {
-			});
-
-
+			<%- include signup_control.js%>
 		</script>
 	</head>
 	<body>
@@ -88,18 +18,19 @@
    	<br><br>
    	<input type="hidden" value="test" id="tempNick">
    	<input type="hidden" value="firPW" id="tempFirPW">
-   	<input type="hidden" value="secPW" id="tempSecPW">
+   	<input type="hidden" value="secPW" id="tempSecPW"> 
+   	<input type="hidden" value="testemail" id="tempEmail"> 
 		<form method="post" action="/process/signup" id="signup">
 			<table>
 				<tr>
 					<td><label>Nickname : </label></td>
 					<td><input type="text" name="nickname" id="nickname" placeholder="can not fill some special character."></td>
-					<td><input type="button" value="Duplication check" onClick="duchNickname()"></td>
+					<td><input type="button" value="Duplication check" onClick="checkNickname()"></td>
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>
 					<td><input type="email" name="email" id="email"></td>
-					<td><input type="button" value="Verify Email"></td>
+					<td><input type="button" value="Duplication check & Verify Email" onClick="checkEmail()"></td>
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>

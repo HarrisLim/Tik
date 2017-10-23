@@ -6,7 +6,7 @@
 		<title>My info</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script>
-			<%- include editinfo_control.ejs%>
+			<%- include editinfo_control.js%>
 		</script>
 	</head>
 	<body>
@@ -31,12 +31,13 @@
 		<input type="hidden" value="test" id="tempNick">
 		<input type="hidden" value="firPW" id="tempFirPW">
 		<input type="hidden" value="secPW" id="tempSecPW">
+		<input type="hidden" value="<%=arrNick%>">
 		<form method="post" action="/process/editinfo" id="editinfo">
 			<table>
 				<tr>
 					<td><label>Nickname : </label></td>
 					<td><input type="text" name="nickname" value="<%= curNickname%>" id="nickname" placeholder="can not fill some special character.">
-					<input type="button" value="Duplication check" onClick="duchNickname()"></td>
+					<input type="button" value="Duplication check" onClick="checkNickname()"></td>
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>

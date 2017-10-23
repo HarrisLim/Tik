@@ -657,27 +657,6 @@ app.get('/process/editpost', function(req, res) {
 	});
 });
 
-// 이것은 nickname 중복검사. 근데 signup get방식으로 할 수 있을 거 같아.
-// app.get('/process/duchnickname', function(req, res) {
-// 	console.log('dd');
-// 	var sql = 'SELECT m.nickname FROM members m';
-// 	conn.query(sql, function(err, results) {
-// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-// 		var context = {results : results};
-// 		req.app.render('signup', context, function(err, html) {
-// 			if(err) {
-// 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
-// 				req.app.render('error', function(err, html) {
-// 					res.end(html);
-// 				});
-// 			} else {
-// 				console.log('*** rendered, /process/duchnickname ***')
-// 				res.end(html);
-// 			}
-// 		})
-// 	});
-// });
-
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
@@ -705,19 +684,21 @@ app.post('/process/signup', function(req, res) {
 	});
 });
 
-
 app.get('/process/signup', function(req, res) {
 	console.log('signup 호출.');
-	var sql = 'SELECT m.nickname FROM members m';
+	var sql = 'SELECT * FROM members m';
 	conn.query(sql, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var nickLeng = results.length
 		var arrNick = [];
+		var arrEmail = [];
 		for(var i = 0; i < nickLeng; i++) {
 			arrNick.push(results[i].nickname);
+			arrEmail.push(results[i].email);
 		}
-		console.log('arr -> ' + arrNick);
-	 	var context = {results : results, arrNick : arrNick};
+		console.log('arrNick -> ' + arrNick);
+		console.log('arrEmail -> ' + arrEmail);
+	 	var context = {results : results, arrNick : arrNick, arrEmail : arrEmail};
 	 	req.app.render('signup', context, function(err, html) {
 	 		if(err) {
 	 			console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

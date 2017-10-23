@@ -26,7 +26,7 @@
 				}
 			};
 
-			function duchNickname() {
+			function checkNickname() {
 				var curNick = $('#nickname').val();
 				var existingNick = "<%= curNickname%>";
 
@@ -43,7 +43,7 @@
 					alert('OK.');
 					$("#tempNick").val(curNick);
 				} else {
-					alert('already existed nickname.');
+					alert('Nickname already exists.');
 				}
 				
 			};
