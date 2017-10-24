@@ -20,17 +20,6 @@ var hasher = bkfd2Password();
 var bodyParser = require('body-parser')
 // var flash = require('connect-flash');
 
-// MySQL 데이터베이스를 사용할 수 있는 mysql 모듈 불러오기
-var mysql = require('mysql');
-var conn = mysql.createConnection({
-	host : 'localhost',
-	user : 'root',
-	password : 'dksuek',
-	database : 'tik',
-	multipleStatements: true
-});
-conn.connect();
-
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
 
@@ -38,8 +27,15 @@ var expressErrorHandler = require('express-error-handler');
 var multer = require('multer');
 var fs = require('fs');
 
+// 이것은 mysql의 user, password와 nodemailer에 필요한 정보가 있는 JSON파일을 가져오는 것.
+var data = fs.readFileSync("../Tik's_secret/client_id.json");
+var jsonData = JSON.parse(data);
+
 // 클라이언트에서 ajax로 요청했을 때 CORS(다중 서버 접속) 지원
 var cors = require('cors');
+
+// nodemailer 사용
+var nodemailer = require('nodemailer');
 
 // 익스프레스 객체 생성
 var app = express();
@@ -63,6 +59,17 @@ app.use('/public', static(path.join(__dirname, 'public')));
 // cookie-parser 설정
 app.use(cookieParser());
 
+// MySQL 데이터베이스를 사용할 수 있는 mysql 모듈 불러오기
+var mysql = require('mysql');
+var conn = mysql.createConnection({
+	host : 'localhost',
+	user : jsonData.web.mysql.user,
+	password : jsonData.web.mysql.password,
+	database : 'tik',
+	multipleStatements: true
+});
+conn.connect();
+
 // session 설정
 app.use(session({
 	secret : 'my key',
@@ -71,8 +78,8 @@ app.use(session({
 	store: new MySQLStore({
 		host : 'localhost',
 		port : 3306,
-		user : 'root',
-		password : 'dksuek',
+		user : jsonData.web.mysql.user,
+		password : jsonData.web.mysql.password,
 		database : 'tik'
 	})
 }));
@@ -654,6 +661,34 @@ app.get('/process/editpost', function(req, res) {
 			console.log('*** rendered, /process/editpost ***');
 			res.end(html);
 		});
+	});
+});
+
+app.get('/process/email', function(req, res) {
+	// sendEmail();
+	var transporter = nodemailer.createTransport({
+		service : 'gmail',
+		auth : {
+			// type : 'OAuth2',
+			user : 'harris19921204@gmail.com',
+			pass : jsonData.web.gmail.password
+			// clientid : jsonData.web.client_id,
+			// clientSecret : jsonData.web.client_secret,
+			// refreshToken : jsonData.web.token.Refresh_token,
+			// accessToken : jsonData.web.token.Access_token,
+			// expires : 3600
+		}
+	});
+
+	var mailOptions = {
+		from : 'Harris_Lim <harris19921204@gmail.com>', // sender address
+		to : 'mklklm@naver.com', // list of receivers
+		subject : "Hi I'm harris (test)", // Subject line
+		html : "How's it going ? (test)" // html body
+	};
+
+	transporter.sendMail(mailOptions, function(error, info) {
+		console.log(error, info);
 	});
 });
 

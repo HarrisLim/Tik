@@ -69,6 +69,7 @@
 				} else if(arrEmail.indexOf(curEmail) === -1) {
 					console.log('hi');
 					alert('OK.');
+					$("#sendEmail").submit();
 					$("#tempEmail").val(curEmail);
 				} else if (curEmail === ""){
 					alert('Fill box plz.');
