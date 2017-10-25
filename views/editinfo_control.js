@@ -67,7 +67,7 @@
 
 			<%# 특수문자 체크 함수 %>
 			function checkStringFormat(string) { 
-				var stringRegx = /[~!@\#$%<>^&*\()\-=+\’'"{}[\]; ]/gi; 
+				var stringRegx = /[~!@\#$%<>^&*\()\-=+\’'"{}[\]; ]/gi;
 				var isValid = true; 
 				if(stringRegx.test(string)) { 
 					isValid = false; 

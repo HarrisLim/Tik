@@ -44,6 +44,7 @@
 				var secPW = $("#secPW").val();
 				var curEmail = $("#email").val();
 				var country = $("#country").val();
+				var agegroup = $("#agegroup").val();
 
 				if(tempNick !== curNick) {
 					alert('Push [Duplication check] button');
@@ -51,7 +52,12 @@
 					alert('Push [Duplication check & Verify Email] button.');
 				} else if(firPW !== secPW || (firPW === "") || (secPW === "")) {
 					alert('Push [Check password] button.');
+				} else if(country === "") {
+					alert('select [Country].');
+				} else if(agegroup === "") {
+					alert('select [Age group].');
 				} else if(nickname && country) {
+					alert('Plz check your email. I sent you the permission mail.');
 					$("#signup").submit();
 				} else {
 					alert('you need to fill empty box except Instagram ID.')
@@ -69,7 +75,6 @@
 				} else if(arrEmail.indexOf(curEmail) === -1) {
 					console.log('hi');
 					alert('OK.');
-					$("#sendEmail").submit();
 					$("#tempEmail").val(curEmail);
 				} else if (curEmail === ""){
 					alert('Fill box plz.');
@@ -80,13 +85,13 @@
 
 			<%# 특수문자 체크 함 %>
 			function checkStringFormat(string) { 
-				var stringRegx = /[~!@\#$%<>^&*\()\-=+_\’'"{}[\]; ]/gi; 
+				var stringRegx = /[~!@\#$%<>^&*\()\-=+\’'"{}[\]; ]/gi;
 				var isValid = true; 
 				if(stringRegx.test(string)) { 
 					isValid = false; 
 				} 
 				return isValid; 
-			};
+			}
 
 			$(function() {
 			});

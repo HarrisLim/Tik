@@ -29,8 +29,12 @@ var fs = require('fs');
 
 // 이것은 mysql의 user, password와 nodemailer에 필요한 정보가 있는 JSON파일을 가져오는 것.
 var data = fs.readFileSync("../Tik's_secret/client_id.json");
+var countryList = fs.readFileSync("./views/country.json");
 var jsonData = JSON.parse(data);
 
+var jsonCountry = JSON.parse(countryList);
+console.log('countryList -> ' + jsonCountry.Country[0]);
+console.log('countryList -> ' + jsonCountry.Country.length);
 // 클라이언트에서 ajax로 요청했을 때 CORS(다중 서버 접속) 지원
 var cors = require('cors');
 
@@ -666,31 +670,34 @@ app.get('/process/editpost', function(req, res) {
 
 app.get('/process/email', function(req, res) {
 	// sendEmail();
+	
+});
+function sendEmail(userEmail, userNick) {
 	var transporter = nodemailer.createTransport({
 		service : 'gmail',
 		auth : {
-			// type : 'OAuth2',
 			user : 'harris19921204@gmail.com',
 			pass : jsonData.web.gmail.password
-			// clientid : jsonData.web.client_id,
-			// clientSecret : jsonData.web.client_secret,
-			// refreshToken : jsonData.web.token.Refresh_token,
-			// accessToken : jsonData.web.token.Access_token,
-			// expires : 3600
 		}
 	});
 
 	var mailOptions = {
 		from : 'Harris_Lim <harris19921204@gmail.com>', // sender address
-		to : 'mklklm@naver.com', // list of receivers
-		subject : "Hi I'm harris (test)", // Subject line
-		html : "How's it going ? (test)" // html body
+		to : userEmail, // list of receivers
+		subject : "Hello, This is TiK(Travel in Korea).", // Subject line
+		html : `
+			<h1>Welcome to TiK. `+ userNick+ ` !</h1><br>
+
+			<h3>your submission has been received.<h3>
+
+			<h2>Click <a href='http://localhost:10468/process/main'>this link</a> to verify your email address.</h3>
+		` // html body
 	};
 
 	transporter.sendMail(mailOptions, function(error, info) {
 		console.log(error, info);
 	});
-});
+};
 
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
@@ -711,6 +718,7 @@ app.post('/process/signup', function(req, res) {
 			} else {
 				req.login(member, function(err) {
 					req.session.save(function() {
+						sendEmail(req.body.email, req.body.nickname);
 						res.redirect('/process/main');
 					});
 				});
@@ -724,7 +732,9 @@ app.get('/process/signup', function(req, res) {
 	var sql = 'SELECT * FROM members m';
 	conn.query(sql, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var nickLeng = results.length
+		var countryList = jsonCountry.Country;
+		var countryLeng = jsonCountry.Country.length;
+		var nickLeng = results.length;
 		var arrNick = [];
 		var arrEmail = [];
 		for(var i = 0; i < nickLeng; i++) {
@@ -733,7 +743,7 @@ app.get('/process/signup', function(req, res) {
 		}
 		console.log('arrNick -> ' + arrNick);
 		console.log('arrEmail -> ' + arrEmail);
-	 	var context = {results : results, arrNick : arrNick, arrEmail : arrEmail};
+	 	var context = {results : results, arrNick : arrNick, arrEmail : arrEmail, countryList : countryList, countryLeng : countryLeng};
 	 	req.app.render('signup', context, function(err, html) {
 	 		if(err) {
 	 			console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

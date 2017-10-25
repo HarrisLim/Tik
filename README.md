@@ -48,15 +48,12 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	3. 작게만 나와서 문의할 수 있게.(체크박스로 몇 명, 몇 박, 호텔 or 게스트하우스, 등등) ex) 페이스북에서 에신저처럼
 
 * `signup`<br>
-	1. 이메일 허가<br>
-	2. 패스워드 두 칸에 있는 것이 같은지 확인하는 버튼 기능<br>
-	4. 빈 칸이 있는데 signup 버튼을 누르면 빈 칸을 채우라는 alert창<br>
-	6. nickname, email 중복검사.
+	1. sendEmail() 함수에서 메일 보내는 거에 로고 만들면 welcome 위에 추가하자.
 
-* `signin`
+* `signin`<br>
 	3. 이메일 틀리거나 비밀번호 틀리면 alert창.
 
-* `forgetemail, forgetpassword (Email이나 Password를 찾는 라우터)`
+* `forgetemail, forgetpassword (Email이나 Password를 찾는 라우터)`<br>
 
 * `addpost`<br>
 	1. 해쉬태그할 수 있는 공간 추가. - Tistory처럼 or 인스타처럼 그냥 #을 쓰면 해쉬태그로 변경.
@@ -69,18 +66,14 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	1. 인스타그램 아이디를 인스타 app 이미지로 가져와서 그것을 누르면 사용자의 id로 가게.
 	5. 
 
-* `mypost (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`
+* `mypost (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`<br>
 
-* `myinfo (내 정보)`
-	1. 여기도 signup과 마찬가지로 ageGroup에 있는 라디오버튼을 누르면 변경되게 하자 그리고 변경하는 것이니까 db의 값을 가져와서 나이대에 맞는 곳에 체크되어 있게 하자.
-	2. *****말고 password를 표현하는 다른 방법 생각해봐.
-	3. change own info를 누르면 password 확인하고 editinfo 페이지로 갈 수 있게 만들자. (passport를 이용해서 password비교해야 하는 것 같은데 어려워.)
-	4. nickname 변경할 시에 중복확인.
+* `myinfo (내 정보)`<br>
+	2. *****말고 password를 표현하는 다른 방법 생각해봐. (무엇을 말하는 건지 모르겠음 . - 2017.10.25)
 
-* `editpost (글 정보 변경)`
-	1. update를 누르면 confirm(ok or cancle)창 뜨게 하자.
+* `editpost (글 정보 변경)`<br>
 
-* `editaccount (계정 정보 변경)`
+* `editaccount (계정 정보 변경)`<br>
 
 * `MySQL (MySQL database)`<br>
 
