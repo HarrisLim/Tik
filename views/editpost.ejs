@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-		<title>My info</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+		<%- include header.ejs %>
 		<script>
 			window.onload = function() {
 			}
@@ -23,7 +19,6 @@
 	<body>
 		<%
 			var curHowmanydays = results.howmanydays;
-			var curFlagpath = results.flagpath;
 			var curNickname = results.nickname;
 			var curInsid = results.insid;
 			var curTitle = results.title;
@@ -35,6 +30,7 @@
 			var curCreated_at = results.created_at;
 			var curUpdated_at = results.updated_at;
 			var curPostnum = results.postnum;
+			var curTld = results.tld;
 		%>
 			<%# 이것은 date format을 바꿔주는 것. %>
 		<%
@@ -53,7 +49,7 @@
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Update post !</h1>
-		<h1> Written by <%= curFlagpath%> <%= curNickname%> !</h1> <%# flagpath와 nickname은 members(db) data %>
+		<h1> Written by <i class="<%=curTld%> flag"></i><%= curNickname%> !</h1>
 	   	<br><br>
 	   	<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">

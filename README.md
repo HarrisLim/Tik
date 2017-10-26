@@ -34,7 +34,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 * 회원탈퇴
 * nickname 특수문자 입력 불가
 * nickname, email 중복 검사
-* 회원가입시 이메일 인증 기능
+* country select box에 flag 추가.
 * 
 
 ## TO DO

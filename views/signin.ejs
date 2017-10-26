@@ -1,27 +1,51 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+		<%- include header.ejs %>
+
+		<script>
+
+			function checkEmpty() {
+				var email = $('#email').val();
+				var PW = $('#PW').val();
+				
+				
+				if((email && PW) === "") {
+					alert('Fill your Email or Password.');
+				} else {
+
+					console.log('123 => ' + $("#getWrong").val());
+					$('#signin').submit();
+
+				}
+			};
+
+		</script>
 		<title>Sign in</title>
 	</head>
 	<body>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Sign in !</h1>
+			<input type="text" value="<%xEmail%>" id="getWrong">
 		<br>
-		<form method="post" action="/process/signin">
+		<form method="post" action="/process/signin" id="signin">
 			<table>
 				<tr>
 					<td><label>Email : </label></td>
-					<td><input type="email" name="username"></td> <%# name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. %>
+					<td><input type="email" name="username" id="email"></td> <%# name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. %>
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>
-					<td><input type="password" name="password"></td> <%# name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. %>
+					<td><input type="password" name="password" id="PW"></td> <%# name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. %>
 				</tr>
 			</table>
-			<input type="submit" value="Sign in : )">
+			<% console.log(' email이 없어 ? ' + xEmail);
+			console.log(' pw가 없어 ? ' + xPW);
+			signinHelper();
+			%>
+
+			<input type="button" value="Sign in : )" onClick="checkEmpty()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>
 	</body>

@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-		<title>My info</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<%- include header.ejs %>
 		<script>
 			<%- include editinfo_control.js%>
 		</script>
+
+		<style>
+			td input {
+				width : 200px;
+			}
+		</style>
+		<title>My info</title>
 	</head>
 	<body>
 		<%
 			var curNickname = results[0][0].nickname;
 			var curEmail = results[0][0].email;
-			var curFlagpath = results[0][0].flagpath;
 			var curCountry = results[0][0].country;
 			var curAgegroup = results[0][0].agegroup;
 			var curInsid = results[0][0].insid;
+			var curTld = results[0][0].tld;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<br> <h2>Hello. <%= curNickname%> !</h2>
+		<br> <h2>Hello. <i class="<%=curTld%> flag"></i><%= curNickname%> !</h2>
 		<br><br>
 		<a href="/process/mypost">My post</a>
 		<br><br><a href='/process/myinfo'>My info</a>
@@ -62,18 +66,23 @@
 				<tr>
 					<td><label>Age group : </label></td>
 					<td>
-						<select name="agegroup" id="ageSel">
-							<option value="10s"> 10s</option>
-							<option value="20s"> 20s</option>
-							<option value="30s"> 30s</option>
-							<option value="40s"> 40s</option>
-							<option value="50s"> 50s</option>
-							<option value="60s"> 60s</option>
-							<option value="70s"> 70s</option>
-							<option value="80s"> 80s</option>
-							<option value="90s"> 90s</option>
-							<option value="100s"> 100s</option>
-						</select>
+						<div class="ui fluid search selection dropdown">
+							<input type="hidden" name="agegroup">
+							<i class="dropdown icon"></i>
+							<div class="default text" id="ageSel">Select Age group</div>
+							<div class="menu">
+								<div class="item" data-value="10s">10s</div>
+								<div class="item" data-value="20s">20s</div>
+								<div class="item" data-value="30s">30s</div>
+								<div class="item" data-value="40s">40s</div>
+								<div class="item" data-value="50s">50s</div>
+								<div class="item" data-value="60s">60s</div>
+								<div class="item" data-value="70s">70s</div>
+								<div class="item" data-value="80s">80s</div>
+								<div class="item" data-value="90s">90s</div>
+								<div class="item" data-value="100s">100s</div>
+							</div>
+						</div>
 					</td>
 				</tr>
 				<tr>

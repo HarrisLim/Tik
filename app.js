@@ -29,12 +29,8 @@ var fs = require('fs');
 
 // 이것은 mysql의 user, password와 nodemailer에 필요한 정보가 있는 JSON파일을 가져오는 것.
 var data = fs.readFileSync("../Tik's_secret/client_id.json");
-var countryList = fs.readFileSync("./views/country.json");
 var jsonData = JSON.parse(data);
 
-var jsonCountry = JSON.parse(countryList);
-console.log('countryList -> ' + jsonCountry.Country[0]);
-console.log('countryList -> ' + jsonCountry.Country.length);
 // 클라이언트에서 ajax로 요청했을 때 CORS(다중 서버 접속) 지원
 var cors = require('cors');
 
@@ -58,7 +54,7 @@ app.use(bodyParser.urlencoded({ extended : false }));
 // body-parser를 사용해 application/json 파싱
 app.use(bodyParser.json());
 
-app.use('/public', static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, './')));
 
 // cookie-parser 설정
 app.use(cookieParser());
@@ -120,7 +116,7 @@ app.get('/process/main', function(req, res){
 
 app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // Signin
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -128,8 +124,9 @@ app.get('/process/main/:page', function(req, res){
 			app.set('curPage', page);
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
+			var signTld = req.user.tld;
 
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page};
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -146,7 +143,7 @@ app.get('/process/main/:page', function(req, res){
 		});
 	} else { // not Signin
 
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -166,7 +163,6 @@ app.get('/process/main/:page', function(req, res){
 		});
 	}
 });
-
 
 app.post('/process/addcomment', function(req, res) {
 	console.log('nickname ->' + req.body.nickname);
@@ -213,6 +209,16 @@ app.post('/process/updatecomment', function(req, res) {
 app.locals.maxHelper = function(arr) { // showpost에서 grconum의 max값을 구하기 위해.
 	var maxarr = Math.max.apply(null, arr);
 	return maxarr;
+};
+
+app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
+	var xEmail = app.get('xEmail');
+	var xPW = app.get('xPW');
+	console.log('xEmail -> ' + xEmail);
+	console.log('xPW -> ' + xPW);
+	if((xEmail === "xEmail") || (xPW === "xPW")) {
+		alert('이메일이나 패스워드 틀렸어 !! ');
+	}
 };
 
 app.post('/process/addsecomment', function(req, res) {
@@ -269,13 +275,14 @@ app.get('/process/showpost', function(req, res) {
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
+	 	console.log('curTld -> ' + req.user.tld);
 		
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 			var leng = Object.keys(results).length -1;
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, notSign : notSign, leng : leng};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, leng : leng};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -293,7 +300,7 @@ app.get('/process/showpost', function(req, res) {
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var notSign = true;
-	 	var sql = 'SELECT m.id, m.flagpath, m.nickname, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -399,7 +406,6 @@ passport.use(new LocalStrategy( //{passReqToCallback : true},
 		conn.query(sql, paramEmail, function(err, results) {
 			console.log(results);
 			if(err) {
-				console.log('err 잡았나 ?'); // email을 잘못쓰면 err로 잡아서 보내고 싶은데 안잡히고 Cannot read property 'salt' of undefined라는 에러만.
 				return done('There is no member.');
 			}
 			if(results[0] !== undefined){
@@ -409,12 +415,14 @@ passport.use(new LocalStrategy( //{passReqToCallback : true},
 						console.log('LocalStrategy', member);
 						return done(null, member); // 이거면 serializeUser가 실행됨.
 					} else {
-						console.log('비밀번호가 다릅니다.');
+						console.log('비밀번호를 확인하십시오..');
+						app.set('xPW', "xPW");
 						return done(null, false); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
 				console.log("I can't find your email.");
+				app.set('xEmail', "xEmail");
 				return done(null, false);
 			}
 		});
@@ -431,9 +439,13 @@ app.post('/process/signin',
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
- 
+ 	
+	var xEmail = app.get('xEmail');
+	var xPW = app.get('xPW');
+	console.log(xEmail, xPW);
+
  	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
- 	var context = {email : req.body.username, nickname : req.body.nickname};
+ 	var context = {email : req.body.username, nickname : req.body.nickname, xEmail : xEmail, xPW : xPW};
  	req.app.render('signin', context, function(err, html) {
  		if(err) {
  			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -457,7 +469,7 @@ app.get('/process/mypost/:page', function(req, res) {
 		console.log('req.user.nickname --> ' + req.user.nickname);
 
 		var memberId = req.user.id;
-		sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.flagpath FROM postings p JOIN members m ON m.id = p.members_id AND members_id=? ORDER BY p.postnum DESC';
+		sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname FROM postings p JOIN members m ON m.id = p.members_id AND members_id=? ORDER BY p.postnum DESC';
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -543,7 +555,6 @@ app.post('/process/cancelmember', function(req, res) {
 		email : null,
 		passwd : null,
 		salt : null,
-		flagpath : null,
 		country : null,
 		agegroup : null,
 		insid : null,
@@ -651,7 +662,7 @@ app.post('/process/editpost', function(req, res) {
 
 app.get('/process/editpost', function(req, res) {
 	console.log('this is curPostnum --> ' + app.get('curPostnum'));
-	var sql = 'SELECT m.flagpath, m.nickname, m.insid, p.created_at, p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
+	var sql = 'SELECT m.nickname, m.tld, m.insid, p.created_at, p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	conn.query(sql, app.get('curPostnum'), function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results[0]};
@@ -707,9 +718,11 @@ app.post('/process/signup', function(req, res) {
 			passwd : hash,
 			salt : salt,
 			country : req.body.country,
+			tld : req.body.tld,
 			agegroup : req.body.agegroup,
 			insid : req.body.insid
 		};
+
 		var sql = 'INSERT INTO members SET ?, created_at = now()';
 		conn.query(sql, member, function(err, results) {
 			if(err) {
@@ -718,7 +731,7 @@ app.post('/process/signup', function(req, res) {
 			} else {
 				req.login(member, function(err) {
 					req.session.save(function() {
-						sendEmail(req.body.email, req.body.nickname);
+						// sendEmail(req.body.email, req.body.nickname);
 						res.redirect('/process/main');
 					});
 				});
@@ -732,8 +745,6 @@ app.get('/process/signup', function(req, res) {
 	var sql = 'SELECT * FROM members m';
 	conn.query(sql, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var countryList = jsonCountry.Country;
-		var countryLeng = jsonCountry.Country.length;
 		var nickLeng = results.length;
 		var arrNick = [];
 		var arrEmail = [];
@@ -743,7 +754,7 @@ app.get('/process/signup', function(req, res) {
 		}
 		console.log('arrNick -> ' + arrNick);
 		console.log('arrEmail -> ' + arrEmail);
-	 	var context = {results : results, arrNick : arrNick, arrEmail : arrEmail, countryList : countryList, countryLeng : countryLeng};
+	 	var context = {results : results, arrNick : arrNick, arrEmail : arrEmail};
 	 	req.app.render('signup', context, function(err, html) {
 	 		if(err) {
 	 			console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

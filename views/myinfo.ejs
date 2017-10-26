@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-		<title>My info</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+		<%- include header.ejs %>
 		<script>
 			
 		</script>
@@ -15,14 +11,14 @@
 			var curNickname = results.nickname;
 			var curEmail = results.email;
 			var curPassword = '';
-			var curFlagpath = results.flagpath;
+			var curTld = results.tld;
 			var curCountry = results.country;
 			var curAgegroup = results.agegroup;
-			var curInsid = results.insid 
+			var curInsid = results.insid;
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<br> <h2>Hello. <%= curNickname%> !</h2>
+		<br> <h2>Hello. <i class="<%=curTld%> flag"></i><%= curNickname%> !</h2>
 		<br><br>
 		<a href="/process/mypost">My post</a>
 		<br><br><a href='/process/myinfo'>My info</a>
@@ -35,19 +31,16 @@
 				<td><label>Email : <%= curEmail%></label></td>
 			</tr>
 			<tr>
-				<td><label>Password : ********</label></td>
-			</tr>
-			<tr>
-				<td><label>Country : <%= curCountry%></label></td>
+				<td><label>Country : <i class="<%=curTld%> flag"></i><%= curCountry%></label></td>
 			</tr>
 			<tr>
 				<td><label>Age group : <%= curAgegroup%></label></td>
 			</tr>
 			<tr>
-				<td><label>Instagram ID : <%= curInsid%></label></td>
+				<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid%></a></label></td>
 			</tr>
 		</table>
-		<p>
+		<p><br>
 		<a href="/process/editinfo">Change own info</a>
 	</body>
 </html>

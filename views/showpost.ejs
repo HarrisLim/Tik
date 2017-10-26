@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+		<%- include header.ejs %>
 		<title>Show post</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 		<script>
 		function button_delPost() {
 			if(confirm("Really want to delete this post ?") == true) {
@@ -87,7 +84,6 @@
 	<body>
 		<%
 			var curId = results[0].id;
-			var curFlagpath = results[0].flagpath;
 			var curNickname = results[0].nickname;
 			var curInsid = results[0].insid;
 			var curCreated_at = results[0].created_at;
@@ -102,15 +98,16 @@
 			var curPostnum = results[0].postnum;
 			var curP_MembersId = results[0].members_id;
 			var curPostings_postnum = results[0].postings_postnum;
+			var curTld = results[0].tld;
 			var commLeng = 0;
 		%>
 		<% if(notSign === false) {%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <%=signNick%>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <i class="<%=signTld%> flag"></i><%=signNick%>
 		<% } else { %>
 			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<% } %>
 		<hr>
-		<h1>Written by <%= curFlagpath%><%= curNickname%> !</h1>
+		<h1>Written by <i class="<%=curTld%> flag"></i><%= curNickname%> !</h1>
 		<% if(curSigninId !== false) { %>
 			<% if(curId == curSigninId) { %>
 				<input type="button" value="Edit" onClick="button_edit();">
@@ -177,7 +174,7 @@
 					<td><%= curHashTag%></td>
 				</tr>
 				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
+					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
 				</tr>
 			</table>
 		<p>
@@ -193,6 +190,7 @@
 			var curDepth = results[i].depth;
 			var curGroupnum = results[i].groupnum;
 			var curGrconum = results[i].grconum;
+			var curCTld = results[i].c_tld;
 
 			if(results[0].comment !== null) {%> 
 
@@ -204,7 +202,7 @@
 				</form>
 				<form method="post" action="/process/updatecomment" id="updaSubmit<%=i%>">
 					<input type="hidden" name="updaC_id" value="<%=curC_id%>">
-					<%= curFlagpath%><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
+					<i class="<%=curCTld%> flag"></i><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 					<input type="text" name="updacomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
 					<div style="float:right">
 							<%# reply button %>
@@ -242,7 +240,7 @@
 				</form>
 				<form method="post" action="/process/updatesecomment" id="updaSeSubmit<%=i%>">
 					<input type="hidden" name="updaSeC_id" value="<%=curC_id%>">
-					&emsp;&emsp;<%= curFlagpath%><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
+					&emsp;&emsp;<i class="<%=curCTld%> flag"></i><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 					<input type="text" name="updaSecomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
 					<div style="float:right">
 							<%# reply button %>
@@ -281,7 +279,7 @@
 
 					<div id='SC<%=i%>' style="display:none; padding-top:15px" > 
 						<form method="post" action="/process/addsecomment">
-							<%= curFlagpath%><%= signNick%> : 
+							<i class="<%=signTld%> flag"></i><%= signNick%> : 
 							<textarea name="secomment"></textarea>
 							<input type="hidden" name="nickname" value="<%= signNick%>">
 							<input type="hidden" name="postnum" value="<%= curPostnum%>">
@@ -321,7 +319,7 @@
 				</tr>
 				<tr>
 					<% if(notSign === false) { %>
-						<td><%= curFlagpath%><%= signNick%> : </td>
+						<td><i class="<%=signTld%> flag"></i><%= signNick%> : </td>
 					<% } %>
 					<td><textarea name="comment"></textarea></td>
 				</tr>
