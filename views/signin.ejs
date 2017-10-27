@@ -8,18 +8,21 @@
 			function checkEmpty() {
 				var email = $('#email').val();
 				var PW = $('#PW').val();
-				
+				if("<%xEmail%>" === "xEmail"){
+					alert('틀림..')
+				}
 				
 				if((email && PW) === "") {
 					alert('Fill your Email or Password.');
 				} else {
 
 					console.log('123 => ' + $("#getWrong").val());
-					$('#signin').submit();
+								
 
+					$('#signin').submit();
+					console.log("<%signinHelper()%>");
 				}
 			};
-
 		</script>
 		<title>Sign in</title>
 	</head>
@@ -27,7 +30,7 @@
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Sign in !</h1>
-			<input type="text" value="<%xEmail%>" id="getWrong">
+			<input type="text" value="<%signinHelper()%>" id="getWrong">
 		<br>
 		<form method="post" action="/process/signin" id="signin">
 			<table>
@@ -42,9 +45,7 @@
 			</table>
 			<% console.log(' email이 없어 ? ' + xEmail);
 			console.log(' pw가 없어 ? ' + xPW);
-			signinHelper();
 			%>
-
 			<input type="button" value="Sign in : )" onClick="checkEmpty()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>

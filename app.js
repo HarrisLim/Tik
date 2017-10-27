@@ -18,7 +18,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var hasher = bkfd2Password();
 var bodyParser = require('body-parser')
-// var flash = require('connect-flash');
+var flash = require('connect-flash');
 
 // 오류 핸들러 사용
 var expressErrorHandler = require('express-error-handler');
@@ -70,6 +70,8 @@ var conn = mysql.createConnection({
 });
 conn.connect();
 
+
+
 // session 설정
 app.use(session({
 	secret : 'my key',
@@ -84,7 +86,7 @@ app.use(session({
 	})
 }));
 
-// app.use(flash());
+app.use(flash());
 app.use(passport.initialize());		// 패스포트 초기화하여 사용
 app.use(passport.session());		// 패스포트를 사용할 때 session을 사용한다.
 
@@ -171,6 +173,7 @@ app.post('/process/addcomment', function(req, res) {
 	var comment = {
 		c_nickname : req.body.nickname,
 		comment : req.body.comment,
+		c_tld : req.body.tld,
 		postings_postnum : req.body.postnum,
 		c_members_id : app.get('curId'),
 		members_id : app.get('curId'),
@@ -217,7 +220,8 @@ app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
 	console.log('xEmail -> ' + xEmail);
 	console.log('xPW -> ' + xPW);
 	if((xEmail === "xEmail") || (xPW === "xPW")) {
-		alert('이메일이나 패스워드 틀렸어 !! ');
+		console.log('이메일이나 패스워드 틀렸어 !! ');
+		return "hihihi";
 	}
 };
 
@@ -398,8 +402,8 @@ passport.deserializeUser(function(id, done) {
 	});
 });
 
-passport.use(new LocalStrategy( //{passReqToCallback : true},
-	function(username, password, done) {
+passport.use(new LocalStrategy( {passReqToCallback : true},
+	function(req, username, password, done) {
 		var paramEmail = username;
 		var paramPassword = password;
 		var sql = 'SELECT * FROM members WHERE email=?';
@@ -415,15 +419,17 @@ passport.use(new LocalStrategy( //{passReqToCallback : true},
 						console.log('LocalStrategy', member);
 						return done(null, member); // 이거면 serializeUser가 실행됨.
 					} else {
-						console.log('비밀번호를 확인하십시오..');
+						// console.log('비밀번호를 확인하십시오..');
 						app.set('xPW', "xPW");
-						return done(null, false); // 이거면 deserializeUser가 실행됨.
+						return done(null, false, {message : "비밀번호를 확인하십시오..(in flash)"}); // 이거면 deserializeUser가 실행됨.
+						// return done(null, false, req.flash('signinmessage', '비밀번호를 확인하십시오..(in flash)')); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
-				console.log("I can't find your email.");
+				// console.log("I can't find your email.");
 				app.set('xEmail', "xEmail");
-				return done(null, false);
+				return done(null, false, {message : "I can't find your email.(in flash)"});
+				// return done(null, false, req.flash('signinmessage', '이메일을 확인하세요..(in flash)')); // 이거면 deserializeUser가 실행됨.
 			}
 		});
 	}
@@ -433,13 +439,14 @@ app.post('/process/signin',
 	passport.authenticate('local', { 
 		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
-        failureFlash: false 
-    })
+        failureFlash: true
+        // failuremessage : 'HiHiHiHiHiHiHi'
+        // successFlash : 'Welcome !Welcome !Welcome !Welcome !Welcome !Welcome !',
+    })    
 );
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
- 	
 	var xEmail = app.get('xEmail');
 	var xPW = app.get('xPW');
 	console.log(xEmail, xPW);
@@ -454,7 +461,13 @@ app.get('/process/signin', function(req, res) {
  			});
  		}
  		console.log('*** rendered, /process/signin ***');
- 		res.end(html);
+ 		// res.render('process/signin',{loginError:req.flash('loginError')});
+ 		// req.flash('signinmessage');
+ 		res.render('login', {
+ 			message : req.flash('error')
+ 		})
+			
+			// res.end(html);
  	});
 });
 

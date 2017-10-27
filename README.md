@@ -2,7 +2,7 @@
 
 외국인을 위한 무료 여행플래너. 무료로 여행 플랜을 세워주지만, 후기를 올려주는 것을 약속한다.<br> 예약같은 것은 하지 않고 정보만 알려준다. 플랜 A와 플랜 B, 2가지를 준다.
 
-## What's different from other travel planner
+## What's different from other travel planners
 
 다른 여행 플래너는 항공, 호텔, 패키지 여행, 가이드를 돈읇 받고 예약해주거나 수수료를 받지만,<br>
 Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여행 후기만으로 한국 여행 플랜을 받을 수 있다.
@@ -14,7 +14,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 ## Built With
 
 * [HTML](https://www.w3.org/html/)
-* [CSS](https://www.w3.org/Style/CSS/) (Framework - [Bootstrap](https://getbootstrap.com/))
+* [CSS](https://www.w3.org/Style/CSS/) (Framework - [Semantic-UI](https://semantic-ui.com/))
 * [Javascript](https://www.javascript.com/) (Library - [jQuery](https://jquery.com/), Framework - [Vue.js](https://vuejs.org/))
 * [node.js](https://nodejs.org/en/) - Server-side
 * [EJS](http://www.embeddedjs.com/) - Javascript View Template
@@ -63,7 +63,6 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 	6. 달력으로 며칠부터 며칠까지인지 받아서 DB에 저장.
 
 * `showpost (main에서 글 목록 중 글을 클릭했을 때 보여주는 라우터)`<br>
-	1. 인스타그램 아이디를 인스타 app 이미지로 가져와서 그것을 누르면 사용자의 id로 가게.
 	5. 
 
 * `mypost (로그인하고 내가 쓴 글이나 나의 정보를 수정할 수 있는 라우터)`<br>
@@ -85,6 +84,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 비용없이 여�
 1. 댓글 삭제하는 것. 댓글의 id값을 각각 받아서 지워야되는데 showpost에서 하나하나 받기가 어렵다.
 2. 댓글에 대댓글 다는데 하나의 댓글에 대댓글을 여러개 남기면 왜 보여지는 건 대댓글 수에 맞춰서 댓글이 하나씩 다 나올까. 
 3. 대댓글 - 하나의 테이블로 groupnum과 grconum을 주면서 간단하게 구현.
+4. 
 
 ## Author
 
