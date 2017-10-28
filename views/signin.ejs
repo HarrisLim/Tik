@@ -11,11 +11,12 @@
 				if("<%xEmail%>" === "xEmail"){
 					alert('틀림..')
 				}
-				
+
+
 				if((email && PW) === "") {
 					alert('Fill your Email or Password.');
 				} else {
-
+					$("#getWrong").val(<%name%>);
 					console.log('123 => ' + $("#getWrong").val());
 								
 
@@ -30,7 +31,7 @@
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
 		<h1>Sign in !</h1>
-			<input type="text" value="<%signinHelper()%>" id="getWrong">
+			<input type="text" value="<%name%>" id="getWrong">
 		<br>
 		<form method="post" action="/process/signin" id="signin">
 			<table>
