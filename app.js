@@ -111,22 +111,6 @@ var upload = multer({
 	}
 });
 
-///////
-
-app.get('/',function(req,res){
-  req.flash('name','alert1111');
-  res.send('hello flash');
-});
-
-app.get('/alert',function(req,res){
-  res.render('flash',{name:req.flash('name')});
-});
-app.get('/other',function(req,res){
-  res.render('flash',{name:req.flash('name')});
-});
-
-///////
-
 app.get('/process/main', function(req, res){
 	res.redirect('/process/main/1');
 });
@@ -229,16 +213,16 @@ app.locals.maxHelper = function(arr) { // showpost에서 grconum의 max값을 �
 	return maxarr;
 };
 
-app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
-	var xEmail = app.get('xEmail');
-	var xPW = app.get('xPW');
-	console.log('xEmail -> ' + xEmail);
-	console.log('xPW -> ' + xPW);
-	if((xEmail === "xEmail") || (xPW === "xPW")) {
-		console.log('이메일이나 패스워드 틀렸어 !! ');
-		return "hihihi";
-	}
-};
+// app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
+// 	var xEmail = app.get('xEmail');
+// 	var xPW = app.get('xPW');
+// 	console.log('xEmail -> ' + xEmail);
+// 	console.log('xPW -> ' + xPW);
+// 	if((xEmail === "xEmail") || (xPW === "xPW")) {
+// 		console.log('이메일이나 패스워드 틀렸어 !! ');
+// 		return "hihihi";
+// 	}
+// };
 
 app.post('/process/addsecomment', function(req, res) {
 	var curDepth = parseInt(req.body.curDepth);
@@ -250,6 +234,7 @@ app.post('/process/addsecomment', function(req, res) {
 	var comment = {
 		c_nickname : req.body.nickname,
 		comment : req.body.secomment,
+		c_tld : req.body.tld,
 		postings_postnum : req.body.postnum,
 		c_members_id : app.get('curId'),
 		members_id : app.get('curId'),
@@ -437,14 +422,16 @@ passport.use(new LocalStrategy(  {passReqToCallback : true},
 						// console.log('비밀번호를 확인하십시오..');
 						app.set('xPW', "xPW");
 						// return done(null, false, {message : "비밀번호를 확인하십시오..(in flash)"}); // 이거면 deserializeUser가 실행됨.
-						return done(null, false, req.flash('signinmessage', '비밀번호를 확인하십시오..(in flash)')); // 이거면 deserializeUser가 실행됨.
+						// return done(null, false, req.flash('signinmessage', '비밀번호를 확인하십시오..(in flash)')); // 이거면 deserializeUser가 실행됨.
+						return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.')); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
 				// console.log("I can't find your email.");
 				app.set('xEmail', "xEmail");
 				// return done(null, false, {message : "I can't find your email.(in flash)"});
-				return done(null, false, req.flash('signinmessage', '이메일을 확인하세요..(in flash)')); // 이거면 deserializeUser가 실행됨.
+				// return done(null, false, req.flash('signinmessage', '이메일을 확인하세요..(in flash)')); // 이거면 deserializeUser가 실행됨.
+				return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.')); // 이거면 deserializeUser가 실행됨.
 			}
 		});
 	}
@@ -454,20 +441,33 @@ app.post('/process/signin',
 	passport.authenticate('local', { 
 		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
-        failureFlash: true
+        failureFlash: true,
         // failuremessage : 'HiHiHiHiHiHiHi'
         // successFlash : 'Welcome !Welcome !Welcome !Welcome !Welcome !Welcome !',
     })    
 );
 
+///////
+
+app.get('/',function(req,res){
+  req.flash('name','alert1111');
+  res.send('hello flash');
+});
+
+app.get('/alert',function(req,res){
+  res.render('signin',{signinmessage:req.flash('signinmessage')});
+});
+app.get('/other',function(req,res){
+  res.render('flash',{name:req.flash('name')});
+});
+
+///////
+
+
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
-	var xEmail = app.get('xEmail');
-	var xPW = app.get('xPW');
-	console.log(xEmail, xPW);
-
  	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
- 	var context = {email : req.body.username, nickname : req.body.nickname, xEmail : xEmail, xPW : xPW, name : req.flash('signinmessage')};
+ 	var context = {email : req.body.username, nickname : req.body.nickname, signinmessage : req.flash('signinmessage')};
  	req.app.render('signin', context, function(err, html) {
  		if(err) {
  			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -476,12 +476,7 @@ app.get('/process/signin', function(req, res) {
  			});
  		}
  		console.log('*** rendered, /process/signin ***');
- 		// res.render('process/signin',{loginError:req.flash('loginError')});
- 		// req.flash('signinmessage');
- 		// res.render('login', {
- 		// 	message : req.flash('error')
- 		// })
-			res.end(html);
+		res.end(html);
  	});
 });
 
@@ -706,10 +701,6 @@ app.get('/process/editpost', function(req, res) {
 	});
 });
 
-app.get('/process/email', function(req, res) {
-	// sendEmail();
-	
-});
 function sendEmail(userEmail, userNick) {
 	var transporter = nodemailer.createTransport({
 		service : 'gmail',

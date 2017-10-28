@@ -8,30 +8,22 @@
 			function checkEmpty() {
 				var email = $('#email').val();
 				var PW = $('#PW').val();
-				if("<%xEmail%>" === "xEmail"){
-					alert('틀림..')
-				}
-
 
 				if((email && PW) === "") {
 					alert('Fill your Email or Password.');
 				} else {
-					$("#getWrong").val(<%name%>);
-					console.log('123 => ' + $("#getWrong").val());
-								
 
 					$('#signin').submit();
-					console.log("<%signinHelper()%>");
 				}
 			};
+
 		</script>
 		<title>Sign in</title>
 	</head>
 	<body>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<h1>Sign in !</h1>
-			<input type="text" value="<%name%>" id="getWrong">
+		<h1 id="xxx">Sign in !</h1>
 		<br>
 		<form method="post" action="/process/signin" id="signin">
 			<table>
@@ -44,9 +36,7 @@
 					<td><input type="password" name="password" id="PW"></td> <%# name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. %>
 				</tr>
 			</table>
-			<% console.log(' email이 없어 ? ' + xEmail);
-			console.log(' pw가 없어 ? ' + xPW);
-			%>
+			<div id="flashMessage" style="color:red"><br><%=signinmessage%></div>
 			<input type="button" value="Sign in : )" onClick="checkEmpty()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>

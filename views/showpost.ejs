@@ -240,7 +240,7 @@
 				</form>
 				<form method="post" action="/process/updatesecomment" id="updaSeSubmit<%=i%>">
 					<input type="hidden" name="updaSeC_id" value="<%=curC_id%>">
-					&emsp;&emsp;<i class="<%=curCTld%> flag"></i><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
+					&emsp;&emsp;<i class="<%=curCTld%> flag"></i><%= curCNickname%> : 대댓 -><span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 					<input type="text" name="updaSecomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
 					<div style="float:right">
 							<%# reply button %>
@@ -284,6 +284,7 @@
 							<input type="hidden" name="nickname" value="<%= signNick%>">
 							<input type="hidden" name="postnum" value="<%= curPostnum%>">
 							<input type="hidden" name="c_id" value="<%= curC_id%>">
+							<input type="hidden" name="tld" value="<%=curTld%>">
 							<input type="hidden" name="postings_postnum" value="<%= curPostings_postnum%>">
 							<input type="hidden" name="cMembersId" value="<%= curMembersId%>">
 							<input type="hidden" name="curDepth" value="<%= curDepth%>">
