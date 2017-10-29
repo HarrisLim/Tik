@@ -2,84 +2,11 @@
 <html>
 	<head>
 		<%- include header.ejs %>
-		<title>Show post</title>
 		<script>
-		function button_delPost() {
-			if(confirm("Really want to delete this post ?") == true) {
-				$("#button_delPost").submit();
-			} else {
-				return;
-			}
-		};
-
-		function button_delCommBu(groupnum) {
-			if(confirm('Really want to delete this comment ?') == true) {
-				$("#curGroupnum").val(groupnum);
-				$("#button_delComm").submit();
-			} else {
-				return;
-			}
-		};
-
-		function button_delSeCommBu(id) {
-			if(confirm('Really want to delete this comment ?') == true) {
-				$("#c_id").val(id);
-				$("#button_delSeComm").submit();
-			} else {
-				return;
-			}
-		};
-
-		function button_edit() {
-			if(confirm("Really want to edit this post ?") == true) {
-				location.href="http://localhost:10468/process/editpost";
-			} else {
-				return;
-			}
-		}
-
-		function updaComment(i) {
-			$("#curComm"+i).css("display", "none");
-			$("#updaText"+i).css("display", "");
-			$("#showUpdaButton"+i).css("display", "none");
-			$("#updaButton"+i).css("display", "");
-			$("#updaCancel"+i).css("display", "");
-		};
-
-		function updaCancleBu(i) {
-			$("#curComm"+i).css("display", "");
-			$("#updaText"+i).css("display", "none");
-			$("#showUpdaButton"+i).css("display", "");
-			$("#updaButton"+i).css("display", "none");
-			$("#updaCancel"+i).css("display", "none");
-		};
-
-		function updaSubmit(i) {
-			if(confirm('Really want to update this comment ?') == true) {
-				$("#updaSubmit"+i).submit();
-			} else {
-				return;
-			}
-		};
-
-		function updaSeSubmit(i) {
-			if(confirm('Really want to update this comment ?') == true) {
-				$("#updaSeSubmit"+i).submit();
-			} else {
-				return;
-			}
-		};
-
-		function showSC(i) {
-			$('#SC'+i).css('display','');
-		};
-		function hideSC(i) {
-			$('#SC'+i).css('display','none');
-		};
-
-		window.onload = function() {
-		}
+			<%- include showpost_control.js%>
 		</script>
+
+		<title>Show post</title>
 	</head>
 	<body>
 		<%
@@ -98,7 +25,7 @@
 			var curPostnum = results[0].postnum;
 			var curP_MembersId = results[0].members_id;
 			var curPostings_postnum = results[0].postings_postnum;
-			var curTld = results[0].tld;
+			var writtenTld = results[0].tld;
 			var commLeng = 0;
 		%>
 		<% if(notSign === false) {%>
@@ -106,232 +33,72 @@
 		<% } else { %>
 			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<% } %>
-		<hr>
-		<h1>Written by <i class="<%=curTld%> flag"></i><%= curNickname%> !</h1>
+		<hr><br>
+		<div class="ui" style="float:right">
+			<% if(notSign === false) { %>
+				<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
+					<input type="submit" value="delete" onClick="button_delPost();">
+					<form method="post" action="/process/deletepost" id="button_delPost">
+						<input type="hidden" name="postnum" value="<%= curPostnum%>">
+					</form>
+				<% } else { %>
+					<input type="button" value="delete : (" onClick='alert("you cant delete.")'>
+				<% } %>
+			<% } else { %>
+				<input type="button" value="delete : (" onClick='alert("you can not delete.")'><br>
+			<% } %>
+		</div><br>
+		<div class="ui container">
+			<div style="float:right">
+				<a class="ui image label">
+					Created_Date
+					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
+				</a>
+				<a class="ui image label">
+					Views
+					<div class="detail"><%= curViews%></div>
+				</a>
+			</div>
+		</div><br><br><br>
+		<div class="ui container" style="text-align:center">
+			<h1><%= curTitle%></h1><br>
+			<div style="float:right">
+				<h4><%= curHowmanydays%></h4>
+				<h2>Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h2>
+			</div>
+		</div><br><br>
 		<% if(curSigninId !== false) { %>
 			<% if(curId == curSigninId) { %>
 				<input type="button" value="Edit" onClick="button_edit();">
 			<% }%>
 		<% }%>
-		<% if(notSign === false) { %>
-			<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
-				<input type="submit" value="delete" onClick="button_delPost();">
-				<form method="post" action="/process/deletepost" id="button_delPost">
-					<input type="hidden" name="postnum" value="<%= curPostnum%>">
-				</form>
-			<% } else { %>
-				<input type="button" value="delete" onClick='alert("you cant delete.")'>
-			<% } %>
-		<% } else { %>
-			<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-		<% } %>
-		<%# 이것은 date format을 바꿔주는 것. %>
-		<%
-			function formatDate(date) {
-		    var d = new Date(date),c                                                                                           
-		    month = '' + (d.getMonth() + 1),
-		    day = '' + d.getDate(),
-		    year = d.getFullYear();
-
-		    if (month.length < 2) month = '0' + month;
-		    if (day.length < 2) day = '0' + day;
-
-		    return [year, month, day].join('-');
-			};
-		%>
 		<br><br>
-		<table>
-				<tr>
-					<td><label>Created_Date : </label></td>
-					<td><%= formatDate(curCreated_at)%> </td>
-				</tr>
-				<tr>
-					<td><label>views : </label></td>
-					<td><%= curViews%></td>
-				</tr>
-				<tr>
-					<td><label>how many days : </label></td>
-					<td><%= curHowmanydays%> days</td>
-				</tr>
-				<tr>
-					<td><label>title : </label></td>
-					<td><%= curTitle%></td>
-				</tr>
-				<tr>
-					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
-					<td><%= curPicpath%></td>
-				</tr>
-				<tr>
-					<td><label>post : </label></td>
-					<td><%= curPost%></td>
-				</tr>
-				<tr>
-					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
-					<td><input type="button" name="getwant" value="WANNA GO"></td>
-				</tr>
-				<tr>
-					<td><label>Hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
-					<td><%= curHashTag%></td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
-				</tr>
-			</table>
+		<h3>Post</h3>
+		<div class="ui container">
+			<div class="ui message">
+				<%= curPicpath%><br>
+				<%= curPost%>
+			</div>	
+		</div>
+		<h3>Hashtag</h3>
+		<div class="ui container">
+			<%= curHashTag%>
+		</div><br>
+		<div class="ui labeled button" tabindex="0">
+			<div class="ui blue button">
+				<i class="plane icon"></i> I wanna go
+			</div>
+			<a class="ui basic blue left pointing label">
+			<%=curGetwant%>
+			</a>
+		</div>
+		<h3>Instagram</h3>
+		<div class="ui container">
+			<label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+		</div>
 		<p>
-		<hr> 
-			<%# comments %>
+		<hr>
 		<br>
-		- comments - <br><br>
-		<% for(var i=0; i<results.length; i++) { %>
-			<% var curComment = results[i].comment;
-			var curCNickname = results[i].c_nickname;
-			var curMembersId = results[i].c_members_id;
-			var curC_id = results[i].c_id;
-			var curDepth = results[i].depth;
-			var curGroupnum = results[i].groupnum;
-			var curGrconum = results[i].grconum;
-			var curCTld = results[i].c_tld;
-
-			if(results[0].comment !== null) {%> 
-
-				<% if(curGrconum <= 1) {%> <%# 댓글 이라면%>
-				
-				
-				<form method="post" action="/process/deletecomm" id="button_delComm">
-					<input type="hidden" name="curGroupnum" id="curGroupnum">
-				</form>
-				<form method="post" action="/process/updatecomment" id="updaSubmit<%=i%>">
-					<input type="hidden" name="updaC_id" value="<%=curC_id%>">
-					<i class="<%=curCTld%> flag"></i><%= curCNickname%> : <span id="curComm<%=i%>" style="display:"><%= curComment%></span>
-					<input type="text" name="updacomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
-					<div style="float:right">
-							<%# reply button %>
-						<% if(notSign === false) { %>
-							<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
-							<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
-							<input type="button" value="reply" onClick="showSC(<%=i%>)">
-						<% } else {%>
-							<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
-						<% } %>
-							<%# update button %>
-							<% if(curMembersId == curSigninId) { %>
-								<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
-							<% } else { %>
-								<input type="button" value="update" onClick='alert("you can not update.")'>
-							<% } %>
-							<%# delete button %>
-						<% if(notSign === false) { %>
-							<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-								<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
-							<% } else { %>
-								<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-							<% } %>
-						<% } else { %>
-							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-						<% } %>
-					</div>
-				</form>
-				
-
-				
-				<% } else { %> <%# 대댓글 이라면 %>
-				<form method="post" action="/process/deletesecomm" id="button_delSeComm">
-					<input type="hidden" name="c_id" id="c_id">
-				</form>
-				<form method="post" action="/process/updatesecomment" id="updaSeSubmit<%=i%>">
-					<input type="hidden" name="updaSeC_id" value="<%=curC_id%>">
-					&emsp;&emsp;<i class="<%=curCTld%> flag"></i><%= curCNickname%> : 대댓 -><span id="curComm<%=i%>" style="display:"><%= curComment%></span>
-					<input type="text" name="updaSecomment" id="updaText<%=i%>" value="<%=curComment%>" style="display:none">
-					<div style="float:right">
-							<%# reply button %>
-						<% if(notSign === false) { %>
-							<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSeSubmit(<%=i%>)" style="display:none">
-							<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
-						<% } %>
-							<%# update button %>
-						<% if(curMembersId == curSigninId) { %>
-							<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:''">
-						<% } else { %>
-							<input type="button" value="update" onClick='alert("you can not update.")'>
-						<% } %>
-							<%# delete button %>
-						<% if(notSign === false) { %>
-							<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-								<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
-							<% } else { %>
-								<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-							<% } %>
-						<% } else { %>
-							<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-						<% } %>
-					</div>
-				<% } %>
-				<% if(notSign === false) { %> <%# 대댓글 추가. %>
-
-				<% var maxGrconum = []; %> <%# grconum의 max값 구하기. app.js에서 helper사용. %>
-				<% for(var j =0; j < results.length; j++) {%>
-					<% 
-					var arrGrconum = [];
-						arrGrconum.push(results[j].grconum);
-						maxGrconum.push(arrGrconum);
-					%>
-				<% } %>
-
-					<div id='SC<%=i%>' style="display:none; padding-top:15px" > 
-						<form method="post" action="/process/addsecomment">
-							<i class="<%=signTld%> flag"></i><%= signNick%> : 
-							<textarea name="secomment"></textarea>
-							<input type="hidden" name="nickname" value="<%= signNick%>">
-							<input type="hidden" name="postnum" value="<%= curPostnum%>">
-							<input type="hidden" name="c_id" value="<%= curC_id%>">
-							<input type="hidden" name="tld" value="<%=curTld%>">
-							<input type="hidden" name="postings_postnum" value="<%= curPostings_postnum%>">
-							<input type="hidden" name="cMembersId" value="<%= curMembersId%>">
-							<input type="hidden" name="curDepth" value="<%= curDepth%>">
-							<input type="hidden" name="curGroupnum" value="<%= curGroupnum%>">
-							<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
-							<div  style="float:right; padding-top:10px">
-							<input type="submit" value="submit">
-							<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
-							</div>
-						</form>
-					</div>
-				<% } %>
-			<% } %><hr>
-			<% if(results[i].groupnum !== null){ %>
-				<% var countGroupnum = results[i].groupnum; %>
-			<%}%>
-			<% if(results[i].groupnum === null){ %>
-				<% var countGroupnum = 0; %>
-			<%}%>
-		<% } %><br>
-		
-		<form method="post" action="/process/addcomment">
-			<% if(notSign === false) { %>
-				<input type="hidden" name="nickname" value="<%= signNick%>">
-				<input type="hidden" name="postnum" value="<%= curPostnum%>">
-				<input type="hidden" name="id" value="<%= curId%>">
-				<input type="hidden" name="maxGroupnum" value="<%=countGroupnum%>">
-				<input type="hidden" name="nonGroupnum" value="<%=countGroupnum%>">
-				<input type="hidden" name="tld" value="<%=curTld%>">
-			<% } %>
-			<table>
-				<tr>
-					<td><label>- add comment -</label></td>
-				</tr>
-				<tr>
-					<% if(notSign === false) { %>
-						<td><i class="<%=signTld%> flag"></i><%= signNick%> : </td>
-					<% } %>
-					<td><textarea name="comment"></textarea></td>
-				</tr>
-			</table>
-			<% if(notSign === true) { %>
-				<input type="button" value="add comment : ) " onClick='alert("need Signining")'>
-			<% } else { %>
-				<input type="submit" value="add comment : ) ">
-			<% } %>
-		</form>
-
+		<%- include showpost_comment.ejs%>
 	</body>
 </html>

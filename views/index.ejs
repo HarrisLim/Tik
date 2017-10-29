@@ -2,7 +2,6 @@
 <html>
 	<head>
 		<%- include header.ejs %>
-
 		<title>Main</title>
 	</head>
 	<body>
@@ -19,7 +18,7 @@
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					[ <a href="/process/main/<%= j+1%>"><%= j+1%></a> ]
+					<a href="/process/main/<%= j+1%>"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>

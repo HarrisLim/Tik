@@ -1,16 +1,4 @@
 <%
-
-function formatDate(date) {
-    var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-}
 	for(var i =(page * pagenum) - pagenum; i < (page * pagenum); i++) { 
 		if(i > leng) {
 			i++;
@@ -27,7 +15,7 @@ function formatDate(date) {
 
 			
 		%>
-			<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= formatDate(curCreated_at)%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
+			<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= formatDateHelper(curCreated_at)%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
 <%		}
 	}
 %>

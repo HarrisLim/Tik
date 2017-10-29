@@ -2,6 +2,20 @@
 <html>
 	<head>
 		<%- include header.ejs %>
+
+		<script>
+		window.onload = function() {
+			$('#rangestart').calendar({
+				type: 'date',
+				endCalendar: $('#rangeend')
+			});
+			$('#rangeend').calendar({
+				type: 'date',
+				startCalendar: $('#rangestart')
+			});
+		};
+		</script>
+
 		<title>Add Post</title>
 	</head>
 	<body>
@@ -17,32 +31,73 @@
 		<h1> Written by <i class="<%=curTld%> flag"></i> <%= curNickname%></h1>
 	   	<br><br>
 	   	<form method="post" action="/process/addpost">
-	   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
-			<table>
-				<tr>
-					<td><label>how many days : </label></td>
-					<td><input type="text" name="howmanydays" placeholder="put in just number."></td>
-				</tr>
-				<tr>
-					<td><label>title : </label></td>
-					<td><input type="text" name="title"></td>
-				</tr>
-				<tr>
-					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
-					<td><input type="text" name="picpath"></td>
-				</tr>
-				<tr>
-					<td><label>post : </label></td>
-					<td><input type="text" name="post"></td>
-				</tr>
-				<tr>
-					<td><label>add hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
-					<td><input type="text" name="hashtag"></td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/" target="_blank"><i class="<%=curTld%> flag"></i><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
-				</tr>
-			</table>
+		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
+			<h3>Date range</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="two fields">
+						<div class="field">
+						<label>Start date</label>
+							<div class="ui calendar" id="rangestart">
+								<div class="ui input left icon">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="Start" id="startDate" name="startDate">
+								</div>
+							</div>
+						</div>
+						<div class="field">
+						<label>End date</label>
+							<div class="ui calendar" id="rangeend">
+								<div class="ui input left icon">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="End" id="endDate" name="endDate">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h3>Title</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<input type="text" name="title">
+					</div>
+				</div>
+			</div>
+			<h3>Picpath</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<input type="text" name="picpath">
+					</div>
+				</div>
+			</div>
+			<h3>Text</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<textarea></textarea>
+					</div>
+				</div>
+			</div>
+			<h3>Hashtag</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<input type="text" name="hashtag">
+					</div>
+				</div>
+			</div>
+			<h3>Instagram</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<a href="https://www.instagram.com/" target="_blank"><i class="<%=curTld%> flag"></i><%= curInsid %></a>
+					</div>
+				</div>
+			</div>
+			<br>
 			<input type="submit" value="add Post : )">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>

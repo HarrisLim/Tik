@@ -17,6 +17,13 @@
 				}
 			};
 
+			window.onload = function() {
+				var signinMessage = $('#flashMessage').text(); <%# errorMessage가 있을 때만 빨간 박스 ? 나오게 할랬는데 안돼.%>
+				if(signinMessage === true) {
+					$('#flashMessage').css('display', '');
+				}
+			}
+
 		</script>
 		<title>Sign in</title>
 	</head>
@@ -26,17 +33,17 @@
 		<h1 id="xxx">Sign in !</h1>
 		<br>
 		<form method="post" action="/process/signin" id="signin">
-			<table>
-				<tr>
-					<td><label>Email : </label></td>
-					<td><input type="email" name="username" id="email"></td> <%# name을 email로 하면 LocalStrategy가 못받아. 그래서 username으로 했다. %>
-				</tr>
-				<tr>
-					<td><label>Password : </label></td>
-					<td><input type="password" name="password" id="PW"></td> <%# name을 passwd로 하면 LocalStrategy가 못받아. 그래서 password 했다. %>
-				</tr>
-			</table>
-			<div id="flashMessage" style="color:red"><br><%=signinmessage%></div>
+			<div class="ui form">
+					<div class="field">
+						<label>Email</label>
+						<input type="text" placeholder="Email" name="username" id="emaile">
+					</div><br>
+					<div class="field">
+						<label>Password</label>
+						<input type="password" placeholder="Password" name="password" id="PW">
+					</div>
+			</div>
+			<div id="flashMessage" class="ui error message" style="color:red"><%=signinmessage%></div>
 			<input type="button" value="Sign in : )" onClick="checkEmpty()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>

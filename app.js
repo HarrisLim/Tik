@@ -213,6 +213,18 @@ app.locals.maxHelper = function(arr) { // showpost에서 grconum의 max값을 �
 	return maxarr;
 };
 
+app.locals.formatDateHelper = function(date) { // showpost에서 created_Date의 formatDate
+	var d = new Date(date),c                                                                                           
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+};
+
 // app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
 // 	var xEmail = app.get('xEmail');
 // 	var xPW = app.get('xPW');
@@ -231,6 +243,7 @@ app.post('/process/addsecomment', function(req, res) {
 	var maxGrconum = parseInt(req.body.maxGrconum);
 	console.log('maxGrconum --> ' + req.body.maxGrconum);
 	console.log('curGroupnum ->', curGroupnum);
+	console.log('tld ->-> ' + req.body.tld)
 	var comment = {
 		c_nickname : req.body.nickname,
 		comment : req.body.secomment,
@@ -274,19 +287,21 @@ app.get('/process/showpost', function(req, res) {
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
 	 	var notSign = false;
+	 	var curTld = req.user.tld;
 	 	console.log(req.query.postnum);
 	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
 	 	console.log('curTld -> ' + req.user.tld);
+
 		
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 			var leng = Object.keys(results).length -1;
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, leng : leng};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -304,7 +319,7 @@ app.get('/process/showpost', function(req, res) {
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var notSign = true;
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.created_at, p.updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -446,23 +461,6 @@ app.post('/process/signin',
         // successFlash : 'Welcome !Welcome !Welcome !Welcome !Welcome !Welcome !',
     })    
 );
-
-///////
-
-app.get('/',function(req,res){
-  req.flash('name','alert1111');
-  res.send('hello flash');
-});
-
-app.get('/alert',function(req,res){
-  res.render('signin',{signinmessage:req.flash('signinmessage')});
-});
-app.get('/other',function(req,res){
-  res.render('flash',{name:req.flash('name')});
-});
-
-///////
-
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
@@ -787,14 +785,15 @@ app.get('/process/signup', function(req, res) {
 });
 
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
 	var posting = {
 		id : req.body.id,
-		howmanydays : req.body.howmanydays || req.query.howmanydays,
-		title : req.body.title || req.query.title,
-		picpath : req.body.picpath || req.query.picpath,
-		post : req.body.post || req.query.post,
-		views : req.body.views || req.query.views,
-		hashtag : req.body.hashtag || req.query.hashtag,
+		howmanydays : dateRange,
+		title : req.body.title,
+		picpath : req.body.picpath,
+		post : req.body.post,
+		views : req.body.views,
+		hashtag : req.body.hashtag,
 		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?, created_at = now()';
