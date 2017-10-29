@@ -33,23 +33,26 @@
 		<% } else { %>
 			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<% } %>
-		<hr><br>
-		<div class="ui" style="float:right">
-			<% if(notSign === false) { %>
-				<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
-					<input type="submit" value="delete" onClick="button_delPost();">
-					<form method="post" action="/process/deletepost" id="button_delPost">
-						<input type="hidden" name="postnum" value="<%= curPostnum%>">
-					</form>
-				<% } else { %>
-					<input type="button" value="delete : (" onClick='alert("you cant delete.")'>
-				<% } %>
-			<% } else { %>
-				<input type="button" value="delete : (" onClick='alert("you can not delete.")'><br>
-			<% } %>
-		</div><br>
+		<hr>
 		<div class="ui container">
-			<div style="float:right">
+			<div class="ui" style="float:right">
+				<% if(notSign === false) { %>
+					<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
+						<input type="button" value="Edit" onClick="button_edit();">
+						<input type="submit" value="Delete : (" onClick="button_delPost();">
+						<form method="post" action="/process/deletepost" id="button_delPost">
+							<input type="hidden" name="postnum" value="<%= curPostnum%>">
+						</form>
+					<% } else { %>
+						<input type="button" value="Delete : (" onClick='alert("you cant delete.")'>
+					<% } %>
+				<% } else { %>
+					<input type="button" value="Delete : (" onClick='alert("you can not delete.")'>
+				<% } %>
+			</div><br>
+		</div>
+		<div class="ui container">
+			<div style="text-align:right; padding-top:20px">
 				<a class="ui image label">
 					Created_Date
 					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
@@ -59,31 +62,26 @@
 					<div class="detail"><%= curViews%></div>
 				</a>
 			</div>
-		</div><br><br><br>
-		<div class="ui container" style="text-align:center">
-			<h1><%= curTitle%></h1><br>
-			<div style="float:right">
-				<h4><%= curHowmanydays%></h4>
-				<h2>Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h2>
+		</div><br>
+		<div class="ui container">
+			<h1 style="text-align:center"><%= curTitle%></h1><br>
+			<div style="text-align:right">
+				<h4><%= curHowmanydays%><br>
+				Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h4>
 			</div>
-		</div><br><br>
-		<% if(curSigninId !== false) { %>
-			<% if(curId == curSigninId) { %>
-				<input type="button" value="Edit" onClick="button_edit();">
-			<% }%>
-		<% }%>
-		<br><br>
+		</div>
 		<h3>Post</h3>
 		<div class="ui container">
 			<div class="ui message">
 				<%= curPicpath%><br>
 				<%= curPost%>
-			</div>	
+			</div>
 		</div>
 		<h3>Hashtag</h3>
 		<div class="ui container">
 			<%= curHashTag%>
-		</div><br>
+		</div>
+		<br>
 		<div class="ui labeled button" tabindex="0">
 			<div class="ui blue button">
 				<i class="plane icon"></i> I wanna go
@@ -94,7 +92,7 @@
 		</div>
 		<h3>Instagram</h3>
 		<div class="ui container">
-			<label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+			<label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
 		</div>
 		<p>
 		<hr>

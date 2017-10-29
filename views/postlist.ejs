@@ -14,20 +14,11 @@
 					$('#frm').submit();
 
 				}%>
-
-		</script>
 	</head>
 	<body>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
-		<hr>
-		<h1>Welcome to TiK !</h1>
-		<div><p>Email : <%= email%></p></div>
-		<div><p>Nickname : <i class="<%=signTld%> flag"></i><%= nickname%></p></div>
-		<br><br><a href="/process/addpost">Add post</a>
-		<br><br><a href="/process/signout">Sign out</a>
-		<br><br><a href="/process/mypost">My post</a>
-		<p>
-
+	<%- include rightTop.ejs %>
+	<h1>Welcome to TiK !</h1>
+	<br><br>
 		<%# 병기가 알려준 것.
 			<form name="frm" id="frm" action="/process/showpost" method="get">
 				<input type="hidden" name="postnum" id="postnum">
@@ -42,7 +33,7 @@
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					[ <a href="/process/main/<%= j+1%>"><%= j+1%></a> ]
+					<a href="/process/main/<%= j+1%>"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>

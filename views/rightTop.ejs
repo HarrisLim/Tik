@@ -1,0 +1,26 @@
+<script>
+	function permissionBu() {
+		$('#permission').submit();
+	}
+</script>	
+<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+<hr>
+<div style="float:right"> 
+	<% if(permission === null) { %> <%# permission code %>
+		<div class="ui form" style="text-align:right">
+			<form method="post" action="/process/permission" id="permission">
+				<input type="text" value="" name="permission" id="getPermission" placeholder="Fill the code getting in your email.">
+				<a href="javascript:permissionBu();">Permission</a> | <a href="/process/signout">Sign out</a>
+			</form>
+		</div>
+	<% } else {%>
+		<a href="/process/addpost">Add post</a> | 
+		<a href="/process/mypost">My post</a> | 
+		<a href="/process/myinfo">My info</a> | 
+		<a href="/process/signout">Sign out</a>
+	<% } %>
+	<div style="text-align:right">
+		<div><p><i class="address card icon"></i> <%= email%></div>
+		<div><p><i class="<%=signTld%> flag"></i><%= nickname%></div><br>
+	</div>
+</div>

@@ -25,8 +25,7 @@
 				var curInsid = results.insid;
 				var curTld = results.tld;
 			%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
-		<hr>
+		<%- include rightTop.ejs %>
 		<h1>Add post !</h1>
 		<h1> Written by <i class="<%=curTld%> flag"></i> <%= curNickname%></h1>
 	   	<br><br>
@@ -77,7 +76,7 @@
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<textarea></textarea>
+						<textarea name="post"></textarea>
 					</div>
 				</div>
 			</div>
@@ -100,6 +99,6 @@
 			<br>
 			<input type="submit" value="add Post : )">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
-		</form>
+		</form><br>
 	</body>
 </html>

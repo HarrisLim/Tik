@@ -16,30 +16,30 @@
 			var curAgegroup = results.agegroup;
 			var curInsid = results.insid;
 		%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
-		<hr>
-		<br> <h2>Hello. <i class="<%=curTld%> flag"></i><%= curNickname%> !</h2>
+		<%- include rightTop.ejs %>
+		<h1>Hello. <img src="../flags-mini/<%=curTld%>.png"><%= nickname%> !</h1>
 		<br><br>
-		<a href="/process/mypost">My post</a>
-		<br><br><a href='/process/myinfo'>My info</a>
-		<p>
-		<table>
-			<tr>
-				<td><label>Nickname : <%= curNickname%></label></td>
-			</tr>
-			<tr>
-				<td><label>Email : <%= curEmail%></label></td>
-			</tr>
-			<tr>
-				<td><label>Country : <i class="<%=curTld%> flag"></i><%= curCountry%></label></td>
-			</tr>
-			<tr>
-				<td><label>Age group : <%= curAgegroup%></label></td>
-			</tr>
-			<tr>
-				<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid%></a></label></td>
-			</tr>
-		</table>
+		-----------나중에 카드 형식으로 바꿔-----------
+		<h3>Nickname</h3>
+		<div class="ui container">
+			<%= curNickname%>
+		</div>
+		<h3>Email</h3>
+		<div class="ui container">
+			<%= curEmail%>
+		</div>
+		<h3>country</h3>
+		<div class="ui container">
+			<i class="<%=curTld%> flag"></i><%= curCountry%>
+		</div>
+		<h3>Age group</h3>
+		<div class="ui container">
+			<%= curAgegroup%>
+		</div>
+		<h3>Instagram</h3>
+		<div class="ui container">
+			<a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid%></a>%>
+		</div>
 		<p><br>
 		<a href="/process/editinfo">Change own info</a>
 	</body>

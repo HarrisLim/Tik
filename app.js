@@ -117,17 +117,18 @@ app.get('/process/main', function(req, res){
 
 app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // Signin
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
 			console.log('page -> ' + page);
+			console.log('permission -> '+ req.user.permission);
 			app.set('curPage', page);
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 			var signTld = req.user.tld;
 
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld};
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -144,7 +145,7 @@ app.get('/process/main/:page', function(req, res){
 		});
 	} else { // not Signin
 
-		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -281,6 +282,12 @@ app.post('/process/updatesecomment', function(req, res) {
 			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
 		}
 	});
+});
+
+app.post('/process/permission', function(req, res) {
+	var permission = req.body.permission;
+	console.log('permission !-> ' + permission);
+	// val
 });
 
 app.get('/process/showpost', function(req, res) { 
@@ -432,13 +439,13 @@ passport.use(new LocalStrategy(  {passReqToCallback : true},
 				return hasher({password:paramPassword, salt:member.salt}, function(err, pass, salt, hash) {
 					if(hash === member.passwd) {
 						console.log('LocalStrategy', member);
-						return done(null, member, {message : '성공 !'}); // 이거면 serializeUser가 실행됨.
+						return done(null, member); // 이거면 serializeUser가 실행됨.
 					} else {
 						// console.log('비밀번호를 확인하십시오..');
 						app.set('xPW', "xPW");
 						// return done(null, false, {message : "비밀번호를 확인하십시오..(in flash)"}); // 이거면 deserializeUser가 실행됨.
 						// return done(null, false, req.flash('signinmessage', '비밀번호를 확인하십시오..(in flash)')); // 이거면 deserializeUser가 실행됨.
-						return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.')); // 이거면 deserializeUser가 실행됨.
+						return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password...')); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
@@ -493,7 +500,7 @@ app.get('/process/mypost/:page', function(req, res) {
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-				var context = {curNickname : req.user.nickname, results : results};
+				var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results};
 				req.app.render('mypost', context, function(err, html) {
 					if(err) {
 						console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -511,7 +518,7 @@ app.get('/process/mypost/:page', function(req, res) {
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 
-			var context = {curNickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page};
+			var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, leng : leng, pagenum : pagenum, page : page};
 			req.app.render('mypost', context, function(err, html) {
 				if(err) {
 					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -544,7 +551,7 @@ app.get('/process/myinfo', function(req, res) {
 	sql = 'SELECT * FROM members WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, results : results[0]};
+		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results[0]};
 		req.app.render('myinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -658,14 +665,15 @@ app.get('/process/editinfo', function(req, res) {
 
 app.post('/process/editpost', function(req, res) {
 	console.log("you're in editpost");
-		console.log('this is curPostnum --> ' + app.get('curPostnum'));
+	console.log('this is curPostnum --> ' + app.get('curPostnum'));
 
+	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
 	var posting = {
-		howmanydays : req.body.howmanydays || req.query.howmanydays,
-		title : req.body.title || req.query.title,
-		picpath : req.body.picpath || req.query.picpath,
-		post : req.body.post || req.query.post,
-		hashtag : req.body.hashtag || req.query.hashtag
+		howmanydays : dateRange,
+		title : req.body.title,
+		picpath : req.body.picpath,
+		post : req.body.post,
+		hashtag : req.body.hashtag
 	};
 	var sql = 'UPDATE postings SET ?, updated_at = now() WHERE postnum=?';
 	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
@@ -684,8 +692,13 @@ app.get('/process/editpost', function(req, res) {
 	console.log('this is curPostnum --> ' + app.get('curPostnum'));
 	var sql = 'SELECT m.nickname, m.tld, m.insid, p.created_at, p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays FROM members m JOIN postings p ON m.id = p.members_id AND postnum=?';
 	conn.query(sql, app.get('curPostnum'), function(err, results) {
+		console.log('howmanydays => ' + results[0].howmanydays);
+		var howmanydays = results[0].howmanydays;
+		var startDate = howmanydays.split(' ~ ')[0];
+		var endDate = howmanydays.split(' ~ ')[1];
+
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results[0]};
+		var context = {results : results[0], startDate : startDate, endDate : endDate};
 		req.app.render('editpost', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -747,7 +760,7 @@ app.post('/process/signup', function(req, res) {
 			} else {
 				req.login(member, function(err) {
 					req.session.save(function() {
-						// sendEmail(req.body.email, req.body.nickname);
+						sendEmail(req.body.email, req.body.nickname);
 						res.redirect('/process/main');
 					});
 				});
@@ -813,7 +826,7 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 		console.log('results --> ' + results[0].email);
 		// app.set('showpostMembersId', results[0].id);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results[0]};
+		var context = {results : results[0], email : req.user.email, nickname : req.user.nickname, signTld : req.user.tld, permission : req.user.permission};
 		req.app.render('addpost', context,  function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

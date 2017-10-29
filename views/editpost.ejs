@@ -4,6 +4,14 @@
 		<%- include header.ejs %>
 		<script>
 			window.onload = function() {
+				$('#rangestart').calendar({
+					type: 'date',
+					endCalendar: $('#rangeend')
+				});
+				$('#rangeend').calendar({
+					type: 'date',
+					startCalendar: $('#rangestart')
+				});
 			}
 
 			function view(num) {
@@ -11,9 +19,8 @@
 
 				$('#postnum').val(num);
 
-				$('#frm').submit();
-
-			}
+				$('#frm').submit();	
+			};
 		</script>
 	</head>
 	<body>
@@ -30,7 +37,7 @@
 			var curCreated_at = results.created_at;
 			var curUpdated_at = results.updated_at;
 			var curPostnum = results.postnum;
-			var curTld = results.tld;
+			var writtenTld = results.tld;
 		%>
 			<%# 이것은 date format을 바꿔주는 것. %>
 		<%
@@ -48,52 +55,83 @@
 		%>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<h1>Update post !</h1>
-		<h1> Written by <i class="<%=curTld%> flag"></i><%= curNickname%> !</h1>
-	   	<br><br>
+		<h1 style="text-align:center">Edit post !</h1>
 	   	<form name="frm" id="frm" action="/process/showpost" method="post">
 			<input type="hidden" name="postnum" id="postnum">
 		</form>
 	   	<form method="post" action="/process/editpost">
-			<table>
-				<tr>
-					<td><label>Created_Date : </label></td>
-					<td><%= formatDate(curCreated_at)%></td>
-				</tr>
-				<tr>
-					<td><label>views : </label></td>
-					<td><%= curViews%></td>
-				</tr>
-				<tr>
-					<td><label>how many days : </label></td>
-					<td><input type="text" name="howmanydays" placeholder="put in just number." value="<%= curHowmanydays%>"></td>
-				</tr>
-				<tr>
-					<td><label>title : </label></td>
-					<td><input type="text" name="title" value="<%= curTitle%>"></td>
-				</tr>
-				<tr>
-					<td><label>picpath : </label></td> <%# 이건 사진 이름 받아서 경로를 넣는 걸로 수정하자.%>
-					<td><input type="text" name="picpath" value="<%= curPicpath%>"></td>
-				</tr>
-				<tr>
-					<td><label>post : </label></td>
-					<td><input type="text" name="post" value="<%= curPost%>"></td>
-				</tr>
-				<tr>
-					<td><label>I wanna go : </label></td> <%# 이거는 버튼을 누르면 숫자가 하나 올라가게.-%>
-					<td><input type="button" name="getwant" value="WANNA GO"></td>
-				</tr>
-				<tr>
-					<td><label>Hashtag : </label></td> <%# hashtag 하나씩 추가할 수 있게. %>
-					<td><input type="text" name="hashtag" value="<%= curHashTag%>"></td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : <a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><%= curInsid %></a></label></td> <%# members에 있는 데이터. com/하고 curInsid받아서 그 사람의 인스타로 가게 하자.%>
-				</tr>
-			</table>
+   		<div class="ui container">
+			<div style="text-align:right; padding-top:20px">
+				<a class="ui image label">
+					Created_Date
+					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
+				</a>
+				<a class="ui image label">
+					Views
+					<div class="detail"><%= curViews%></div>
+				</a>
+			</div>
+		</div><br>
+		<div class="ui container">
+			<div class="ui form">
+				<h1 style="text-align:center"><input type="text" name="title" value="<%= curTitle%>"></h1><br>
+			</div>
+			<div style="text-align:right">
+				<div class="ui container">
+					<div class="ui form">
+						<div class="two fields">
+							<div class="field">
+							<label>Start date</label>
+								<div class="ui calendar" id="rangestart">
+									<div class="ui input left icon">
+										<i class="calendar icon"></i>
+										<input type="text" placeholder="Start" id="startDate" name="startDate" value="<%=startDate%>">
+									</div>
+								</div>
+							</div>
+							<div class="field">
+							<label>End date</label>
+								<div class="ui calendar" id="rangeend">
+									<div class="ui input left icon">
+										<i class="calendar icon"></i>
+										<input type="text" placeholder="End" id="endDate" name="endDate" value="<%=endDate%>">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h4>
+			</div>
+		</div>
+		<h3>Post</h3>
+		<div class="ui container">
+			<div class="ui form">
+				<input type="text" name="picpath" value="<%= curPicpath%>"><br>
+				<textarea name="post"><%= curPost%></textarea>
+			</div>
+		</div>
+		<h3>Hashtag</h3>
+		<div class="ui container">
+			<div class="ui form">
+				<input type="text" name="hashtag" value="<%= curHashTag%>">
+			</div>
+		</div>
+		<br>
+		<div class="ui labeled button" tabindex="0">
+			<div class="ui blue button">
+				<i class="plane icon"></i> I wanna go
+			</div>
+			<a class="ui basic blue left pointing label">
+			<%=curGetwant%>
+			</a>
+		</div>
+		<h3>Instagram</h3>
+		<div class="ui container">
+			<label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+		</div><br>
 			<input type="submit" value="Update : )">
 			<a href="/process/showpost?postnum=<%=curPostnum%>"><input type="button" value="Cancle : )"></a>
-		</form>
+		</form><br>
 	</body>
 </html>

@@ -30,7 +30,7 @@
 							<div class="metadata">
 								<span class="date"><%=curCreated_at%></span>
 							</div>
-							<div class="text">
+							<div class="text ui form">
 								<span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 								<textarea rows="2" name="updacomment" id="updaText<%=i%>" style="display:none"><%=curComment%></textarea>
 							</div>
@@ -184,5 +184,5 @@
 			<% } else { %>
 				<input type="submit" value="add comment : ) ">
 			<% } %>
-		</form>
+		</form><br>
 </div>

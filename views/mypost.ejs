@@ -5,13 +5,10 @@
 		<title>My post</title>
 	</head>
 	<body>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
-		<hr>
-		<br> <h2>Hello. <%= curNickname%> !</h2>
-		<br><br><a href="/process/addpost">Add post</a>
-		<br><br><a href="/process/mypost">My post</a>
-		<br><br><a href='/process/myinfo'>My info</a>
-		<p>
+		
+	<%- include rightTop.ejs %>
+		<h1>Welcome to TiK !</h1>
+		<br><br>
 		<% if(results.length === 0) {%>
 			You don't have a posting. <br>
 		<% } else {%>
@@ -23,7 +20,7 @@
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					[ <a href="/process/mypost/<%= j+1%>"><%= j+1%></a> ]
+					<a href="/process/mypost/<%= j+1%>"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>
