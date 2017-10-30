@@ -13,8 +13,8 @@
 			var curId = results[0].id;
 			var curNickname = results[0].nickname;
 			var curInsid = results[0].insid;
-			var curCreated_at = results[0].created_at;
-			var curUpdated_at = results[0].updated_at;
+			var curCreated_at = results[0].p_created_at;
+			var curUpdated_at = results[0].p_updated_at;
 			var curTitle = results[0].title;
 			var curPicpath = results[0].picpath;
 			var curPost = results[0].post;
@@ -29,7 +29,7 @@
 			var commLeng = 0;
 		%>
 		<% if(notSign === false) {%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <i class="<%=signTld%> flag"></i><%=signNick%>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <img src="../flags-mini/<%=signTld%>.png"> <%=signNick%>
 		<% } else { %>
 			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<% } %>
@@ -40,8 +40,7 @@
 					<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
 						<input type="button" value="Edit" onClick="button_edit();">
 						<input type="submit" value="Delete : (" onClick="button_delPost();">
-						<form method="post" action="/process/deletepost" id="button_delPost">
-							<input type="hidden" name="postnum" value="<%= curPostnum%>">
+						<form method="post" action="/process/deletepost" id="button_delPost"> <input type="hidden" name="postnum" value="<%= curPostnum%>">
 						</form>
 					<% } else { %>
 						<input type="button" value="Delete : (" onClick='alert("you cant delete.")'>
@@ -49,10 +48,10 @@
 				<% } else { %>
 					<input type="button" value="Delete : (" onClick='alert("you can not delete.")'>
 				<% } %>
-			</div><br>
+			</div>
 		</div>
 		<div class="ui container">
-			<div style="text-align:right; padding-top:20px">
+			<div style="text-align:right; padding-top:25px">
 				<a class="ui image label">
 					Created_Date
 					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
@@ -67,7 +66,7 @@
 			<h1 style="text-align:center"><%= curTitle%></h1><br>
 			<div style="text-align:right">
 				<h4><%= curHowmanydays%><br>
-				Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h4>
+				Written by <img src="../flags-mini/<%=writtenTld%>.png"> <%= curNickname%> !</h4>
 			</div>
 		</div>
 		<h3>Post</h3>

@@ -27,7 +27,7 @@
 			%>
 		<%- include rightTop.ejs %>
 		<h1>Add post !</h1>
-		<h1> Written by <i class="<%=curTld%> flag"></i> <%= curNickname%></h1>
+		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
 	   	<form method="post" action="/process/addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
@@ -92,7 +92,7 @@
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<a href="https://www.instagram.com/" target="_blank"><i class="<%=curTld%> flag"></i><%= curInsid %></a>
+						<a href="https://www.instagram.com/" target="_blank"><i class="instagram icon"></i><%= curInsid %></a>
 					</div>
 				</div>
 			</div>

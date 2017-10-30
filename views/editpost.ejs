@@ -34,8 +34,7 @@
 			var curGetwant = results.getwant;
 			var curHashTag = results.hashtag;
 			var curViews = results.views
-			var curCreated_at = results.created_at;
-			var curUpdated_at = results.updated_at;
+			var curCreated_at = results.p_created_at;
 			var curPostnum = results.postnum;
 			var writtenTld = results.tld;
 		%>
@@ -101,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-				Written by <i class="<%=writtenTld%> flag"></i><%= curNickname%> !</h4>
+				Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%> !</h4>
 			</div>
 		</div>
 		<h3>Post</h3>

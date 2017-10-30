@@ -9,12 +9,11 @@
 			var curGroupnum = results[i].groupnum;
 			var curGrconum = results[i].grconum;
 			var curCTld = results[i].c_tld;
-			var curCreated_at = results[i].created_at;
+			var curCreated_at = results[i].c_created_at;
 
 			if(results[0].comment !== null) {%> 
 
 				<% if(curGrconum <= 1) {%> <%# 댓글 이라면%>
-				
 				
 				<form method="post" action="/process/deletecomm" id="button_delComm">
 					<input type="hidden" name="curGroupnum" id="curGroupnum">
@@ -29,40 +28,40 @@
 							<a class="author"><%= curCNickname%></a>
 							<div class="metadata">
 								<span class="date"><%=curCreated_at%></span>
+								<div class="actions" style="text-align:right">
+									<%# reply button %>
+									<% if(notSign === false) { %>
+										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
+										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
+										<input type="button" value="reply" onClick="showSC(<%=i%>)">
+									<% } else {%>
+										<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
+									<% } %>
+										<%# update button %>
+										<% if(curMembersId == curSigninId) { %>
+											<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
+										<% } else { %>
+											<input type="button" value="update" onClick='alert("you can not update.")'>
+										<% } %>
+										<%# delete button %>
+									<% if(notSign === false) { %>
+										<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
+											<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
+										<% } else { %>
+											<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+										<% } %>
+									<% } else { %>
+										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+									<% } %>
+								</div>
 							</div>
 							<div class="text ui form">
 								<span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 								<textarea rows="2" name="updacomment" id="updaText<%=i%>" style="display:none"><%=curComment%></textarea>
 							</div>
-							<div class="actions">
-								<%# reply button %>
-								<% if(notSign === false) { %>
-									<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
-									<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
-									<input type="button" value="reply" onClick="showSC(<%=i%>)">
-								<% } else {%>
-									<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
-								<% } %>
-									<%# update button %>
-									<% if(curMembersId == curSigninId) { %>
-										<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
-									<% } else { %>
-										<input type="button" value="update" onClick='alert("you can not update.")'>
-									<% } %>
-									<%# delete button %>
-								<% if(notSign === false) { %>
-									<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-										<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
-									<% } else { %>
-										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-									<% } %>
-								<% } else { %>
-									<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-								<% } %>
-							</div>
 						</div>
 					</div>
-				</form><br>				
+				</form>				
 				<% } else { %> <%# 대댓글 이라면 %>
 				<form method="post" action="/process/deletesecomm" id="button_delSeComm">
 					<input type="hidden" name="c_id" id="c_id">
@@ -77,37 +76,38 @@
 							<a class="author"><%= curCNickname%></a>
 							<div class="metadata">
 								<span class="date"><%=curCreated_at%></span>
+								<div class="actions">
+									<%# reply button %>
+									<% if(notSign === false) { %>
+										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSeSubmit(<%=i%>)" style="display:none">
+										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
+									<% } %>
+										<%# update button %>
+										<% if(curMembersId == curSigninId) { %>
+											<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
+										<% } else { %>
+											<input type="button" value="update" onClick='alert("you can not update.")'>
+										<% } %>
+										<%# delete button %>
+									<% if(notSign === false) { %>
+										<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
+											<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
+										<% } else { %>
+											<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+										<% } %>
+									<% } else { %>
+										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+									<% } %>
+								</div>
 							</div>
 							<div class="text ui form">
 								<span id="curComm<%=i%>" style="display:"><%= curComment%></span>
 								<textarea rows="2" name="updaSecomment" id="updaText<%=i%>" style="display:none"><%=curComment%></textarea>
 							</div>
-							<div class="actions">
-								<%# reply button %>
-								<% if(notSign === false) { %>
-									<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSeSubmit(<%=i%>)" style="display:none">
-									<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
-								<% } %>
-									<%# update button %>
-									<% if(curMembersId == curSigninId) { %>
-										<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
-									<% } else { %>
-										<input type="button" value="update" onClick='alert("you can not update.")'>
-									<% } %>
-									<%# delete button %>
-								<% if(notSign === false) { %>
-									<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-										<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
-									<% } else { %>
-										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-									<% } %>
-								<% } else { %>
-									<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
-								<% } %>
-							</div>
+							
 						</div>
 					</div>
-				</form><br>
+				</form>
 				<% } %>
 				<% if(notSign === false) { %> <%# 대댓글 추가. %>
 
@@ -119,29 +119,30 @@
 						maxGrconum.push(arrGrconum);
 					%>
 				<% } %>
-
-					<div id='SC<%=i%>' style="display:none; padding-top:15px" > 
+					<div id='SC<%=i%>' style="display:none" > 
 						<form method="post" action="/process/addsecomment">
 							<div class="ui container">
 								<div class="ui form">
 									<div class="field">
-										<i class="<%=signTld%> flag"></i><%= signNick%>'s reply
+										<img src="../flags-mini/<%=curCTld%>.png"><%= signNick%>'s reply
 									</div>
 									<div class="field">
 										<textarea rows="2" name="secomment"></textarea>
 									</div>
-							<input type="hidden" name="nickname" value="<%= signNick%>">
-							<input type="hidden" name="postnum" value="<%= curPostnum%>">
-							<input type="hidden" name="c_id" value="<%= curC_id%>">
-							<input type="hidden" name="tld" value="<%=curTld%>">
-							<input type="hidden" name="postings_postnum" value="<%= curPostings_postnum%>">
-							<input type="hidden" name="cMembersId" value="<%= curMembersId%>">
-							<input type="hidden" name="curDepth" value="<%= curDepth%>">
-							<input type="hidden" name="curGroupnum" value="<%= curGroupnum%>">
-							<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
-									<div class="field">
-										<input type="submit" value="Add reply">
-										<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
+									<input type="hidden" name="nickname" value="<%= signNick%>">
+									<input type="hidden" name="postnum" value="<%= curPostnum%>">
+									<input type="hidden" name="c_id" value="<%= curC_id%>">
+									<input type="hidden" name="tld" value="<%=curTld%>">
+									<input type="hidden" name="postings_postnum" value="<%= curPostings_postnum%>">
+									<input type="hidden" name="cMembersId" value="<%= curMembersId%>">
+									<input type="hidden" name="curDepth" value="<%= curDepth%>">
+									<input type="hidden" name="curGroupnum" value="<%= curGroupnum%>">
+									<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
+									<div class="comment">
+										<div class="field actions">
+											<input type="submit" value="Add reply">
+											<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
+										</div>
 									</div>
 							</div>
 							</div>
@@ -156,7 +157,7 @@
 				<% var countGroupnum = 0; %>
 			<%}%>
 		<% } %><br>
-		
+		<%# 댓글 추가 %>
 		<form method="post" action="/process/addcomment">
 			<% if(notSign === false) { %>
 				<input type="hidden" name="nickname" value="<%= signNick%>">
@@ -171,7 +172,7 @@
 				<div class="ui form">
 					<div class="field">
 				<% if(notSign === false) { %>
-					<i class="<%=signTld%> flag"></i><%= signNick%> :
+					<img src="../flags-mini/<%=signTld%>.png"> <%= signNick%> :
 				<% } %>
 					</div>
 					<div class="field">
