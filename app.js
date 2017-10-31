@@ -127,8 +127,8 @@ app.get('/process/main/:page', function(req, res){
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 			var signTld = req.user.tld;
-
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission};
+			
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage')};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -323,8 +323,20 @@ app.post('/process/permission', function(req, res) {
 		 	res.redirect('/process/main/1');
 		});
 	} else {
+		console.log('no email code');
+		req.flash('permissionMessage', 'Retry after click link in mail I sent.');
 		res.redirect('/process/main/1');
 	}
+});
+
+app.post('/process/resend', function(req, res) {
+	// console.log('permission -> ' + permission);
+	console.log('app.get(okPermission) -> ' + app.get('okPermission'));
+	console.log('req.user.email -> ' + req.user.email);
+	console.log('req.user.nickname -> ' + req.user.nickname);
+	console.log('req.get(host) -> '+ req.get('host'));
+	sendEmail(req.get('host'), req.user.email, req.user.nickname);
+	res.redirect('/process/main/1');
 });
 
 app.get('/process/showpost', function(req, res) { 
@@ -764,7 +776,7 @@ function sendEmail(cliHost, cliTo, userNickname) {
 	rand = Math.floor((Math.random() * 100) + 54);
 	host = cliHost;
 	// link = 'http://' + req.get('host') + '/process/main/1?id='+rand;
-	link = 'http://' + cliHost + '/verify?id='+rand;
+	link = 'http://' + cliHost + '/process/main/1?id='+rand;
 	console.log('rand -> ' + rand); // rand로 보내고 바로 rand값을 가져오면 그 값은 같다.
 	app.set('emailCode', rand);
 	console.log("app.get(emailCode) -> " + app.get('emailCode'));
@@ -783,22 +795,23 @@ function sendEmail(cliHost, cliTo, userNickname) {
 		}
 	});
 };
-app.get('/verify', function(req, res) {
-	console.log(req.protocol+':/'+req.get('host'));
-	if((req.protocol+"://"+req.get('host')) == ("http://"+host)) {
-		console.log('domain is matched.');
-		if(req.query.id == rand) {
-			console.log('email is verified');
-			setTimeout(res.redirect('/process/main/1?id='+app.get('emailCode')), 10000);
-			res.end('<h1>Email '+mailOptions.to+' is been successfully verified</h1>');
-		} else {
-			console.log('email is not verified');
-			res.end('<h1>bad request</h1>');
-		}
-	} else {
-		res.end('<h1>request is from unknown source</h1>');
-	}
-});
+// app.get('/verify', function(req, res) {
+// 	console.log(req.protocol+':/'+req.get('host'));
+// 	if((req.protocol+"://"+req.get('host')) == ("http://"+host)) {
+// 		console.log('domain is matched.');
+// 		if(req.query.id == rand) {
+// 			console.log('email is verified');
+// 			res.redirect('/process/main/1?id='+app.get('emailCode'))
+// 			// res.end('<h1>Email '+mailOptions.to+' is been successfully verified</h1>');
+// 		} else {
+// 			console.log('email is not verified');
+// 			res.end('<h1>bad request</h1>');
+// 		}
+// 	} else {
+// 		res.redirect('/process/main/1?id='+app.get('emailCode'))
+// 		// res.end('<h1>request is from unknown source</h1>');
+// 	}
+// });
 
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){

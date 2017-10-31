@@ -1,13 +1,24 @@
 <script>
+	function resend() {
+		$('#submit_resend').submit();
+	}
+	function permission() {
+		$('#submit_permission').submit();
+	}
 </script>	
 <a href="/process/main"><h3>Talk<br>T ik</h3></a>
 <hr>
 <div style="float:right"> 
 	<% if(permission === null) { %> <%# permission code %>
 		<div class="ui form" style="text-align:right">
-			<form method="post" action="/process/permission">
-				<h3 style="color:red">you've not verified email yet.</h3> <input	type="submit" value="Permission" id="permi">
-			</form> 
+		<h3 style="color:red;margin:0px">you've not verified email yet.</h3>
+		<h3 style="color:blue;margin:0px"><%=permissionMessage%></h3>
+			<form method="post" action="/process/permission" id="submit_permission">
+			</form>
+			<form method="post" action="/process/resend" id="submit_resend">
+			</form>
+			<a href="javascript:permission();" style="color:red" id="permission">Permission</a> | 
+			<a href="javascript:resend();" style="color:red" id="resend">Resend</a><br>
 			<a href="/process/myinfo">My info</a> | 
 			<a href="/process/signout">Sign out</a>
 		</div>
