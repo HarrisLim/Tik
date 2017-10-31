@@ -350,7 +350,7 @@ app.get('/process/showpost', function(req, res) {
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
 	 	console.log('curTld -> ' + req.user.tld);
-
+	 	console.log('curPermission -> ' + req.user.permission);
 		
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
@@ -358,7 +358,7 @@ app.get('/process/showpost', function(req, res) {
 			console.log('created_at -> ' + results[0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

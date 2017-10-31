@@ -30,12 +30,12 @@
 								<span class="date"><%=curCreated_at%></span>
 								<div class="actions" style="text-align:right">
 									<%# reply button %>
-									<% if(notSign === false) { %>
+									<% if((notSign === false) && (curPermission === "ok")) { %>
 										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
 										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
 										<input type="button" value="reply" onClick="showSC(<%=i%>)">
 									<% } else {%>
-										<input type="button" value="reply" onClick='alert("you need to Sign in.")'>
+										<input type="button" value="reply" onClick='alert("you do not have authorisation.\nex) signing in or verifying email.")'>
 									<% } %>
 										<%# update button %>
 										<% if(curMembersId == curSigninId) { %>
@@ -180,10 +180,10 @@
 					</div>
 				</div>
 			</div><br>
-			<% if(notSign === true) { %>
-				<input type="button" value="add comment : ) " onClick='alert("need Signining")'>
-			<% } else { %>
+			<% if((notSign === false)  && (curPermission === "ok")) { %>
 				<input type="submit" value="add comment : ) ">
+			<% } else { %>
+				<input type="button" value="add comment : ) " onClick='alert("you do not have authorisation.\nex) signing in or verifying email.")'>
 			<% } %>
 		</form><br>
 </div>
