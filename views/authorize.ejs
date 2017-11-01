@@ -4,11 +4,15 @@
 		<%- include header.ejs %>
 		<script>
 			function submit_authorize(i) {
-
-				var curEmail = $('#list'+i).val();
-				$('#curEmail').val(curEmail);
-				alert("<%=results[0].permissionpost%>")
-				$('#submit_authorize').submit();
+				if (confirm('Do you authorize this member ?') == true) {
+					var curEmail = $('#list'+i).val();
+					var curPermissionpost = $('#permissionpost'+i).val();
+					$('#curEmail').val(curEmail);
+					$('#curPermissionpost').val(curPermissionpost);
+					$('#submit_authorize').submit();	
+				} else {
+					return;
+				}
 			}
 		</script>
 
@@ -19,13 +23,16 @@
 		<br>
 		<h1>members list</h1><br>
 		<form method="post" action="/process/authorize" id="submit_authorize">
-			<input type="text" value="" name="curEmail" id="curEmail"> 
+			<input type="hidden" value="" name="curEmail" id="curEmail">
+			<input type="hidden" value="" name="curPermissionpost" id="curPermissionpost">
 		</form>
 		<div class="ui container">
 			<div class="ui list">
 				<% var count = 0;for(var i = 0; i < results.length; i++) { %>
 					<%if(results[i].email !== null) { count++; %>
-					<input type="button" value="<%=results[i].email%>" id="list<%=i%>" onClick="submit_authorize(<%=i%>)">
+					<input type="button" value="Authorizing to <%=results[i].nickname%>" onClick="submit_authorize(<%=i%>)">
+					<input type="hidden" value="<%=results[i].permissionpost%>" id="permissionpost<%=i%>">
+					<input type="hidden" value="<%=results[i].email%>" id="list<%=i%>">
 						<div class="item">		
 								<%=count%>. <img class="ui avatar image" src="../../flags-mini/<%=results[i].tld%>.png">
 								<div class="content" style="">

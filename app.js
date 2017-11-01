@@ -123,11 +123,22 @@ app.get('/process/main/:page', function(req, res){
 			var page = req.params.page;
 			console.log('page -> ' + page);
 			console.log('permission -> '+ req.user.permission);
+			var countMypost = 0;
+			for (var i = 0; i < results.length ; i++) {
+				if(results[i].nickname === req.user.nickname) {
+					countMypost++;
+				}
+			};
+			app.set('countMypost',countMypost);
+			console.log('results[0].nickname -> ' + results[1].nickname)
+			console.log('countMypost -> ' + app.get('countMypost'));
+			
+
 			app.set('curPage', page);
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 			var signTld = req.user.tld;
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage')};
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -192,7 +203,7 @@ app.get('/process/authorize', function(req, res) {
 	var sql = 'select * from members';
 	conn.query(sql, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results, email : req.user.email, nickname : req.user.nickname, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), signTld : req.user.tld};
+		var context = {results : results, email : req.user.email, nickname : req.user.nickname, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), signTld : req.user.tld, countMypost : app.get('countMypost'), curPermissionpost : req.user.permissionpost};
 		req.app.render('authorize', context, function(err, html) {
 			if(err) {
 				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -210,11 +221,14 @@ app.get('/process/authorize', function(req, res) {
 app.post('/process/authorize', function(req, res) {
 	console.log('this is authorize(post)');
 	console.log('req.body.curEmail -> ' + req.body.curEmail);
+	console.log('req.body.curPermissionpost -> ' + parseInt(req.body.curPermissionpost) + 1);
+	var permissionpost = parseInt(req.body.curPermissionpost);
+	permissionpost = permissionpost || 0;
 	var authorize = {
 		permissionpost : permissionpost + 1
 	}
-	var sql = 'UPDATE members SET authorize WHERE email = ?';
-	conn.query(sql, req.body.curEmail, function(err, results) {
+	var sql = 'UPDATE members SET ? WHERE email=?';
+	conn.query(sql, [authorize, req.body.curEmail], function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
@@ -937,7 +951,7 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 		console.log('results --> ' + results[0].email);
 		// app.set('showpostMembersId', results[0].id);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results[0], email : req.user.email, nickname : req.user.nickname, signTld : req.user.tld, permission : req.user.permission};
+		var context = {results : results[0], email : req.user.email, nickname : req.user.nickname, signTld : req.user.tld, permission : req.user.permission, countMypost : app.get('countMypost'), curPermissionpost : req.user.permissionpost};
 		req.app.render('addpost', context,  function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);

@@ -35,7 +35,7 @@
 										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
 										<input type="button" value="reply" onClick="showSC(<%=i%>)">
 									<% } else {%>
-										<input type="button" value="reply" onClick='alert("you do not have an authority.\nex) signing in or verifying email.")'>
+										<input type="button" value="reply" onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
 									<% } %>
 										<%# update button %>
 										<% if(curMembersId == curSigninId) { %>
@@ -183,7 +183,7 @@
 			<% if((notSign === false)  && (curPermission === "ok")) { %>
 				<input type="submit" value="add comment : ) ">
 			<% } else { %>
-				<input type="button" value="add comment : ) " onClick='alert("you do not have an authority.\nex) signing in or verifying email.")'>
+				<input type="button" value="add comment : ) " onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
 			<% } %>
 		</form><br>
 </div>

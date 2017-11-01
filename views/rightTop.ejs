@@ -5,6 +5,11 @@
 	function permission() {
 		$('#submit_permission').submit();
 	}
+	
+	function requestManager() {
+		alert('You do not have an authority.\nPlz, Repuest to manager.');
+	};
+
 </script>	
 <a href="/process/main"><h3>Talk<br>T ik</h3></a>
 <hr>
@@ -26,7 +31,11 @@
 			<a href="/process/signout">Sign out</a>
 		</div>
 	<% } else {%>
-		<a href="/process/addpost">Add post</a> | 
+	<% if(countMypost < curPermissionpost) {%>
+			<a href="/process/addpost">Add post</a> | 
+		<% } else {%>
+		<a href="" onClick='requestManager()'>Add post</a> | 
+		<%} %>
 		<a href="/process/mypost">My post</a> | 
 		<a href="/process/myinfo">My info</a> | 
 		<a href="/process/signout">Sign out</a>
