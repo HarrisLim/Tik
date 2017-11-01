@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include header.ejs %>
+		<script>
+			function submit_authorize(i) {
+
+				var curEmail = $('#list'+i).val();
+				$('#curEmail').val(curEmail);
+				alert("<%=results[0].permissionpost%>")
+				$('#submit_authorize').submit();
+			}
+		</script>
+
+		<title>Authorize posting</title>
+	</head>
+	<body>
+		<%- include rightTop.ejs %>
+		<br>
+		<h1>members list</h1><br>
+		<form method="post" action="/process/authorize" id="submit_authorize">
+			<input type="text" value="" name="curEmail" id="curEmail"> 
+		</form>
+		<div class="ui container">
+			<div class="ui list">
+				<% var count = 0;for(var i = 0; i < results.length; i++) { %>
+					<%if(results[i].email !== null) { count++; %>
+					<input type="button" value="<%=results[i].email%>" id="list<%=i%>" onClick="submit_authorize(<%=i%>)">
+						<div class="item">		
+								<%=count%>. <img class="ui avatar image" src="../../flags-mini/<%=results[i].tld%>.png">
+								<div class="content" style="">
+									<%=results[i].nickname%>, <%=results[i].email%>
+								</div>
+						</div><hr>
+					<% } %>	
+				<% } %>
+			</div>
+			<h4 style="text-align:right">members count : <%=count%></h4>
+		</div><br><br>
+	</body>
+</html>

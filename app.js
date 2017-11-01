@@ -127,7 +127,6 @@ app.get('/process/main/:page', function(req, res){
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 			var signTld = req.user.tld;
-			
 			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage')};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
@@ -187,6 +186,43 @@ app.get('/process/main/:page', function(req, res){
 		});
 	}
 });
+
+app.get('/process/authorize', function(req, res) {
+	console.log('this is authorize(get)');
+	var sql = 'select * from members';
+	conn.query(sql, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {results : results, email : req.user.email, nickname : req.user.nickname, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), signTld : req.user.tld};
+		req.app.render('authorize', context, function(err, html) {
+			if(err) {
+				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				});
+			}
+		console.log('*** rendered, /process/authorize ***');
+		res.end(html);
+		});
+	});
+});
+
+app.post('/process/authorize', function(req, res) {
+	console.log('this is authorize(post)');
+	console.log('req.body.curEmail -> ' + req.body.curEmail);
+	var authorize = {
+		permissionpost : permissionpost + 1
+	}
+	var sql = 'UPDATE members SET authorize WHERE email = ?';
+	conn.query(sql, req.body.curEmail, function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			res.redirect('/process/authorize');
+		}
+	})
+})
 
 app.post('/process/addcomment', function(req, res) {
 	console.log('nickname ->' + req.body.nickname);

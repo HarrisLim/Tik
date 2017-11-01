@@ -9,7 +9,10 @@
 <a href="/process/main"><h3>Talk<br>T ik</h3></a>
 <hr>
 <div style="float:right"> 
-	<% if(permission === null) { %> <%# permission code %>
+	<% if(nickname === "harrislim") {%> <%# permission code %>
+		<a href="/process/authorize">Authorizing</a> | 
+	<% } %>
+	<% if(permission === null) { %> 
 		<div class="ui form" style="text-align:right">
 		<h3 style="color:red;margin:0px">you've not verified email yet.</h3>
 		<h3 style="color:blue;margin:0px"><%=permissionMessage%></h3>
