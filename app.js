@@ -298,17 +298,6 @@ app.locals.formatDateHelper = function(date) { // showpost에서 created_Date의
     return [year, month, day].join('-');
 };
 
-// app.locals.signinHelper = function() { // signin에서 email, pw 확인 기능.
-// 	var xEmail = app.get('xEmail');
-// 	var xPW = app.get('xPW');
-// 	console.log('xEmail -> ' + xEmail);
-// 	console.log('xPW -> ' + xPW);
-// 	if((xEmail === "xEmail") || (xPW === "xPW")) {
-// 		console.log('이메일이나 패스워드 틀렸어 !! ');
-// 		return "hihihi";
-// 	}
-// };
-
 app.post('/process/addsecomment', function(req, res) {
 	var curDepth = parseInt(req.body.curDepth);
 	console.log('curDepth -> ' + curDepth)
@@ -542,17 +531,11 @@ passport.use(new LocalStrategy(  {passReqToCallback : true},
 						return done(null, member); // 이거면 serializeUser가 실행됨.
 					} else {
 						// console.log('비밀번호를 확인하십시오..');
-						app.set('xPW', "xPW");
-						// return done(null, false, {message : "비밀번호를 확인하십시오..(in flash)"}); // 이거면 deserializeUser가 실행됨.
-						// return done(null, false, req.flash('signinmessage', '비밀번호를 확인하십시오..(in flash)')); // 이거면 deserializeUser가 실행됨.
-						return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.')); // 이거면 deserializeUser가 실행됨.
+						return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.'), req.flash('checkoriginpw', 'Incorrect password. Plz enter correct password.')); // 이거면 deserializeUser가 실행됨.
 					}
 				});
 			} else {
 				// console.log("I can't find your email.");
-				app.set('xEmail', "xEmail");
-				// return done(null, false, {message : "I can't find your email.(in flash)"});
-				// return done(null, false, req.flash('signinmessage', '이메일을 확인하세요..(in flash)')); // 이거면 deserializeUser가 실행됨.
 				return done(null, false, req.flash('signinmessage', 'Invalid your Email or Password.')); // 이거면 deserializeUser가 실행됨.
 			}
 		});
@@ -563,9 +546,7 @@ app.post('/process/signin',
 	passport.authenticate('local', { 
 		successRedirect: '/process/main',
         failureRedirect: '/process/signin',
-        failureFlash: true,
-        // failuremessage : 'HiHiHiHiHiHiHi'
-        // successFlash : 'Welcome !Welcome !Welcome !Welcome !Welcome !Welcome !',
+        failureFlash: true
     })    
 );
 
@@ -600,7 +581,7 @@ app.get('/process/mypost/:page', function(req, res) {
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-				var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, permission : req.user.permission};
+				var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
 				req.app.render('mypost', context, function(err, html) {
 					if(err) {
 						console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -618,7 +599,7 @@ app.get('/process/mypost/:page', function(req, res) {
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 
-			var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, leng : leng, pagenum : pagenum, page : page, permission : req.user.permission};
+			var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, leng : leng, pagenum : pagenum, page : page, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
 			req.app.render('mypost', context, function(err, html) {
 				if(err) {
 					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -652,7 +633,7 @@ app.get('/process/myinfo', function(req, res) {
 	sql = 'SELECT * FROM members WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0]};
+		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
 		req.app.render('myinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -705,7 +686,10 @@ app.post('/process/cancelmember', function(req, res) {
 	})
 });
 
-app.post('/process/editinfo', function(req, res) {
+app.post('/process/editinfo', passport.authenticate('local', { 
+        failureRedirect: '/process/editinfo',
+        failureFlash: true
+    }), function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
 			nickname : req.body.nickname || req.query.nickname,
@@ -747,7 +731,7 @@ app.get('/process/editinfo', function(req, res) {
 		console.log('arr -> ' + arrNick);
 		console.log('nickLeng ->' + nickLeng);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : arrNick};
+		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : arrNick, checkoriginpw : req.flash('checkoriginpw')};
 		app.set('postLeng', Object.keys(results).length);
 		console.log('results[1] -> ' + results[1][1].nickname);
 		req.app.render('editinfo', context, function(err, html) {

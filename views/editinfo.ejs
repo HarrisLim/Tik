@@ -45,11 +45,11 @@
 				</tr>
 				<tr>
 					<td><label>Email : </label></td>
-					<td><%= curEmail%></td>
+					<td><%=curEmail%><input type="hidden" name="username" id="email" value="<%=curEmail%>"></td>
 				</tr>
 				<tr>
 					<td><label>originPassword : </label></td> 
-					<td><input type="password" value="<%= curEmail%>"> <- 여기에 기존의 패스워드를 입력하고 그것을 확인한 후에 비밀번호 변경이 가능하게.</td>
+					<td><input type="password" name="password" value="" id="oriPassword"><div style="color:red"><%=checkoriginpw%></div></td>
 				</tr>
 				<tr>
 					<td><label>Password : </label></td>

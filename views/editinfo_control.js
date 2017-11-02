@@ -57,7 +57,9 @@
 		var tempNick = $("#tempNick").val();
 		var firPW = $("#firPW").val();
 		var secPW = $("#secPW").val();
-		
+		$('#editinfopw_username').val($('#email').val());
+		$('#editinfopw_password').val($('#oriPassword').val());
+
 		if(tempNick !== curNick) {
 			alert('Push [Duplication check] button');
 		} else if((firPW !== secPW) || (firPW === "") || (secPW === "")) {
@@ -68,7 +70,7 @@
 			$("#editinfo").submit();
 		}
 	};
-
+	
 	<%# 특수문자 체크 함수 %>
 	function checkStringFormat(string) { 
 		var stringRegx = /[~!@\#$%<>^&*\()\-=+\’'"{}[\]; ]/gi;
