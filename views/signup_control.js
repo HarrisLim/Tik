@@ -59,7 +59,7 @@
 		} else if(nickname && country) {
 			alert('Plz check your email. I sent you the permission mail.');
 
-	        $.get("http://localhost:10468/signup");
+	        // $.get("http://localhost:10468/signup");
 			$('#getCountry').val(country);
 			$("#signup").submit();
 		} else {

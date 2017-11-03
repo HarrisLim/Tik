@@ -5,6 +5,28 @@
 
 		<script>
 
+			function showForgotpw() {
+				$('#forgot').css('display','');
+			}
+
+			function forgotpw() {
+				var arrEmail = "<%=arrEmail%>".split(',');
+				var tempEmail = $('#tempEmail').val();
+				// console.log('arrEmail.indexOf(tempEmail) -> ' + arrEmail.indexOf(tempEmail));
+				// console.log('arrEmail -> ' + arrEmail);
+				$('#getEmail').val(tempEmail);
+
+				if((arrEmail.indexOf(tempEmail) === -1) || (tempEmail === "")) {
+					alert('This email is not our member.');
+				} else if(confirm('Do you want to get email to ' + tempEmail + ' ?') === true) {
+					$('#sendpw').submit();
+					alert('OK. Check your Email.')
+				} else {
+					return;
+				}
+				
+			}
+
 			function checkEmpty() {
 				var email = $('#email').val();
 				var PW = $('#PW').val();
@@ -27,9 +49,12 @@
 		<title>Sign in</title>
 	</head>
 	<body>
+		<form method="post" action="/process/sendpw" id="sendpw">
+			<input type="hidden" value="" name="forgotEmail" id="getEmail">
+		</form>
 		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<hr>
-		<h1 id="xxx">Sign in !</h1>
+		<h1>Sign in !</h1>
 		<br>
 		<form method="post" action="/process/signin" id="signin">
 			<div class="ui form">
@@ -41,6 +66,11 @@
 						<label>Password</label>
 						<input type="password" placeholder="Password" name="password" id="PW">
 					</div>
+			</div>
+			<a href="javascript:showForgotpw()" style="color:red">forgot password ?</a><br>
+			<div style="display:none" id="forgot">
+				<input type="email" value="" placeholder="Put in your Email" id="tempEmail">
+				<input type="button" value="send" onClick="forgotpw()">
 			</div>
 			<h3 style="color:red"><%=signinmessage%></h3>
 			<input type="button" value="Sign in : )" onClick="checkEmpty()">

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include header.ejs %>
+
+		<script>
+
+			function submit_forgotpw() {
+				var email = $('#email').text();
+				$('#tempEmail').val(email);
+
+				var firPW = $('#firPW').val();
+				var secPW = $('#secPW').val();
+				if((firPW !== secPW) || ((firPW === "") || (secPW === ""))){
+					alert('Check your new password.');
+				} else {
+					alert(email+ "'s password is changed");
+					$('#forgotpw').submit();
+				}
+			}
+
+			window.onload = function() {
+			}
+		</script>
+		<title>Forgot PW</title>
+	</head>
+	<body>
+		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<hr>
+		<h1>Reset your password !</h1>
+		<br>
+		<form method="post" action="/process/forgotpw" id="forgotpw">
+			<div class="ui form">
+				<div class="field">
+					<h4>Email</h3> <label id="email"><%=email%></label>
+					<input type="hidden" name="email" value="" id="tempEmail">
+				</div><br>
+				<div class="field">
+					<label>New password</label>
+					<input type="password" placeholder="Password" name="password" id="firPW"><br><br>
+					<label>Confirm new password</label>
+					<input type="password" placeholder="Password" name="passwd" id="secPW">
+				</div>
+			</div>
+			<input type="button" value="Reset : )" onClick="submit_forgotpw()">
+			<a href="/process/main"><input type="button" value="Cancle : )"></a>
+		</form>
+	</body>
+</html>

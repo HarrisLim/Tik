@@ -57,6 +57,7 @@
 		var tempNick = $("#tempNick").val();
 		var firPW = $("#firPW").val();
 		var secPW = $("#secPW").val();
+		var oriPassword = $("#oriPassword").val();
 		$('#editinfopw_username').val($('#email').val());
 		$('#editinfopw_password').val($('#oriPassword').val());
 
@@ -64,6 +65,8 @@
 			alert('Push [Duplication check] button');
 		} else if((firPW !== secPW) || (firPW === "") || (secPW === "")) {
 			alert('Push [Check password] button.');
+		}  else if(oriPassword === ""){
+			alert('Fill your origin password to edit.');
 		} else if(curNick === "<%=curNickname%>") {
 			$("#editinfo").submit();
 		} else {

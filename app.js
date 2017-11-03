@@ -132,7 +132,7 @@ app.get('/process/main/:page', function(req, res){
 			app.set('countMypost',countMypost);
 			console.log('results[0].nickname -> ' + results[1].nickname)
 			console.log('countMypost -> ' + app.get('countMypost'));
-			
+			console.log('req.get(host) -> ' + req.get('host'));
 
 			app.set('curPage', page);
 			var leng = Object.keys(results).length -1;
@@ -149,9 +149,10 @@ app.get('/process/main/:page', function(req, res){
 				}
 				console.log('*** rendered, /process/main(postlist) ***');
 				if (req.query.id !== app.get('emailCode')) { // 이메일 인증.
-					if((req.protocol+"://"+req.get('host')) == ("http://"+host)) {
+					if((req.protocol+"://"+req.get('host')) == ("http://localhost:10468")) {
+					// if((req.protocol+"://"+req.get('host')) == ("http://192.168.219.194:10468")) {
 						console.log('domain is matched.');
-						if(req.query.id == rand) {
+						if(req.query.id == app.get('emailCode')) {
 							console.log('email is verified');
 							app.set('signinNickname', req.user.nickname);
 							app.set('okPermission', 'okPermission');
@@ -552,17 +553,123 @@ app.post('/process/signin',
 
 app.get('/process/signin', function(req, res) {
 	console.log('get.signin에 들어옴.');
- 	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
- 	var context = {email : req.body.username, nickname : req.body.nickname, signinmessage : req.flash('signinmessage')};
- 	req.app.render('signin', context, function(err, html) {
+	var sql = "SELECT * FROM members;"
+	conn.query(sql, function(err, results) {
+		var emailLeng = results.length;
+		var arrEmail = [];
+		for(var i = 0; i < emailLeng; i++) {
+			arrEmail.push(results[i].email);
+		}
+		console.log('arrEmail -> ' + arrEmail);
+	 	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+	 	var context = {email : req.body.username, nickname : req.body.nickname, signinmessage : req.flash('signinmessage'), results : results, arrEmail : arrEmail};
+	 	req.app.render('signin', context, function(err, html) {
+	 		if(err) {
+	 			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+	 			req.app.render('error', function(err, html) {
+	 				res.end(html);
+	 			});
+	 		}
+	 		console.log('*** rendered, /process/signin ***');
+			res.end(html);
+	 	});
+ 	});
+});
+
+app.post('/process/editpw', passport.authenticate('local', { 
+        failureRedirect: '/process/editinfo',
+        failureFlash: true
+    }), function(req, res) {
+	console.log('app.get(forgotemail) -> ' + app.get('forgotEmail'));
+	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
+		var member = {
+			nickname : req.body.nickname || req.query.nickname,
+			passwd : hash,
+			salt : salt,
+			country : req.body.country || req.query.country,
+			agegroup : req.body.agegroup || req.query.agegroup,
+			insid : req.body.insid || req.query.insid
+		};
+		var sql = 'UPDATE members SET ?, m_updated_at = now() WHERE email = ?';
+		conn.query(sql, [member, req.user.email || app.get('forgotEmail')], function(err, results) {
+			if(err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				console.log('info 변경');
+				res.redirect('/process/myinfo');
+			}
+		});
+	});
+});
+
+app.post('/process/sendpw', function(req, res) {
+	console.log('post.forgotpw에 들어옴.');
+	console.log('req.body.forgotEmail -> ' + req.body.forgotEmail);
+	app.set('forgotEmail', req.body.forgotEmail);
+	sendEmail(req.get('host'), req.body.forgotEmail, '', "forgotpw");
+	res.redirect('/process/signin');
+});
+
+app.post('/process/forgotpw', function(req, res) {
+	console.log('post.forgotpw에 들어옴.');
+	console.log('req.body.email ->' + req.body.email);
+	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
+		var member = {
+			passwd : hash,
+			salt : salt
+		};
+		var sql = 'UPDATE members SET ?, m_updated_at = now() WHERE email = ?';
+		conn.query(sql, [member, req.body.email], function(err, results) {
+			if(err) {
+				console.log(err);
+				res.status(500);
+			} else {
+				console.log('pw 변경');
+				res.redirect('/process/signin');
+			}
+		});
+	});
+});
+
+app.get('/process/forgotpw', function(req, res) {
+	console.log('get.forgotpw에 들어옴.');
+	res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+ 	var context = {email : app.get('forgotEmail')};
+ 	req.app.render('forgotpw', context, function(err, html) {
  		if(err) {
  			console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
  			req.app.render('error', function(err, html) {
  				res.end(html);
  			});
  		}
- 		console.log('*** rendered, /process/signin ***');
-		res.end(html);
+ 		console.log('req.query.id -> '+ req.query.id);
+ 		console.log('app.get(emailCode) -> '+ app.get('emailCode'));
+
+ 		console.log('*** rendered, /process/forgotpw ***');
+ 		if (req.query.id !== app.get('emailCode')) { // password 변경 시에 살짝의 보안 ?
+			if((req.protocol+"://"+req.get('host')) == ("http://localhost:10468")) {
+			// if((req.protocol+"://"+req.get('host')) == ("http://192.168.219.194:10468")) {
+				console.log('domain is matched.');
+				if(req.query.id == app.get('emailCode')) {
+					console.log('email is verified');
+					res.end(html);
+
+				} else if(req.query.id === undefined) {
+					console.log('req.query.id -> ' + req.query.id);
+					res.end('<h1>bad request</h1>');
+				} else {
+					console.log('email is not verified');
+					res.end('<h1>bad request</h1>');
+				}
+			} else {
+				res.end('<h1>request is from unknown source</h1>');
+			}
+		} else {
+			console.log('req.query.id -> ' + req.query.id);
+			res.end(html);
+			console.log(req.protocol+"://"+req.get('host')+"/process/main/1")
+		}
  	});
 });
 
@@ -633,7 +740,7 @@ app.get('/process/myinfo', function(req, res) {
 	sql = 'SELECT * FROM members WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
+		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), permissionMessage : req.flash('permissionMessage')};
 		req.app.render('myinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -690,6 +797,7 @@ app.post('/process/editinfo', passport.authenticate('local', {
         failureRedirect: '/process/editinfo',
         failureFlash: true
     }), function(req, res) {
+	console.log('app.get(forgotemail) -> ' + app.get('forgotEmail'));
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
 		var member = {
 			nickname : req.body.nickname || req.query.nickname,
@@ -700,7 +808,7 @@ app.post('/process/editinfo', passport.authenticate('local', {
 			insid : req.body.insid || req.query.insid
 		};
 		var sql = 'UPDATE members SET ?, m_updated_at = now() WHERE email = ?';
-		conn.query(sql, [member, req.user.email], function(err, results) {
+		conn.query(sql, [member, req.user.email || app.get('forgotEmail')], function(err, results) {
 			if(err) {
 				console.log(err);
 				res.status(500);
@@ -720,7 +828,7 @@ app.get('/process/editinfo', function(req, res) {
 	var memberEmail = req.user.email;
 	console.log("ageGV -> " + req.query.agegroup);
 	console.log('email -> ' + req.user.email);
-	sql = "SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?; SELECT m.nickname FROM members m";
+	var sql = "SELECT * FROM members LEFT JOIN postings ON members.id = postings.members_id WHERE email=?; SELECT m.nickname FROM members m";
 	conn.query(sql, memberEmail, function(err, results) {
 
 		var nickLeng = results[1].length;
@@ -799,7 +907,7 @@ app.get('/process/editpost', function(req, res) {
 
 // 이메일 인증
 var rand, mailOptions, host, link;
-function sendEmail(cliHost, cliTo, userNickname) {
+function sendEmail(cliHost, cliTo, userNickname, way) {
 	var transporter = nodemailer.createTransport({
 		service : 'gmail',
 		auth : {
@@ -807,19 +915,30 @@ function sendEmail(cliHost, cliTo, userNickname) {
 			pass : jsonData.web.gmail.password
 		}
 	});
-	rand = Math.floor((Math.random() * 100) + 54);
+	rand = Math.floor((Math.random() * 100) + 54)
 	host = cliHost;
-	// link = 'http://' + req.get('host') + '/process/main/1?id='+rand;
-	link = 'http://' + cliHost + '/process/main/1?id='+rand;
 	console.log('rand -> ' + rand); // rand로 보내고 바로 rand값을 가져오면 그 값은 같다.
 	app.set('emailCode', rand);
 	console.log("app.get(emailCode) -> " + app.get('emailCode'));
-	mailOptions = {
-	from : 'TiK(Travel in Korea) <harris19921204@gmail.com>', // sender address
-	to : cliTo, // list of receivers
-	subject : "Welcome to TiK ! This is the permission Email.", // Subject line
-	html : "Hello, " +userNickname+ "<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" // html body
-	};
+	console.log('way -> ' + way);
+	console.log('userNickname -> '+ userNickname)
+	if(way === "forgotpw") {
+		link = 'http://' + cliHost + '/process/forgotpw?id='+rand;
+		mailOptions = {
+			from : 'TiK(Travel in Korea) <harris19921204@gmail.com>', // sender address
+			to : cliTo, // list of receivers
+				subject : "Hello. This is TiK ! forgot password ?",
+				html : "Hello, " +userNickname+ "<br> Please Click on the link and then set new password.<br><a href="+link+">Click here to set new password</a>"
+		};
+	} else {
+		link = 'http://' + cliHost + '/process/main/1?id='+rand;
+		mailOptions = {
+			from : 'TiK(Travel in Korea) <harris19921204@gmail.com>', // sender address
+			to : cliTo, // list of receivers
+				subject : "Welcome to TiK ! This is the permission Email.", // Subject line
+				html : "Hello, " +userNickname+ "<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" // html body
+		};
+	}
 
 	transporter.sendMail(mailOptions, function(error, response) {
 		if(error) {
@@ -829,23 +948,6 @@ function sendEmail(cliHost, cliTo, userNickname) {
 		}
 	});
 };
-// app.get('/verify', function(req, res) {
-// 	console.log(req.protocol+':/'+req.get('host'));
-// 	if((req.protocol+"://"+req.get('host')) == ("http://"+host)) {
-// 		console.log('domain is matched.');
-// 		if(req.query.id == rand) {
-// 			console.log('email is verified');
-// 			res.redirect('/process/main/1?id='+app.get('emailCode'))
-// 			// res.end('<h1>Email '+mailOptions.to+' is been successfully verified</h1>');
-// 		} else {
-// 			console.log('email is not verified');
-// 			res.end('<h1>bad request</h1>');
-// 		}
-// 	} else {
-// 		res.redirect('/process/main/1?id='+app.get('emailCode'))
-// 		// res.end('<h1>request is from unknown source</h1>');
-// 	}
-// });
 
 app.post('/process/signup', function(req, res) {
 	hasher({password:req.body.passwd}, function(err, pass, salt, hash){
@@ -860,7 +962,6 @@ app.post('/process/signup', function(req, res) {
 			insid : req.body.insid
 		};
 		console.log('111 -> ' + req.get('host'));
-
 		var sql = 'INSERT INTO members SET ?, m_created_at = now()';
 		conn.query(sql, member, function(err, results) {
 			if(err) {
