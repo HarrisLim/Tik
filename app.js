@@ -1069,19 +1069,19 @@ app.post('/process/photo', upload.array('photo', 1), function(req, res) {
 		if(Array.isArray(files)) {
 			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
 
-			for(var index=0; index < files.length; index++) {
-				originalname = files[index].originalname;
-				filename = files[index].filename;
-				mimetype = files[index].mimetype;
-				size = files[index].size;
+			for(var i = 0; i < files.length; i++) {
+				originalname = files[i].originalname;
+				filename = files[i].filename;
+				mimetype = files[i].mimetype;
+				size = files[i].size;
 			}
 		} else {
 			console.log('파일 갯수 : 1');
 
-			originalname = files[index].originalname;
-			filename = files[index].name;
-			mimetype = files[index].mimetype;
-			size = files[index].size;
+			originalname = files[i].originalname;
+			filename = files[i].name;
+			mimetype = files[i].mimetype;
+			size = files[i].size;
 		}
 
 		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);

@@ -14,6 +14,10 @@
 				startCalendar: $('#rangestart')
 			});
 		};
+
+		function uploadPhoto() {
+			$('#submit_photo').submit();
+		}
 		</script>
 
 		<title>Add Post</title>
@@ -29,6 +33,7 @@
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
+	   	<form method="post" enctype="multipart/form-data" action="/process/photo" id="submit_photo"></form>
 	   	<form method="post" action="/process/addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<h3>Date range</h3>
@@ -56,6 +61,15 @@
 					</div>
 				</div>
 			</div>
+
+			<table>
+				<tr>
+					<td><label>File : </label></td>
+					<td><input type="file" name="photo"></td>
+				</tr>
+			</table>
+			<input type="button" value="업로드" name="submit" onClick="uploadPhoto()">
+
 			<h3>Title</h3>
 			<div class="ui container">
 				<div class="ui form">
