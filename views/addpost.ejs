@@ -3,8 +3,14 @@
 	<head>
 		<%- include header.ejs %>
 
+		<script src="../ckeditor2/ckeditor.js"></script>
 		<script>
 		window.onload = function() {
+
+			CKEDITOR.replace('editor1', {
+				filebrowserUploadUrl: '/process/photo'
+			});
+
 			$('#rangestart').calendar({
 				type: 'date',
 				endCalendar: $('#rangeend')
@@ -13,6 +19,7 @@
 				type: 'date',
 				startCalendar: $('#rangestart')
 			});
+
 		};
 
 		function uploadPhoto() {
@@ -23,6 +30,18 @@
 		<title>Add Post</title>
 	</head>
 	<body>
+		<form method="post" enctype="multipart/form-data" action="/process/photo" id="submit_photo"></form>
+	   	<form method="post" action="/process/addpost">
+	<input type="submit" value="add Post : )">
+	<h3>Text</h3>
+		<div class="ui container">
+			<div class="ui form">
+				<div class="field">
+					<textarea name="post" id="editor1"></textarea>
+				</div>
+			</div>
+		</div>
+
 			<%
 				var curId = results.id;
 				var curNickname = results.nickname;
@@ -30,11 +49,17 @@
 				var curTld = results.tld;
 			%>
 		<%- include rightTop.ejs %>
+
+	
+
+
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
-	   	<form method="post" enctype="multipart/form-data" action="/process/photo" id="submit_photo"></form>
-	   	<form method="post" action="/process/addpost">
+	   	
+	   		--- 원래 form태그 2개의 자리.
+
+
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<h3>Date range</h3>
 			<div class="ui container">
@@ -86,14 +111,10 @@
 					</div>
 				</div>
 			</div>
-			<h3>Text</h3>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
-						<textarea name="post"></textarea>
-					</div>
-				</div>
-			</div>
+
+			-- 이 자리가 원래 test의 자리.
+
+
 			<h3>Hashtag</h3>
 			<div class="ui container">
 				<div class="ui form">
@@ -111,7 +132,7 @@
 				</div>
 			</div>
 			<br>
-			<input type="submit" value="add Post : )">
+			--- 이 자리가 원래 submit의 자리.
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form><br>
 	</body>

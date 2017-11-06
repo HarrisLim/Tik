@@ -1051,53 +1051,131 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 	});
 });
 
-app.post('/process/photo', upload.array('photo', 1), function(req, res) {
-	console.log('/process/photo 호출됨.');
 
-	try {
-		var files = req.files;
+app.post('/process/photo', upload.array('upload', 1), function(req,res) {
+    var files = req.files;
 
-		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
-		console.dir(req.files[0]);
-		console.dir('#=====#');
-		// 현재의 파일 정보를 저장할 변수 선언
-		var originalname = '';
-		var filename = '';
-		var mimetype = '';
-		var size = 0;
+	console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+	// console.dir(req.files[0]);
+	console.dir('#=====#');
+	// 현재의 파일 정보를 저장할 변수 선언
+	var originalname = '';
+	var filename = '';
+	var mimetype = '';
+	var size = 0;
+	var html;
 
-		if(Array.isArray(files)) {
-			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
+	if(Array.isArray(files)) {
+		console.log('배열에 들어있는 파일 갯수 : %d', files.length);
 
-			for(var i = 0; i < files.length; i++) {
-				originalname = files[i].originalname;
-				filename = files[i].filename;
-				mimetype = files[i].mimetype;
-				size = files[i].size;
-			}
-		} else {
-			console.log('파일 갯수 : 1');
-
+		for(var i = 0; i < files.length; i++) {
 			originalname = files[i].originalname;
-			filename = files[i].name;
+			filename = files[i].filename;
 			mimetype = files[i].mimetype;
 			size = files[i].size;
+
+			html = "";
+		    html += "<script type='text/javascript'>";
+		    html += " var funcNum = " + req.query.CKEditorFuncNum + ";";
+		    html += " var url = \"/uploads/" + filename + "\";";
+		    html += " var size = "+ size +";";
+		    // html += " var message = \"업로드 완료\";";
+		    html += " window.parent.CKEDITOR.tools.callFunction(funcNum, url);";
+		    html += "</script>";
+		    
 		}
+	} else {
+		console.log('파일 갯수 : 1');
 
-		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
+		originalname = files[i].originalname;
+		filename = files[i].name;
+		mimetype = files[i].mimetype;
+		size = files[i].size;
 
-		// 클라이언트에 응답 전송
-		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		res.write('<h3>파일 업로드 성공</h3>');
-		res.write('<hr>');
-		res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
-		res.write('<p>MIME TYPE : ' + mimetype + '</p>');
-		res.write('<p>파일 크기 : '+ size +'</p>');
-		res.end();
-	} catch(err) {
-		console.dir(err.stack);
+		html = "";
+	    html += "<script type='text/javascript'>";
+	    html += " var funcNum = " + req.query.CKEditorFuncNum + ";";
+	    html += " var url = \"/uploads/" + filename + "\";";
+	    html += " var size = "+ size +";";
+	    // html += " var message = \"업로드 완료\";";
+	    html += " window.parent.CKEDITOR.tools.callFunction(funcNum, url);";
+	    html += "</script>";
 	}
+	console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
+
+	res.send(html);
+
 });
+
+	// 이 밑에 있는 건 CKeditor를 이용한 사진 올리기. 왜 array로 바꿔서 하냐면 ckeditor 사진 upload 커스텀할 수 있으면 한 번에 여러개 올리려고.
+// 	app.post('/process/photo', upload.single('upload'), function(req,res) {	
+//   var tmpPath = req.file.path;
+//   var fileName = req.file.filename;
+//   var newPath = "/uploads/" + fileName;
+//   fs.rename(tmpPath, newPath, function (err) {
+//     if (err) {
+//       console.log(err);
+//     }
+//     var html;
+//     html = "";
+//     html += "<script type='text/javascript'>";
+//     html += " var funcNum = " + req.query.CKEditorFuncNum + ";";
+//     html += " var url = \"/uploads/" + fileName + "\";";
+//     // html += " var message = \"업로드 완료\";";
+//     html += " window.parent.CKEDITOR.tools.callFunction(funcNum, url);";
+//     html += "</script>";
+//     res.send(html);
+// 	});
+// });
+
+// 책에 있던 photo upload except CKeditor
+// app.post('/process/photo', upload.array('photo', 1), function(req, res) {
+// 	console.log('/process/photo 호출됨.');
+
+// 	try {
+// 		var files = req.files;
+
+// 		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+// 		console.dir(req.files[0]);
+// 		console.dir('#=====#');
+// 		// 현재의 파일 정보를 저장할 변수 선언
+// 		var originalname = '';
+// 		var filename = '';
+// 		var mimetype = '';
+// 		var size = 0;
+
+// 		if(Array.isArray(files)) {
+// 			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
+
+// 			for(var i = 0; i < files.length; i++) {
+// 				originalname = files[i].originalname;
+// 				filename = files[i].filename;
+// 				mimetype = files[i].mimetype;
+// 				size = files[i].size;
+// 			}
+// 		} else {
+// 			console.log('파일 갯수 : 1');
+
+// 			originalname = files[i].originalname;
+// 			filename = files[i].name;
+// 			mimetype = files[i].mimetype;
+// 			size = files[i].size;
+// 		}
+
+// 		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
+
+// 		// 클라이언트에 응답 전송
+// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+// 		res.write('<h3>파일 업로드 성공</h3>');
+// 		res.write('<hr>');
+// 		res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
+// 		res.write('<p>MIME TYPE : ' + mimetype + '</p>');
+// 		res.write('<p>파일 크기 : '+ size +'</p>');
+// 		res.end();
+// 	} catch(err) {
+// 		console.dir(err.stack);
+// 	}
+// });
 
 // 모든 router 처리 끝난 후 404 오류 페이지 처리
 var errorHandler = expressErrorHandler({
