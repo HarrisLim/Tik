@@ -1051,7 +1051,6 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 	});
 });
 
-
 app.post('/process/photo', upload.array('upload', 1), function(req,res) {
     var files = req.files;
 
@@ -1107,7 +1106,11 @@ app.post('/process/photo', upload.array('upload', 1), function(req,res) {
 
 });
 
-	// 이 밑에 있는 건 CKeditor를 이용한 사진 올리기. 왜 array로 바꿔서 하냐면 ckeditor 사진 upload 커스텀할 수 있으면 한 번에 여러개 올리려고.
+app.locals.replHelper = function (sentence, arr, src, style){ // showpost에서 post를 보여주기위헤. 근데 서버에서 가져가면 무조건 ""로 묶는 거 같아.
+	return sentence.replace(arr, '<img src=' + src + ' style=' + style+ '>');
+};
+
+// 이 밑에 있는 건 CKeditor를 이용한 사진 올리기. 왜 array로 바꿔서 하냐면 ckeditor 사진 upload 커스텀할 수 있으면 한 번에 여러개 올리려고.
 // 	app.post('/process/photo', upload.single('upload'), function(req,res) {	
 //   var tmpPath = req.file.path;
 //   var fileName = req.file.filename;
