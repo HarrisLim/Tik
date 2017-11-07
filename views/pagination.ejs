@@ -15,7 +15,7 @@
 
 			
 		%>
-			<li><a href="/process/showpost?postnum=<%=curPostnum%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= formatDateHelper(curCreated_at)%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
+			<li><a href="/process/showpost?postnum=<%=curPostnum%>&views=<%=curViews%>"><%= curPicpath%> Title : <%= curTitle %></a><%= curFlagpath%> <%= curNickname%> date : <%= formatDateHelper(curCreated_at)%> views : <%= curViews%> wanna go : <%= curGetwant%></li><br>	
 <%		}
 	}
 %>

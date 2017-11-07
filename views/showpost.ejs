@@ -112,12 +112,12 @@
 		</div>
 		<br>
 		<form method="post" action="/process/getwant" id="submit_getwant">
-			<input style="width:500px" type="text" value="<%=curSigninId%>" name="curMemberId" id="curMemberId"><br>
-			<input style="width:500px" type="text" value="<%=curPostnum%>" name="curPostnum"><br>
-			<input style="width:500px" type="text" value="<%=curGetwant%>" name="curGetwant"><br>
-			<input style="width:500px" type="text" value="<%=curGetwant_members%>" name="curGetwant_members"><br>
-			<input style="width:500px" type="text" value="<%=curGetwant_ip%>" name="curGetwant_ip"><br>
-			<input style="width:500px" type="text" value="<%=curIp%>" name="curIp">
+			<input type="hidden" value="<%=curSigninId%>" name="curMemberId" id="curMemberId">
+			<input type="hidden" value="<%=curPostnum%>" name="curPostnum">
+			<input type="hidden" value="<%=curGetwant%>" name="curGetwant">
+			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members">
+			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip">
+			<input type="hidden" value="<%=curIp%>" name="curIp">
 		</form>
 		<form method="post" action="/process/notgetwant" id="submit_Notgetwant">
 			<input type="hidden" value="<%=curSigninId%>" name="curMemberId">
