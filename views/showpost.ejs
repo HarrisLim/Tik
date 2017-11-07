@@ -16,64 +16,6 @@
 		<title>Show post</title>
 	</head>
 	<body>
-		<%#
-			var strToMatch = "<img src=\"http://a.jpg\"/> image1<img src='http://b.jpg'/> image2  <img src='http://a.gif'/>";
-			var strReg = new RegExp("http://*[^>]*\\.(jpg|gif|png)","gim");
-			var xArr =  strToMatch.match(strReg);
-
-
-
-			var regexp_src = /\"\/uploads*[^"]*\"/gim;
-			var regexp_style= /\"height*[^"]*\"/gim;	
-
-			splitOne[i]
-
-
-			var getFir = sentence.replace(xArr[0],'??');
-			getFir.replace(xArr[1],'??');
-		%>
-
-		
-			<%
-				var sentence = results[0].post;
-				var regexp_img = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/gim;
-				var regexp_src = /\/uploads*[^"]*/gim;
-				var regexp_style= /height*[^"]*/gim;
-				var xArr =  sentence.match(regexp_img);
-				var src =  sentence.match(regexp_src);
-				var style =  sentence.match(regexp_style);%>
-				<%if (xArr) {%> <%# if를 하는 이유는 사진이 업로되된 페이지가 아니면 length에러가 나기 때문.%>
-
-				<%
-				var leng = xArr.length + xArr.length + 1;
-				var splitOne = sentence.split(xArr);
-
-				console.log('leng -> ' + leng);
-				console.log('regexp_img -> ' + regexp_img);
-				console.log('xArr.length -> ' + xArr.length);
-				console.log('xArr-> ' + xArr);
-				console.log('src0 -> ' + src[0]);
-				console.log('src1 -> ' + src[1]);
-				console.log('-------------------------------');
-				%>	
-
-			<%# 이 밑에 것으로 그 중간에 위치는 찾았는데 html tag가 안들어가네 %>
-			<%for(var j = 0; j < xArr.length; j++) {%>
-				<%
-				var temp;
-				var getF;
-				sentence = sentence.replace(xArr[j], '??');%>
-				
-				<img src="<%=src[j]%>" style="<%=style[j]%>">
-			<%}%><br>
-			<%=sentence%><br>
-
-			위에 ??에 어떻게 img 태그를 넣어야할까..
-		<%}%>
-		<%console.log('xArr-> ' + xArr);%>
-		<br><br>
-
-------------------------------------------------------------------------------------------
 		<%
 			var curId = results[0].id;
 			var curNickname = results[0].nickname;
@@ -137,8 +79,7 @@
 		<h3>Post</h3>
 		<div class="ui container">
 			<div class="ui message">
-				<%= curPicpath%><br>
-				<%= curPost%>
+				<%- curPost%>
 			</div>
 		</div>
 		<h3>Hashtag</h3>

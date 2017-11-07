@@ -8,7 +8,8 @@
 		window.onload = function() {
 
 			CKEDITOR.replace('editor1', {
-				filebrowserUploadUrl: '/process/photo'
+				filebrowserUploadUrl: '/process/photo',
+				extraPlugins : 'image2'
 			});
 
 			$('#rangestart').calendar({
@@ -21,27 +22,11 @@
 			});
 
 		};
-
-		function uploadPhoto() {
-			$('#submit_photo').submit();
-		}
 		</script>
 
 		<title>Add Post</title>
 	</head>
 	<body>
-		<form method="post" enctype="multipart/form-data" action="/process/photo" id="submit_photo"></form>
-	   	<form method="post" action="/process/addpost">
-	<input type="submit" value="add Post : )">
-	<h3>Text</h3>
-		<div class="ui container">
-			<div class="ui form">
-				<div class="field">
-					<textarea name="post" id="editor1">This is test for uploading image.</textarea>
-				</div>
-			</div>
-		</div>
-
 			<%
 				var curId = results.id;
 				var curNickname = results.nickname;
@@ -50,15 +35,10 @@
 			%>
 		<%- include rightTop.ejs %>
 
-
-
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
-	   	
-	   		--- 원래 form태그 2개의 자리.
-
-
+	   		<form method="post" action="/process/addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<h3>Date range</h3>
 			<div class="ui container">
@@ -86,13 +66,6 @@
 				</div>
 			</div>
 
-			<table>
-				<tr>
-					<td><label>File : </label></td>
-					<td><input type="file" name="photo"></td>
-				</tr>
-			</table>
-			<input type="button" value="업로드" name="submit" onClick="uploadPhoto()">
 
 			<h3>Title</h3>
 			<div class="ui container">
@@ -102,18 +75,14 @@
 					</div>
 				</div>
 			</div>
-			<h3>Picpath</h3>
+			<h3>Text</h3>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<input type="text" name="picpath">
+						<textarea name="post" id="editor1">This is test for uploading image.</textarea>
 					</div>
 				</div>
 			</div>
-
-			-- 이 자리가 원래 text의 자리.
-
-
 			<h3>Hashtag</h3>
 			<div class="ui container">
 				<div class="ui form">
@@ -131,7 +100,7 @@
 				</div>
 			</div>
 			<br>
-			--- 이 자리가 원래 submit의 자리.
+			<input type="submit" value="add Post : )">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form><br>
 	</body>
