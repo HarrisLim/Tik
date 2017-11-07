@@ -11,6 +11,28 @@
 					return sentence.replace(arr, '<img src=' + src + ' style=' + style+ '>');
 				};
 				
+				function getwant() {
+					var getwant_members = "<%=results[0].getwant_members%>";
+					var getwant_ip = "<%=results[0].getwant_ip%>";
+
+					console.log('getwant_members -> ' + getwant_members);
+					var getwant_members_split = getwant_members.split(',');
+					var getwant_ip_split = getwant_ip.split(',');
+					console.log(getwant_members_split);
+					console.log(getwant_ip_split);
+					console.log('curSigninId -> ' + <%=curSigninId%>)
+					console.log('splitmember -> ' +getwant_ip_split.indexOf("<%=curSigninId%>"));
+					console.log('splitIp -> ' +getwant_ip_split.indexOf("<%=curIp%>"));
+
+					console.log(getwant_members_split.indexOf("<%=curSigninId%>"));
+
+					if(<%=curSigninId%>) {
+						$('#submit_getwant').submit();
+					} else {
+						$('#submit_Notgetwant').submit();
+					}
+				}
+
 		</script>
 
 		<title>Show post</title>
@@ -26,6 +48,8 @@
 			var curPicpath = results[0].picpath;
 			var curPost = results[0].post;
 			var curGetwant = results[0].getwant;
+			var curGetwant_members = results[0].getwant_members;
+			var curGetwant_ip = results[0].getwant_ip;
 			var curHashTag = results[0].hashtag;
 			var curViews = results[0].views;
 			var curHowmanydays = results[0].howmanydays;
@@ -87,7 +111,23 @@
 			<%= curHashTag%>
 		</div>
 		<br>
-		<div class="ui labeled button" tabindex="0">
+		<form method="post" action="/process/getwant" id="submit_getwant">
+			<input style="width:500px" type="text" value="<%=curSigninId%>" name="curMemberId" id="curMemberId"><br>
+			<input style="width:500px" type="text" value="<%=curPostnum%>" name="curPostnum"><br>
+			<input style="width:500px" type="text" value="<%=curGetwant%>" name="curGetwant"><br>
+			<input style="width:500px" type="text" value="<%=curGetwant_members%>" name="curGetwant_members"><br>
+			<input style="width:500px" type="text" value="<%=curGetwant_ip%>" name="curGetwant_ip"><br>
+			<input style="width:500px" type="text" value="<%=curIp%>" name="curIp">
+		</form>
+		<form method="post" action="/process/notgetwant" id="submit_Notgetwant">
+			<input type="hidden" value="<%=curSigninId%>" name="curMemberId">
+			<input type="hidden" value="<%=curPostnum%>" name="curPostnum">
+			<input type="hidden" value="<%=curGetwant%>" name="curGetwant">
+			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members">
+			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip">
+			<input type="hidden" value="<%=curIp%>" name="curIp">
+		</form>
+		<div class="ui labeled button" onClick="getwant()" tabindex="0" id="button_getwant">
 			<div class="ui blue button">
 				<i class="plane icon"></i> I wanna go
 			</div>

@@ -40,6 +40,8 @@ var nodemailer = require('nodemailer');
 // 익스프레스 객체 생성
 var app = express();
 
+var ip = require('ip');
+
 // 뷰 엔진 설정
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -379,11 +381,77 @@ app.post('/process/resend', function(req, res) {
 	res.redirect('/process/main/1');
 });
 
+app.post('/process/getwant', function(req, res) {
+	console.log('in /process/getwant.');
+	var curGetwant = req.body.curGetwant
+	var curGetwant_members = req.body.curGetwant_members;
+	var getwant_members_split = curGetwant_members.split(',');
+	var curMemberId = req.body.curMemberId;
+
+	curGetwant = curGetwant || 0;
+	if(getwant_members_split.indexOf(curMemberId) === -1 ) { // false 값을 받아오는데 문자열로 받아온다.
+		var getwant = {
+			getwant : parseInt(curGetwant) + 1,
+			getwant_members : curGetwant_members + curMemberId + ','
+		}	
+	} else {
+		var getwant = {
+			getwant : parseInt(curGetwant) - 1,
+			getwant_members : curGetwant_members.replace(curMemberId+',', '')
+		}
+	}
+
+	var sql = 'UPDATE postings SET ? WHERE postnum=?';
+	conn.query(sql, [getwant, req.body.curPostnum], function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('/process/getwant');
+			res.redirect('/process/showpost?postnum='+req.body.curPostnum);
+		}
+	})
+});
+
+app.post('/process/notgetwant', function(req, res) {
+	console.log('in /process/notgetwant.');
+	var curGetwant = req.body.curGetwant
+	var curGetwant_ip = req.body.curGetwant_ip;
+	var curIp = req.body.curIp;
+	var getwant_ip_split = curGetwant_ip.split(',');
+
+	curGetwant = curGetwant || 0;
+	if(getwant_ip_split.indexOf(curIp) === -1 ) { // false 값을 받아오는데 문자열로 받아온다.
+		var getwant = {
+			getwant : parseInt(curGetwant) + 1,
+			getwant_ip : curGetwant_ip + curIp + ','
+		}	
+	} else{
+		var getwant = {
+			getwant : parseInt(curGetwant) - 1,
+			getwant_ip : curGetwant_ip.replace(curIp+',', '')
+		}
+	}
+
+	var sql = 'UPDATE postings SET ? WHERE postnum=?';
+	conn.query(sql, [getwant, req.body.curPostnum], function(err, results) {
+		if(err) {
+			console.log(err);
+			res.status(500);
+		} else {
+			console.log('/process/getwant');
+			res.redirect('/process/showpost?postnum='+req.body.curPostnum);
+		}
+	})
+});
+
 app.get('/process/showpost', function(req, res) { 
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
 	 	var notSign = false;
 	 	var curTld = req.user.tld;
+
+		console.log(ip.address());
 	 	console.log(req.query.postnum);
 	 	console.log('req.params.id --> ' + req.params.id);
 	 	console.log('req.user.id --> ' + req.user.id);
@@ -392,13 +460,13 @@ app.get('/process/showpost', function(req, res) {
 	 	console.log('curTld -> ' + req.user.tld);
 	 	console.log('curPermission -> ' + req.user.permission);
 		
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 			var leng = Object.keys(results).length -1;
 			console.log('created_at -> ' + results[0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission};
+			var context = {curSigninId : req.user.id, results : results, signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address()};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -406,7 +474,7 @@ app.get('/process/showpost', function(req, res) {
 			 			res.end(html);
 			 		});
 			 	}
-			 	console.log('curGisninID --> ' + req.user.id);
+			 	console.log('curSigninID --> ' + req.user.id);
 			 	// console.log('results --> ' + results[0].id);
 			 	console.log('*** rendered, /process/showpost ***');
 	 			res.end(html);
@@ -416,11 +484,11 @@ app.get('/process/showpost', function(req, res) {
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var notSign = true;
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC';
 	 	conn.query(sql, postnum, function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results, notSign : notSign};
+			var context = {curSigninId : false, results : results, notSign : notSign, curIp : ip.address()};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
