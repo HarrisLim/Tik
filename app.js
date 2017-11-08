@@ -448,9 +448,9 @@ app.post('/process/notgetwant', function(req, res) {
 app.get('/process/showpost', function(req, res) { 
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
-	 	var views = req.query.views;
 	 	var notSign = false;
 	 	var curTld = req.user.tld;
+	 	var views = req.query.views;
 
 		console.log(ip.address());
 	 	console.log('postnum -> ' + req.query.postnum);
@@ -458,18 +458,16 @@ app.get('/process/showpost', function(req, res) {
 	 	console.log('req.user.id --> ' + req.user.id);
 	 	app.set('curId', req.user.id);
 	 	app.set('curPostnum', postnum);
-	 	// app.set('views', views);
 	 	console.log('curTld -> ' + req.user.tld);
 	 	console.log('curPermission -> ' + req.user.permission);
-	 	
-	 	console.log('views -> ' + req.query.views);
-		var views = views || 0;
+
+		views = views || 0;
 		var view = {
 			views : parseInt(views) + 1
-		}
-		
+		}		
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum = ?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
+	 		console.log('results[0][0].views => ' + results[0][0].views);
 			var leng = Object.keys(results).length -1;
 			console.log('created_at -> ' + results[0][0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
@@ -493,15 +491,15 @@ app.get('/process/showpost', function(req, res) {
 	 	var postnum = req.query.postnum;
 	 	var views = req.query.views;
 	 	var notSign = true;
-	 	var views = views || 0;
+	 	views = views || 0;
 		var view = {
 			views : parseInt(views) + 1
 		}
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum = ?';
-	 	conn.query(sql, postnum, function(err, results) {
+	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results, notSign : notSign, curIp : ip.address()};
+			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address()};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
