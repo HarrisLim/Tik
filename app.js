@@ -1086,8 +1086,23 @@ app.get('/process/signup', function(req, res) {
 	});
 });
 
+app.post('/ajax_send_email', function(req, res){
+  console.log(req.body.email);
+  var responseData = {'result' : 'ok', 'email' : req.body.email}
+  res.json(responseData);
+  // 서버에서는 JSON.stringify 필요없음
+})
+
 app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
+	var hashtag = req.body.hashtag;
+	var hashtags = [];
+	hashtag = hashtag.replace(/#[^#\s,;]+/gm, function(tag) {
+		hashtags.push(tag);
+	});
+	hashtags = hashtags.join(' ');
+	console.log('hh -> ' + hashtags);
+	console.log()
 	var posting = {
 		id : req.body.id,
 		howmanydays : dateRange,
@@ -1095,7 +1110,7 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 		picpath : req.body.picpath,
 		post : req.body.post,
 		views : req.body.views,
-		hashtag : req.body.hashtag,
+		hashtag : hashtags,
 		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?, p_created_at = now()';
