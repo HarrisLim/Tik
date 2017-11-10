@@ -4,49 +4,6 @@
 		<%- include header.ejs %>
 		<script>
 			<%- include showpost_control.js%>
-
-				function repl(sentence, arr, src, style){
-					var rere = sentence.replace(arr, '<img src=' + src + ' style=' + style+ '>')
-					$('#tempText').val(rere);
-					return sentence.replace(arr, '<img src=' + src + ' style=' + style+ '>');
-				};
-				
-				function getwant() {
-					var getwant_members = "<%=results[0].getwant_members%>";
-					var getwant_ip = "<%=results[0].getwant_ip%>";
-
-					var getwant_members_split = getwant_members.split(',');
-					var getwant_ip_split = getwant_ip.split(',');
-
-					if(<%=curSigninId%>) {
-						$('#submit_getwant').submit();
-					} else {
-						$('#submit_Notgetwant').submit();
-					}
-				}
-
-				<%# working ajax%>
-				var getData = function(){
-					var attach = document.getElementById('root');
-					var httpRequest;
-					if(window.XMLHttpRequest){ //Chrome, Safari..
-						httpRequest = new XMLHttpRequest();
-					}
-
-					httpRequest.onreadystatechange = function(){
-						if(httpRequest.readyState === 4){
-							/* 서버에 대한 요청 응답 처리 상태 : readyState */
-							if(httpRequest.status === 200){
-								/* 서버 응답 코드 : status */
-								attach.innerHTML = httpRequest.responseText;
-							}
-						}
-					}
-					httpRequest.open('POST', '/process/notgetwant', true);
-					httpRequest.send();
-				}
-
-
 		</script>
 
 		<title>Show post</title>
@@ -125,38 +82,22 @@
 			<%= curHashTag%>
 		</div>
 		<br>
-		<form method="post" action="/process/getwant" id="submit_getwant">
+		<form method="post" action="/ajax" id="submit_getwant">
 			<input type="hidden" value="<%=curSigninId%>" name="curMemberId" id="curMemberId">
-			<input type="hidden" value="<%=curPostnum%>" name="curPostnum">
-			<input type="hidden" value="<%=curGetwant%>" name="curGetwant">
-			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members">
-			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip">
-			<input type="hidden" value="<%=curIp%>" name="curIp">
+			<input type="hidden" value="<%=curPostnum%>" name="curPostnum" id="curPostnum">
+			<input type="hidden" value="<%=curGetwant%>" name="curGetwant" id="curGetwant">
+			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members" id="curGetwant_members">
+			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip" id="curGetwant_ip">
+			<input type="hidden" value="<%=curIp%>" name="curIp" id="curIp">
 		</form>
-		<form method="post" action="/process/notgetwant" id="submit_Notgetwant">
-			<input type="hidden" value="<%=curSigninId%>" name="curMemberId">
-			<input type="hidden" value="<%=curPostnum%>" name="curPostnum">
-			<input type="hidden" value="<%=curGetwant%>" name="curGetwant">
-			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members">
-			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip">
-			<input type="hidden" value="<%=curIp%>" name="curIp">
-		</form>
-
-
-		<%# working ajax%>
-		 <div id="root">
-      데이터가 붙을 곳입니다.
-    </div>
-		<button onclick="getData();">Json 통신하기</button>
-
-
-		<div class="ui labeled button" onClick="getwant()" tabindex="0" id="button_getwant">
+		<div class="ui labeled button" tabindex="0" id="button_getwant" onClick="getwant()">
 			<div class="ui blue button">
 				<i class="plane icon"></i> I wanna go
 			</div>
-			<a class="ui basic blue left pointing label">
+			<a class="ui basic blue left pointing label" id="num">
 			<%=curGetwant%>
 			</a>
+
 		</div>
 		<h3>Instagram</h3>
 		<div class="ui container">

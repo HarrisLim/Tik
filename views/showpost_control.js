@@ -71,6 +71,56 @@ function hideSC(i) {
 	$('#SC'+i).css('display','none');
 };
 
+// I wanna go ajax 
+function getwant() {
+	// 밑에서 ""로 curMemberId를 가져오니까 문자열로 가져와서 "false"로 해야해.
+	if(($('#curMemberId').val()) !== "false") {
+
+		$('#num').html('');
+		console.log('true ? -> ' + $('#curMemberId').val());
+		$.ajax({
+			url: '/process/getwant',
+			dataType: 'json',
+			type: 'POST',
+			data: {
+				'msg':$('#msg').val(),
+				'curGetwant' : $('#curGetwant').val(),
+				'curGetwant_members' : $('#curGetwant_members').val(),
+				'curMemberId' : $('#curMemberId').val(),
+				'curPostnum' : $('#curPostnum').val()
+			},
+			success: function(result) {
+				if ( result['result'] == true ) {
+					$('#curGetwant_members').val(result['curGetwant_members']);
+					$('#num').html(result['curGetwant']);
+				}
+			} 
+		}); 
+	} else {
+		$('#num').html('');
+		console.log('false ? -> ' + $('#curMemberId').val());
+		
+		$.ajax({
+			url: '/process/notgetwant',
+			dataType: 'json',
+			type: 'POST',
+			data: {
+				'msg':$('#msg').val(),
+				'curGetwant' : $('#curGetwant').val(),
+				'curGetwant_ip' : $('#curGetwant_ip').val(),
+				'curIp' : $('#curIp').val(),
+				'curPostnum' : $('#curPostnum').val()
+			},
+			success: function(result) {
+				if ( result['result'] == true ) {
+					$('#curGetwant_ip').val(result['curGetwant_ip']);
+					$('#num').html(result['curGetwant']);
+				}
+			}
+		});
+	}
+};
+
 window.onload = function() {
 	
 }

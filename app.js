@@ -383,7 +383,7 @@ app.post('/process/resend', function(req, res) {
 
 app.post('/process/getwant', function(req, res) {
 	console.log('in /process/getwant.');
-	var curGetwant = req.body.curGetwant
+	var curGetwant = req.body.curGetwant;
 	var curGetwant_members = req.body.curGetwant_members;
 	var getwant_members_split = curGetwant_members.split(',');
 	var curMemberId = req.body.curMemberId;
@@ -396,26 +396,27 @@ app.post('/process/getwant', function(req, res) {
 		}	
 	} else {
 		var getwant = {
-			getwant : parseInt(curGetwant) - 1,
+			getwant : parseInt(curGetwant),
 			getwant_members : curGetwant_members.replace(curMemberId+',', '')
 		}
 	}
 
-	var sql = 'UPDATE postings SET ? WHERE postnum=?';
-	conn.query(sql, [getwant, req.body.curPostnum], function(err, results) {
+	var sql = 'UPDATE postings SET ? WHERE postnum=?;SELECT * FROM postings WHERE postnum=?';
+	conn.query(sql, [getwant, req.body.curPostnum, req.body.curPostnum], function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
 		} else {
 			console.log('/process/getwant');
-			res.redirect('/process/showpost?postnum='+req.body.curPostnum);
+			res.send({result:true, curGetwant : results[1][0].getwant, curGetwant_members : results[1][0].getwant_members});
+
 		}
-	})
+	});
 });
 
 app.post('/process/notgetwant', function(req, res) {
 	console.log('in /process/notgetwant.');
-	var curGetwant = req.body.curGetwant
+	var curGetwant = req.body.curGetwant;
 	var curGetwant_ip = req.body.curGetwant_ip;
 	var curIp = req.body.curIp;
 	var getwant_ip_split = curGetwant_ip.split(',');
@@ -428,21 +429,21 @@ app.post('/process/notgetwant', function(req, res) {
 		}	
 	} else{
 		var getwant = {
-			getwant : parseInt(curGetwant) - 1,
+			getwant : parseInt(curGetwant),
 			getwant_ip : curGetwant_ip.replace(curIp+',', '')
 		}
 	}
 
-	var sql = 'UPDATE postings SET ? WHERE postnum=?';
-	conn.query(sql, [getwant, req.body.curPostnum], function(err, results) {
+	var sql = 'UPDATE postings SET ? WHERE postnum=?;SELECT * FROM postings WHERE postnum=?';
+	conn.query(sql, [getwant, req.body.curPostnum, req.body.curPostnum], function(err, results) {
 		if(err) {
 			console.log(err);
 			res.status(500);
 		} else {
-			console.log('/process/getwant');
-			res.redirect('/process/showpost?postnum='+req.body.curPostnum);
+			console.log('/process/notgetwant');
+			res.send({result:true, curGetwant:results[1][0].getwant, curGetwant_ip : results[1][0].getwant_ip});
 		}
-	})
+	});
 });
 
 app.get('/process/showpost', function(req, res) { 
@@ -451,6 +452,7 @@ app.get('/process/showpost', function(req, res) {
 	 	var notSign = false;
 	 	var curTld = req.user.tld;
 	 	var views = req.query.views;
+	 	// app.set('views', views);
 
 		console.log(ip.address());
 	 	console.log('postnum -> ' + req.query.postnum);
@@ -465,7 +467,7 @@ app.get('/process/showpost', function(req, res) {
 		var view = {
 			views : parseInt(views) + 1
 		}		
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum = ?';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		console.log('results[0][0].views => ' + results[0][0].views);
 			var leng = Object.keys(results).length -1;
@@ -490,12 +492,13 @@ app.get('/process/showpost', function(req, res) {
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var views = req.query.views;
+	 	// app.set('views', views);
 	 	var notSign = true;
 	 	views = views || 0;
 		var view = {
 			views : parseInt(views) + 1
 		}
-	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum = ?';
+	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
@@ -1273,6 +1276,15 @@ app.locals.replHelper = function (sentence, arr, src, style){ // showpost에서 
 // 		console.dir(err.stack);
 // 	}
 // });
+
+/* POST 호출 처리 */
+
+app.post('/ajax', function(req, res) {
+   console.log('POST 방식으로 서버 호출됨');
+    var msg = req.body.msg;
+    msg = '[에코]' + msg;
+    res.send({result:true, msg:msg});
+});
 
 // 모든 router 처리 끝난 후 404 오류 페이지 처리
 var errorHandler = expressErrorHandler({
