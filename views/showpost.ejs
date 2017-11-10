@@ -77,9 +77,11 @@
 				<%- curPost%>
 			</div>
 		</div>
-		<h3>Hashtag</h3>
+		<h3>Tag</h3>
 		<div class="ui container">
-			<%= curHashTag%>
+			<% for(var i =0; i < curTags.length - 1; i++) {%>
+				<a href=""><%= curTags[i]%></a>, 
+			<%}%>
 		</div>
 		<br>
 		<form method="post" action="/ajax" id="submit_getwant">

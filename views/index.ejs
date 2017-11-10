@@ -5,26 +5,21 @@
 		<title>Main</title>
 	</head>
 	<body>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		<a href="/process/main" style="font-size:23px">Talk<br>T&nbsp;&nbsp;ik</a>
 		<hr>
-		<div style="float:right">
+		<div style="text-align:right;width:100%;padding-bottom:20px">
 		<a href="/process/signin">Sign in</a> | 
 		<a href="/process/signup">Sign up</a>
 		</div>
-		<h1>Welcome to TiK !</h1>
-		<br><br>
 		<%- include pagination.ejs%>
-		<br>
-		<tr>
-			<td colspan="5">
-				<% 
-					for(var j=0; j<results.length/4; j++) {
-				%>
-					<a href="/process/main/<%= j+1%>"><%= j+1%></a>&emsp;
-				<%
-					}
-				%>
-			</td>
-		</tr>
+		<div style="text-align:center;padding:5% 0 10% 0;">
+			<% 
+				for(var j=0; j<results.length/4; j++) {
+			%>
+				<a href="/process/main/<%= j+1%>" style="padding:5%"><%= j+1%></a>&emsp;
+			<%
+				}
+			%>
+		</div>
 	</body>
 </html>

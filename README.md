@@ -37,6 +37,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 다른 비용없�
 * country select box에 flag 추가.
 * 글쓰기 권한 부여, 부여받지 못한다면 글쓰기 불가.
 * 패스워드 분실 시, 패스워드 reset 링크 메일로 받기.
+* I wanna go ajax
 * 
 
 ## TO DO

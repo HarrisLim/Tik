@@ -21,6 +21,30 @@
 				startCalendar: $('#rangestart')
 			});
 		};
+
+		function tag() {
+			var tags = [];
+			$.ajax({
+				url: '/process/tag',
+				dataType: 'json',
+				type: 'POST',
+				data: {
+					'msg':$('#tag').val(),
+					'result':$('#result').text(),
+				},
+				success: function(result) {
+					if ( result['result'] == true ) {
+						$('#result').html(result['tag']);
+						$('#tempTag').val(result['tag']);
+						tags.push($('#tempTag').val());
+						for(var i =0; i < tags.length; i++){
+							console.log(tags[i]);
+						}
+					}
+				}
+			});
+			$('#tag').val('');
+		};
 		</script>
 
 		<title>Add Post</title>
@@ -33,7 +57,6 @@
 				var curTld = results.tld;
 			%>
 		<%- include rightTop.ejs %>
-
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
@@ -64,6 +87,14 @@
 					</div>
 				</div>
 			</div>
+			<h3>Travel map</h3>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<input type="file" name="picpath" value="" placeholder="main picture(내(운영자)가 올리는 거야. 그 루트 짜준거 여기에 사진 하나 넣을 수 있도록 해.)"><br>
+					</div>
+				</div>
+			</div>
 			<h3>Title</h3>
 			<div class="ui container">
 				<div class="ui form">
@@ -80,11 +111,15 @@
 					</div>
 				</div>
 			</div>
-			<h3>Hashtag</h3>
+			<h3>Tag</h3>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<input type="text" name="hashtag" id="hashtag" style="color:red">
+						<input type="text" id="tag">
+						<div id="result"></div>
+						<a href="javascript:tag();">Add tag</a>
+						<p id="getLeng"></p>
+						<input type="hidden" name="tag" id="tempTag">
 					</div>
 				</div>
 			</div>

@@ -9,16 +9,16 @@
 	function requestManager() {
 		alert('You do not have an authority.\nPlz, Repuest to manager.');
 	};
+</script>
 
-</script>	
-<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+<a href="/process/main" style="font-size:23px">Talk<br>T&nbsp;&nbsp;ik</a>
 <hr>
-<div style="float:right"> 
+<div style="text-align:right;width:100%;"> 
 	<% if(nickname === "harrislim") {%> <%# permission code %>
 		<a href="/process/authorize">Authorizing</a> | 
 	<% } %>
 	<% if(permission === null) { %> 
-		<div class="ui form" style="text-align:right">
+		<div class="ui form">
 		<h3 style="color:red;margin:0px">you've not verified email yet.</h3>
 		<h3 style="color:blue;margin:0px"><%=permissionMessage%></h3>
 			<form method="post" action="/process/permission" id="submit_permission">
@@ -40,7 +40,7 @@
 		<a href="/process/myinfo">My info</a> | 
 		<a href="/process/signout">Sign out</a>
 	<% } %>
-	<div style="text-align:right">
+	<div>
 		<div><p><i class="address card icon"></i> <%= email%></div>
 		<div><p><img src="../../flags-mini/<%=signTld%>.png"> <%= nickname%></div><br>
 	</div>

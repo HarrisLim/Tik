@@ -76,7 +76,7 @@ function getwant() {
 	// 밑에서 ""로 curMemberId를 가져오니까 문자열로 가져와서 "false"로 해야해.
 	if(($('#curMemberId').val()) !== "false") {
 
-		$('#num').html('');
+		// $('#num').html('');
 		console.log('true ? -> ' + $('#curMemberId').val());
 		$.ajax({
 			url: '/process/getwant',
@@ -97,7 +97,7 @@ function getwant() {
 			} 
 		}); 
 	} else {
-		$('#num').html('');
+		// $('#num').html('');
 		console.log('false ? -> ' + $('#curMemberId').val());
 		
 		$.ajax({

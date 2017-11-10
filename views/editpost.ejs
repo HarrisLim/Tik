@@ -21,6 +21,31 @@
 
 				$('#frm').submit();	
 			};
+
+			function tag() {
+				var tags = [];
+				$.ajax({
+					url: '/process/tag',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						'msg':$('#tag').val(),
+						'result':$('#result').text(),
+					},
+					success: function(result) {
+						if ( result['result'] == true ) {
+							$('#result').html(result['tag']);
+							$('#tempTag').val(result['tag']);
+							tags.push($('#tempTag').val());
+							for(var i =0; i < tags.length; i++){
+								console.log(tags[i]);
+							}
+						}
+					}
+				});
+				$('#tag').val('');
+			};
+
 		</script>
 	</head>
 	<body>
@@ -106,14 +131,20 @@
 		<h3>Post</h3>
 		<div class="ui container">
 			<div class="ui form">
-				<input type="text" name="picpath" value="<%= curPicpath%>"><br>
 				<textarea name="post"><%= curPost%></textarea>
 			</div>
 		</div>
-		<h3>Hashtag</h3>
+
+		<h3>Tag</h3>
 		<div class="ui container">
 			<div class="ui form">
-				<input type="text" name="hashtag" value="<%= curHashTag%>">
+				<div class="field">
+					<input type="text" id="tag">
+					<div id="result"><%= curHashTag%></div>
+					<a href="javascript:tag();">Add tag</a>
+					<p id="getLeng"></p>
+					<input type="hidden" name="tag" id="tempTag">
+				</div>
 			</div>
 		</div>
 		<br>

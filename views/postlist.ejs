@@ -4,6 +4,10 @@
 		<%- include header.ejs %>
 		<script>
 		</script>
+
+		<style>
+		</style>
+
 		<title>Main</title>
 
 			<%# 이거 클라이언트에서 서버로 데이터 보낼 때 사용. 병기가 알려준 것. 밑에 form 태그와 함께.
@@ -19,27 +23,25 @@
 	</head>
 	<body>
 	<%- include rightTop.ejs %>
-	<h1>Welcome to TiK !</h1>
-	<br><br>
 		<%# 병기가 알려준 것.
 			<form name="frm" id="frm" action="/process/showpost" method="get">
 				<input type="hidden" name="postnum" id="postnum">
 				<input type="hidden" name="memberId" id="memberId">
 			</form>
 		%>
-		
-		<%- include pagination.ejs%>
 		<br>
-		<tr>
-			<td colspan="5">
+		<div class="container">
+			<%- include pagination.ejs%>
+		</div>
+		<br>
+		<div style="text-align:center">
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					<a href="/process/main/<%= j+1%>"><%= j+1%></a>&emsp;
+					<a href="/process/main/<%= j+1%>" style="padding:3%"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>
-			</td>
-		</tr>
+		</div>
 	</body>
 </html>

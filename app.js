@@ -119,7 +119,7 @@ app.get('/process/main', function(req, res){
 
 app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // Signin
-		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -180,7 +180,7 @@ app.get('/process/main/:page', function(req, res){
 		});
 	} else { // not Signin
 
-		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -262,7 +262,7 @@ app.post('/process/addcomment', function(req, res) {
 			console.log(err);
 			res.status(500);
 		} else {
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -279,7 +279,7 @@ app.post('/process/updatecomment', function(req, res) {
 		} else {
 			console.log('post 변경');
 			backURL = req.header('Referer') || '/';
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -326,7 +326,7 @@ app.post('/process/addsecomment', function(req, res) {
 			console.log(err);
 			res.status(500);
 		} else {
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -343,7 +343,7 @@ app.post('/process/updatesecomment', function(req, res) {
 		} else {
 			console.log('post 변경');
 			backURL = req.header('Referer') || '/';
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -420,18 +420,21 @@ app.post('/process/notgetwant', function(req, res) {
 	var curGetwant_ip = req.body.curGetwant_ip;
 	var curIp = req.body.curIp;
 	var getwant_ip_split = curGetwant_ip.split(',');
-
 	curGetwant = curGetwant || 0;
+	var count = 0;
+	count = count + 1;
 	if(getwant_ip_split.indexOf(curIp) === -1 ) { // false 값을 받아오는데 문자열로 받아온다.
 		var getwant = {
 			getwant : parseInt(curGetwant) + 1,
 			getwant_ip : curGetwant_ip + curIp + ','
 		}	
+		console.log('count ++ -> ' + count);
 	} else{
 		var getwant = {
 			getwant : parseInt(curGetwant),
 			getwant_ip : curGetwant_ip.replace(curIp+',', '')
 		}
+		console.log('count -- ->' + count);
 	}
 
 	var sql = 'UPDATE postings SET ? WHERE postnum=?;SELECT * FROM postings WHERE postnum=?';
@@ -446,13 +449,14 @@ app.post('/process/notgetwant', function(req, res) {
 	});
 });
 
-app.get('/process/showpost', function(req, res) { 
+app.get('/process/showpost', function(req, res) {
+	app.set('curViews', req.query.views);
+	console.log('outside if loop -> ' + app.get('curViews'));
  	if(req.user && req.user.email) {
 	 	var postnum = req.query.postnum;
 	 	var notSign = false;
 	 	var curTld = req.user.tld;
 	 	var views = req.query.views;
-	 	// app.set('views', views);
 
 		console.log(ip.address());
 	 	console.log('postnum -> ' + req.query.postnum);
@@ -469,12 +473,14 @@ app.get('/process/showpost', function(req, res) {
 		}		
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
+	 		var tag = results[0][0].hashtag;
+	 		var tags = tag.split(', ');
 	 		console.log('results[0][0].views => ' + results[0][0].views);
 			var leng = Object.keys(results).length -1;
 			console.log('created_at -> ' + results[0][0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address()};
+			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address(), curTags : tags};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -492,7 +498,6 @@ app.get('/process/showpost', function(req, res) {
 		console.log('postnum --->> ' + req.query.postnum);
 	 	var postnum = req.query.postnum;
 	 	var views = req.query.views;
-	 	// app.set('views', views);
 	 	var notSign = true;
 	 	views = views || 0;
 		var view = {
@@ -500,9 +505,11 @@ app.get('/process/showpost', function(req, res) {
 		}
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld, c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
+	 		var tag = results[0][0].hashtag;
+	 		var tags = tag.split(', ');
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address()};
+			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address(), curTags : tags};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -555,7 +562,7 @@ app.post('/process/deletecomm', function(req, res) {
 			res.status(500);
 		} else {
 			console.log('delete post');
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -573,7 +580,7 @@ app.post('/process/deletesecomm', function(req, res) {
 			res.status(500);
 		} else {
 			console.log('delete post');
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -948,7 +955,7 @@ app.post('/process/editpost', function(req, res) {
 		title : req.body.title,
 		picpath : req.body.picpath,
 		post : req.body.post,
-		hashtag : req.body.hashtag
+		hashtag : req.body.tag
 	};
 	var sql = 'UPDATE postings SET ?, p_updated_at = now() WHERE postnum=?';
 	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
@@ -958,7 +965,7 @@ app.post('/process/editpost', function(req, res) {
 		} else {
 			console.log('podst 변경');
 			backURL = req.header('Referer') || '/';
-			res.redirect('/process/showpost?postnum='+app.get('curPostnum'));
+			res.redirect('/process/showpost?postnum='+app.get('curPostnum') + '&views=' + app.get('curViews'));
 		}
 	});
 });
@@ -1089,23 +1096,32 @@ app.get('/process/signup', function(req, res) {
 	});
 });
 
-app.post('/ajax_send_email', function(req, res){
-  console.log(req.body.email);
-  var responseData = {'result' : 'ok', 'email' : req.body.email}
-  res.json(responseData);
-  // 서버에서는 JSON.stringify 필요없음
-})
+app.post('/process/tag', function(req, res) {
+    console.log('POST 방식으로 서버 호출됨');
+    var msg = req.body.msg;
+    var result = req.body.result;
+    tag = result + msg + ', ';
+    res.send({result:true, tag:tag});
+});
 
-app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+	console.log('req.body.tag -> '+req.body.tag);
+	// var tag = req.body.tag;
+	// var tags = [];
+	// tags = tag.split(', ');
+	// for(var i = 0; i < tags.length; i++) {
+	// 	console.log('tags #'+i+'#-> '+tags[i]);
+	// }
+	
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
-	var hashtag = req.body.hashtag;
-	var hashtags = [];
-	hashtag = hashtag.replace(/#[^#\s,;]+/gm, function(tag) {
-		hashtags.push(tag);
-	});
-	hashtags = hashtags.join(' ');
-	console.log('hh -> ' + hashtags);
-	console.log()
+	// var hashtag = req.body.hashtag;
+	// var hashtags = [];
+	// hashtag = hashtag.replace(/#[^#\s,;]+/gm, function(tag) {
+	// 	hashtags.push(tag);
+	// });
+	// hashtags = hashtags.join(' ');
+	// console.log('hh -> ' + hashtags);
+	// console.log()
 	var posting = {
 		id : req.body.id,
 		howmanydays : dateRange,
@@ -1113,7 +1129,7 @@ app.post('/process/addpost', function(req, res) { // 로그인한 아이디로 �
 		picpath : req.body.picpath,
 		post : req.body.post,
 		views : req.body.views,
-		hashtag : hashtags,
+		hashtag : req.body.tag,
 		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?, p_created_at = now()';
@@ -1277,14 +1293,6 @@ app.locals.replHelper = function (sentence, arr, src, style){ // showpost에서 
 // 	}
 // });
 
-/* POST 호출 처리 */
-
-app.post('/ajax', function(req, res) {
-   console.log('POST 방식으로 서버 호출됨');
-    var msg = req.body.msg;
-    msg = '[에코]' + msg;
-    res.send({result:true, msg:msg});
-});
 
 // 모든 router 처리 끝난 후 404 오류 페이지 처리
 var errorHandler = expressErrorHandler({
