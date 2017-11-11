@@ -119,7 +119,7 @@ app.get('/process/main', function(req, res){
 
 app.get('/process/main/:page', function(req, res){
 	if(req.user && req.user.email) { // Signin
-		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -474,7 +474,7 @@ app.get('/process/showpost', function(req, res) {
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		var tag = results[0][0].hashtag;
-	 		var tags = tag.split(', ');
+	 		var tags = tag.split(',');
 	 		console.log('results[0][0].views => ' + results[0][0].views);
 			var leng = Object.keys(results).length -1;
 			console.log('created_at -> ' + results[0][0].p_created_at);
@@ -1105,23 +1105,15 @@ app.post('/process/tag', function(req, res) {
 });
 
 app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
-	console.log('req.body.tag -> '+req.body.tag);
-	// var tag = req.body.tag;
-	// var tags = [];
-	// tags = tag.split(', ');
-	// for(var i = 0; i < tags.length; i++) {
-	// 	console.log('tags #'+i+'#-> '+tags[i]);
-	// }
-	
+	var tag = req.body.tag;
+	var tags = [];
+	tags = tag.split(', ');
+	var arrTag = [];
+	for(var i = 0; i < tags.length -1 ; i++){
+		arrTag.push(tags[i]);
+	}
+	tag = arrTag.join();
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
-	// var hashtag = req.body.hashtag;
-	// var hashtags = [];
-	// hashtag = hashtag.replace(/#[^#\s,;]+/gm, function(tag) {
-	// 	hashtags.push(tag);
-	// });
-	// hashtags = hashtags.join(' ');
-	// console.log('hh -> ' + hashtags);
-	// console.log()
 	var posting = {
 		id : req.body.id,
 		howmanydays : dateRange,
@@ -1129,7 +1121,7 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // �
 		picpath : req.body.picpath,
 		post : req.body.post,
 		views : req.body.views,
-		hashtag : req.body.tag,
+		hashtag : tag,
 		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?, p_created_at = now()';

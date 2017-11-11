@@ -36,24 +36,23 @@
 			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
 		<% } %>
 		<hr>
-		<div class="ui container">
-			<div class="ui" style="float:right">
-				<% if(notSign === false) { %>
-					<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
-						<input type="button" value="Edit" onClick="button_edit();">
-						<input type="submit" value="Delete : (" onClick="button_delPost();">
-						<form method="post" action="/process/deletepost" id="button_delPost"> <input type="hidden" name="postnum" value="<%= curPostnum%>">
-						</form>
-					<% } else { %>
-						<input type="button" value="Delete : (" onClick='alert("you cant delete.")'>
-					<% } %>
+		<div class="ui" style="text-align:right;width:100%;padding-bottom:50px">
+			<% if(notSign === false) { %>
+				<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
+					<input type="button" value="Edit" onClick="button_edit();">
+					<input type="submit" value="Delete : (" onClick="button_delPost();">
+					<form method="post" action="/process/deletepost" id="button_delPost"> <input type="hidden" name="postnum" value="<%= curPostnum%>">
+					</form>
 				<% } else { %>
-					<input type="button" value="Delete : (" onClick='alert("you can not delete.")'>
+					<input type="button" value="Delete : (" onClick='alert("you cant delete.")'>
 				<% } %>
-			</div>
+			<% } else { %>
+				<input type="button" value="Delete : (" onClick='alert("you can not delete.")'>
+			<% } %>
 		</div>
 		<div class="ui container">
-			<div style="text-align:right; padding-top:25px">
+			<h1 style="text-align:center"><%= curTitle%></h1><br>
+			<div style="text-align:right">
 				<a class="ui image label">
 					Created_Date
 					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
@@ -62,12 +61,7 @@
 					Views
 					<div class="detail"><%= curViews%></div>
 				</a>
-			</div>
-		</div><br>
-		<div class="ui container">
-			<h1 style="text-align:center"><%= curTitle%></h1><br>
-			<div style="text-align:right">
-				<h4><%= curHowmanydays%><br>
+				<h4 style="margin-top:0px"><%= curHowmanydays%><br>
 				Written by <img src="../flags-mini/<%=writtenTld%>.png"> <%= curNickname%> !</h4>
 			</div>
 		</div>
@@ -79,7 +73,7 @@
 		</div>
 		<h3>Tag</h3>
 		<div class="ui container">
-			<% for(var i =0; i < curTags.length - 1; i++) {%>
+			<% for(var i =0; i < curTags.length; i++) {%>
 				<a href=""><%= curTags[i]%></a>, 
 			<%}%>
 		</div>

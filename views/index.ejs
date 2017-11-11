@@ -11,7 +11,9 @@
 		<a href="/process/signin">Sign in</a> | 
 		<a href="/process/signup">Sign up</a>
 		</div>
-		<%- include pagination.ejs%>
+		<div class="ui two column grid" style="padding:3%">
+			<%- include pagination.ejs%>
+		</div>
 		<div style="text-align:center;padding:5% 0 10% 0;">
 			<% 
 				for(var j=0; j<results.length/4; j++) {
