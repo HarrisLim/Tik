@@ -483,7 +483,7 @@ app.get('/process/showpost', function(req, res) {
 			console.log('created_at -> ' + results[0][0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address(), curTags : tags};
+			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address(), curTags : tags, ip : ip.address()};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -512,7 +512,7 @@ app.get('/process/showpost', function(req, res) {
 	 		var tags = tag.split(', ');
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address(), curTags : tags};
+			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address(), curTags : tags, ip : ip.address()};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -956,7 +956,7 @@ app.post('/process/editpost', function(req, res) {
 	var posting = {
 		howmanydays : dateRange,
 		title : req.body.title,
-		picpath : req.body.picpath,
+		picpath : app.get('edit_picpath'),
 		post : req.body.post,
 		hashtag : req.body.tag
 	};
@@ -981,6 +981,7 @@ app.get('/process/editpost', function(req, res) {
 		var howmanydays = results[0].howmanydays;
 		var startDate = howmanydays.split(' ~ ')[0];
 		var endDate = howmanydays.split(' ~ ')[1];
+		app.set('edit_picpath',results[0].picpath);
 
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results[0], startDate : startDate, endDate : endDate, signTld : req.user.tld, signNick : req.user.nickname};

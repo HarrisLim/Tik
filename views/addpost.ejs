@@ -6,10 +6,10 @@
 		<script src="../ckeditor2/ckeditor.js"></script>
 		<script>
 		window.onload = function() {
-
 			CKEDITOR.replace('editor1', {
-				filebrowserUploadUrl: '/process/photo',
-				extraPlugins : 'image2'
+				filebrowserUploadUrl : '/process/photo',
+				extraPlugins : 'image2',
+				extraPlugins : 'confighelper'
 			});
 
 			$('#rangestart').calendar({
@@ -20,8 +20,21 @@
 				type: 'date',
 				startCalendar: $('#rangestart')
 			});
-
 		};
+
+		function addpost() {
+			var ckeditor = CKEDITOR.instances.editor1;
+			var startDate = $('#startDate').val();
+			var endDate = $('#endDate').val();
+			var title = $('#title').val();
+			var editor1 = $('#editor1').val();
+			if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "")) {
+				alert('Plz, Fill required box.');
+			} else {
+				$('#submit_addpost').submit();	
+			}
+		}
+
 
 		function delTag() {
 			// $('#pp').children().eq(0).remove();
@@ -45,15 +58,13 @@
 						var tempT = [];
 						var tag = [];
 						var tags = result['tags'][0].split(', ');
-						console.log('tags -> ' + result['tag'][0]);
-						console.log('tags -> ' + result['tag'][1]);
-						console.log('tags[0] -> ' + tags[0]);
-						console.log('tags[1] -> ' + tags[1]);
 						var tagLeng = result['tag'].split(',');
 						console.log('tagLeng - > ' + tagLeng.length);
+						console.log('tags - > ' + tags[0]);
+						var reg = / /gim;
 						// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
-						$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '</a>');
-						$('#tempTag').val(result['tag']);
+						$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
+						$('#tempTag').val(result['tag'].replace(reg,'').toLowerCase());
 						
 					}
 				}
@@ -75,7 +86,7 @@
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
-	   		<form method="post" action="/process/addpost">
+	   		<form method="post" action="/process/addpost" id="submit_addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<h3>Date range</h3>
 			<div class="ui container">
@@ -86,7 +97,7 @@
 							<div class="ui calendar" id="rangestart">
 								<div class="ui input left icon">
 									<i class="calendar icon"></i>
-									<input type="text" placeholder="Start" id="startDate" name="startDate">
+									<input type="text" placeholder="START" id="startDate" name="startDate">
 								</div>
 							</div>
 						</div>
@@ -95,7 +106,7 @@
 							<div class="ui calendar" id="rangeend">
 								<div class="ui input left icon">
 									<i class="calendar icon"></i>
-									<input type="text" placeholder="End" id="endDate" name="endDate">
+									<input type="text" placeholder="END" id="endDate" name="endDate">
 								</div>
 							</div>
 						</div>
@@ -114,7 +125,7 @@
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<input type="text" name="title">
+						<input type="text" name="title" id="title" placeholder="TITLE">
 					</div>
 				</div>
 			</div>
@@ -122,7 +133,7 @@
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<textarea name="post" id="editor1">This is test for uploading image.</textarea>
+						<textarea name="post" id="editor1" placeholder="TEXT"></textarea>
 					</div>
 				</div>
 			</div>
@@ -130,11 +141,11 @@
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
-						<input type="text" id="tag">
+						<input type="text" id="tag" placeholder="TAG">
 						<p id="tagParent"></p>
-						<a href="javascript:tag();" style="padding-right:10px">Add tag</a>
-						<a href="javascript:delTag();" style="color:red">Delete tag</a>
-						<input type="hidden" name="tag" id="tempTag">
+						<a href="javascript:tag();" style="padding-right:15px">Add tag</a>|
+						<a href="javascript:delTag();" style="color:red;padding-left:15px">Delete tag</a>
+						<input type="text" name="tag" id="tempTag">
 					</div>
 				</div>
 			</div>
@@ -147,7 +158,7 @@
 				</div>
 			</div>
 			<br>
-			<input type="submit" value="add Post : )">
+			<input type="button" value="add Post : )" onclick="addpost()">
 			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form><br>
 	</body>
