@@ -9,40 +9,10 @@
 	function requestManager() {
 		alert('You do not have an authority.\nPlz, Repuest to manager.');
 	};
-
-	window.onload = function() {
-		// 태그 검색
-		var tags = [];
-		var tag = [];
-		<%for(var i=0; i < results.length; i++) {%>
-			tag = '<%=results[i].hashtag%>';
-			tags.push(tag);
-		<%}%>
-		var joinTag = tags.join();
-		var arrTag = joinTag.split(',');
-
-		var content = [];
-		for(var j = 0; j < arrTag.length; j++) {
-			content.push({ title: arrTag[j] })
-		}
-
-		$('.ui.search')
-			.search({
-			source: content
-			})
-		;
-	}
 </script>
-<div class="ui search" style="text-align:right">
-	<a href="/process/main" style="font-size:23px;float:left">Talk<br>T&nbsp;iK</a>
-	<div class="ui icon input right">
-		<input class="prompt" type="text" placeholder="Search tag...">
-		<i class="search icon"></i>
-	</div>
-	<div class="results"></div>
-</div>
-<hr>
-<div style="text-align:right;width:100%;"> 
+<a href="/process/main" style="font-size:23px;float:right">Talk<br>T&nbsp;iK</a>
+<hr style="margin-top:50px">
+<div style="text-align:right;width:100%"> 
 	<% if(nickname === "harrislim") {%> <%# permission code %>
 		<a href="/process/authorize">Authorizing</a> | 
 	<% } %>

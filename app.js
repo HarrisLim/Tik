@@ -113,6 +113,9 @@ var upload = multer({
 	}
 });
 
+app.get('/process/main/undefined', function(req, res){
+	res.redirect('/process/main/1');
+});
 app.get('/process/main', function(req, res){
 	res.redirect('/process/main/1');
 });
@@ -980,7 +983,7 @@ app.get('/process/editpost', function(req, res) {
 		var endDate = howmanydays.split(' ~ ')[1];
 
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results[0], startDate : startDate, endDate : endDate, signTld : req.user.tld};
+		var context = {results : results[0], startDate : startDate, endDate : endDate, signTld : req.user.tld, signNick : req.user.nickname};
 		req.app.render('editpost', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -1100,14 +1103,20 @@ app.post('/process/tag', function(req, res) {
     console.log('POST 방식으로 서버 호출됨');
     var msg = req.body.msg;
     var result = req.body.result;
+    var resultLeng = result.split(',');
+    tags = [];
     tag = result + msg + ', ';
-    res.send({result:true, tag:tag});
+    tagx = msg + ', ';
+    tags.push(tagx);
+    // console.log('tags.length111 -> ' +resultLeng.length);
+    // res.send({result:true, tag:tag});
+    res.send({result:true, tag:tag, tags:tags});
 });
 
 app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var tag = req.body.tag;
 	var tags = [];
-	tags = tag.split(', ');
+	tags = tag.split(',');
 	var arrTag = [];
 	for(var i = 0; i < tags.length -1 ; i++){
 		arrTag.push(tags[i]);
@@ -1121,7 +1130,7 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // �
 		picpath : req.body.picpath,
 		post : req.body.post,
 		views : req.body.views,
-		hashtag : tag,
+		hashtag : tag + ', ',
 		members_id : req.body.id
 	};
 	var sql = 'INSERT INTO postings SET ?, p_created_at = now()';

@@ -4,6 +4,7 @@
 		<%- include header.ejs %>
 		<script>
 			<%- include showpost_control.js%>
+			<%- include searchTag.js%>
 		</script>
 
 		<title>Show post</title>
@@ -31,9 +32,13 @@
 			var commLeng = 0;
 		%>
 		<% if(notSign === false) {%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a> Hi ! <img src="../flags-mini/<%=signTld%>.png"> <%=signNick%>
+		<a href="/process/main" style="font-size:23px;float:right">Talk<br>T&nbsp;iK</a><br>
+		<div style="text-align:left">
+		Hi ! <img src="../flags-mini/<%=signTld%>.png"> <%=signNick%>
+		</div>
 		<% } else { %>
-			<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+			<a href="/process/main" style="font-size:23px;float:right;">Talk<br>T&nbsp;iK</a>
+			<div style="text-align:left">&nbsp;<br>&nbsp;</div>
 		<% } %>
 		<hr>
 		<div class="ui" style="text-align:right;width:100%;padding-bottom:50px">
@@ -53,11 +58,11 @@
 		<div class="ui container">
 			<h1 style="text-align:center"><%= curTitle%></h1><br>
 			<div style="text-align:right">
-				<a class="ui image label">
+				<a class="ui image small label">
 					Created_Date
 					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
 				</a>
-				<a class="ui image label">
+				<a class="ui image small label">
 					Views
 					<div class="detail"><%= curViews%></div>
 				</a>
@@ -73,8 +78,8 @@
 		</div>
 		<h3>Tag</h3>
 		<div class="ui container">
-			<% for(var i =0; i < curTags.length; i++) {%>
-				<a href=""><%= curTags[i]%></a>, 
+			<% for(var i =0; i < curTags.length -1; i++) {%>
+				<a class="ui tag label"><%= curTags[i]%></a>
 			<%}%>
 		</div>
 		<br>

@@ -21,30 +21,43 @@
 
 				$('#frm').submit();	
 			};
+function delTag() {
+			// $('#pp').children().eq(0).remove();
+			$('#tagParent').children().remove();
+			$('#tempTag').val('');
+		}
 
-			function tag() {
-				var tags = [];
-				$.ajax({
-					url: '/process/tag',
-					dataType: 'json',
-					type: 'POST',
-					data: {
-						'msg':$('#tag').val(),
-						'result':$('#result').text(),
-					},
-					success: function(result) {
-						if ( result['result'] == true ) {
-							$('#result').html(result['tag']);
-							$('#tempTag').val(result['tag']);
-							tags.push($('#tempTag').val());
-							for(var i =0; i < tags.length; i++){
-								console.log(tags[i]);
-							}
-						}
+		function tag() {
+			var tags = [];
+			$.ajax({
+				url: '/process/tag',
+				dataType: 'json',
+				type: 'POST',
+				data: {
+					'msg':$('#tag').val(),
+					'result':$('#tempTag').val()
+				},
+				success: function(result) {
+					if ( result['result'] == true ) {
+
+						var tempT = [];
+						var tag = [];
+						var tags = result['tags'][0].split(', ');
+						console.log('tags -> ' + result['tag'][0]);
+						console.log('tags -> ' + result['tag'][1]);
+						console.log('tags[0] -> ' + tags[0]);
+						console.log('tags[1] -> ' + tags[1]);
+						var tagLeng = result['tag'].split(',');
+						console.log('tagLeng - > ' + tagLeng.length);
+						// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
+						$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '</a>');
+						$('#tempTag').val(result['tag']);
+						
 					}
-				});
-				$('#tag').val('');
-			};
+				}
+			});
+			$('#tag').val('');
+		};
 
 		</script>
 	</head>
@@ -76,8 +89,10 @@
 
 		    return [year, month, day].join('-');
 			};
-		%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
+		%><a href="/process/main" style="font-size:23px;float:right">Talk<br>T&nbsp;iK</a><br>
+		<div style="text-align:left">
+		Hi ! <img src="../flags-mini/<%=signTld%>.png"> <%=signNick%>
+		</div>
 		<hr>
 		<h1 style="text-align:center">Edit post !</h1>
 	   	<form name="frm" id="frm" action="/process/showpost" method="post">
@@ -140,10 +155,19 @@
 			<div class="ui form">
 				<div class="field">
 					<input type="text" id="tag">
-					<div id="result"><%= curHashTag%></div>
-					<a href="javascript:tag();">Add tag</a>
-					<p id="getLeng"></p>
-					<input type="hidden" name="tag" id="tempTag">
+					<p id="tagParent">
+						<%
+						var ArrTag = curHashTag.split(', ');
+						console.log('ArrTag -> ' + ArrTag.length);
+						console.log('ArrTag -> ' + ArrTag[0]);
+						console.log('ArrTag -> ' + ArrTag[1]);
+						for(var i = 0; i < ArrTag.length -1; i++) {%>
+						<a id="result" class="ui tag label" style="margin:10px"><%= ArrTag[i]%></a>
+						<%}%>
+					</p>
+					<a href="javascript:tag();" style="padding-right:10px">Add tag</a>
+					<a href="javascript:delTag();" style="color:red">Delete tag</a>
+					<input type="text" name="tag" id="tempTag" value="<%=curHashTag%>">
 				</div>
 			</div>
 		</div>

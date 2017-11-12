@@ -3,6 +3,7 @@
 	<head>
 		<%- include header.ejs %>
 		<script>
+			<%- include searchTag.js%>
 		</script>
 
 		<style>
@@ -22,6 +23,13 @@
 				}%>
 	</head>
 	<body>
+	<div class="ui search" style="float:left">
+		<div class="ui icon input right">
+			<input class="prompt" type="text" placeholder="Search tag...">
+			<i class="search icon"></i>
+		</div>
+		<div class="results"></div>
+	</div>
 	<%- include rightTop.ejs %>
 		<%# 병기가 알려준 것.
 			<form name="frm" id="frm" action="/process/showpost" method="get">
