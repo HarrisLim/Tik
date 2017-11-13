@@ -58,9 +58,6 @@
 						var tempT = [];
 						var tag = [];
 						var tags = result['tags'][0].split(', ');
-						var tagLeng = result['tag'].split(',');
-						console.log('tagLeng - > ' + tagLeng.length);
-						console.log('tags - > ' + tags[0]);
 						var reg = / /gim;
 						// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
 						$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
@@ -145,7 +142,7 @@
 						<p id="tagParent"></p>
 						<a href="javascript:tag();" style="padding-right:15px">Add tag</a>|
 						<a href="javascript:delTag();" style="color:red;padding-left:15px">Delete tag</a>
-						<input type="text" name="tag" id="tempTag">
+						<input type="hidden" name="tag" id="tempTag">
 					</div>
 				</div>
 			</div>

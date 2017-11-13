@@ -135,7 +135,7 @@ app.get('/process/main/:page', function(req, res){
 				}
 			};
 			app.set('countMypost',countMypost);
-			console.log('results[0].nickname -> ' + results[1].nickname)
+			console.log('results[0].nickname -> ' + results[1].nickname);
 			console.log('countMypost -> ' + app.get('countMypost'));
 			console.log('req.get(host) -> ' + req.get('host'));
 
@@ -951,14 +951,26 @@ app.get('/process/editinfo', function(req, res) {
 app.post('/process/editpost', function(req, res) {
 	console.log("you're in editpost");
 	console.log('this is curPostnum --> ' + app.get('curPostnum'));
-
+	var tag = req.body.tag;
+	var tags = [];
+	tags = tag.split(',');
+	var arrTag = [];
+	for(var i = 0; i < tags.length -1 ; i++){
+		if(i === 0){
+			arrTag.push(tags[i]);
+		} else {
+			arrTag.push(' ' + tags[i]);
+		}
+	}
+	tag = arrTag.join();
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
 	var posting = {
 		howmanydays : dateRange,
 		title : req.body.title,
 		picpath : app.get('edit_picpath'),
 		post : req.body.post,
-		hashtag : req.body.tag
+		hashtag : tag + ' '
+		// hashtag : req.body.tag
 	};
 	var sql = 'UPDATE postings SET ?, p_updated_at = now() WHERE postnum=?';
 	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
@@ -1120,7 +1132,11 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // ë
 	tags = tag.split(',');
 	var arrTag = [];
 	for(var i = 0; i < tags.length -1 ; i++){
-		arrTag.push(tags[i]);
+		if(i === 0){
+			arrTag.push(tags[i]);
+		} else {
+			arrTag.push(' ' + tags[i]);
+		}
 	}
 	tag = arrTag.join();
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;

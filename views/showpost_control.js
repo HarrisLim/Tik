@@ -26,8 +26,8 @@ function button_delSeCommBu(id) {
 
 function button_edit() {
 	if(confirm("Really want to edit this post ?") == true) {
-		location.href="http://"+'<%=ip%>'+":10468/process/editpost";
-		// location.href="http://localhost:10468/process/editpost";
+		// location.href="http://"+'<%=ip%>'+":10468/process/editpost";
+		location.href="http://localhost:10468/process/editpost";
 	} else {
 		return;
 	}
