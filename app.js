@@ -119,9 +119,90 @@ app.get('/process/main/undefined', function(req, res){
 app.get('/process/main', function(req, res){
 	res.redirect('/process/main/1');
 });
-
 app.get('/process/main/:page', function(req, res){
-	if(req.user && req.user.email) { // Signin
+	if(req.query.gettag){ // 태그 검색 시
+		if(req.user && req.user.email) { // Signin
+			var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+			conn.query(sql, function(err, results) {
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				var page = req.params.page;
+				console.log('page -> ' + page);
+				console.log('permission -> '+ req.user.permission);
+				var countMypost = 0;
+				for (var i = 0; i < results.length ; i++) {
+					if(results[i].nickname === req.user.nickname) {
+						countMypost++;
+					}
+				};
+				app.set('countMypost',countMypost);
+				console.log('results[0].nickname -> ' + results[1].nickname);
+				console.log('countMypost -> ' + app.get('countMypost'));
+				console.log('req.get(host) -> ' + req.get('host'));
+
+				app.set('curPage', page);
+				var leng = Object.keys(results).length -1;
+				var pagenum = 4;
+				var signTld = req.user.tld;
+				var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost, gettag : req.query.gettag};
+				req.app.render('postlist_searched', context, function(err, html) {
+					if(err) {
+						console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+						req.app.render('error', function(err, html) {
+							res.end(html);
+						});
+					}
+					console.log('*** rendered, /process/main(postlist) ***');
+					if (req.query.id !== app.get('emailCode')) { // 이메일 인증.
+						if((req.protocol+"://"+req.get('host')) == ("http://localhost:10468")) {
+						// if((req.protocol+"://"+req.get('host')) == ("http://192.168.219.194:10468")) {
+							console.log('domain is matched.');
+							if(req.query.id == app.get('emailCode')) {
+								console.log('email is verified');
+								app.set('signinNickname', req.user.nickname);
+								app.set('okPermission', 'okPermission');
+								res.end(html);
+
+							} else if(req.query.id === undefined) {
+								console.log('req.query.id -> ' + req.query.id);
+								res.end(html);
+							} else {
+								console.log('email is not verified');
+								res.end('<h1>bad request</h1>');
+							}
+						} else {
+							res.end('<h1>request is from unknown source</h1>');
+						}
+					} else {
+						console.log('req.query.id -> ' + req.query.id);
+						console.log('signinNickname --> ' + req.user.nickname);
+						res.end(html);
+						console.log(req.protocol+"://"+req.get('host')+"/process/main/1")
+					}
+				});
+			});
+		} else { // not Signin
+			var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+			conn.query(sql, function(err, results) {
+				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+				var page = req.params.page;
+				var leng = Object.keys(results).length -1;
+				var pagenum = 4;
+
+				var context = {results : results, leng : leng, pagenum : pagenum, page : page, gettag : req.query.gettag};
+				console.log('results[0].members_id -->' + results[0].members_id);
+				// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
+				req.app.render('index_searched', context, function(err, html) {
+					console.log('*** rendered, /process/main(index) ***');
+					console.log('Object xxx --> ' + leng); //<-- 글 목록 개수.
+					console.log('pagenum  -- > ' + pagenum);
+					console.log('page --> ' + req.params.page);
+					res.end(html);
+				});
+			});
+		}
+
+	} else if(req.user && req.user.email) { // Signin
 		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -182,8 +263,7 @@ app.get('/process/main/:page', function(req, res){
 			});
 		});
 	} else { // not Signin
-
-		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
@@ -477,6 +557,7 @@ app.get('/process/showpost', function(req, res) {
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		var tag = results[0][0].hashtag;
+	 		console.log(tag);
 	 		var tags = tag.split(',');
 	 		console.log('results[0][0].views => ' + results[0][0].views);
 			var leng = Object.keys(results).length -1;
@@ -963,15 +1044,28 @@ app.post('/process/editpost', function(req, res) {
 		}
 	}
 	tag = arrTag.join();
+	console.log('여기에도 tags가 있네 ? -> ' + tags.length);
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
-	var posting = {
-		howmanydays : dateRange,
-		title : req.body.title,
-		picpath : app.get('edit_picpath'),
-		post : req.body.post,
-		hashtag : tag + ' '
-		// hashtag : req.body.tag
-	};
+	if(tags.length < 2) {
+		var posting = {
+			howmanydays : dateRange,
+			title : req.body.title,
+			picpath : app.get('edit_picpath'),
+			post : req.body.post,
+			hashtag : tag + ''
+			// hashtag : req.body.tag
+		};	
+	} else {
+		var posting = {
+			howmanydays : dateRange,
+			title : req.body.title,
+			picpath : app.get('edit_picpath'),
+			post : req.body.post,
+			hashtag : tag + ', '
+			// hashtag : req.body.tag
+		};
+	}
+	
 	var sql = 'UPDATE postings SET ?, p_updated_at = now() WHERE postnum=?';
 	conn.query(sql, [posting, app.get('curPostnum')], function(err, results) {
 		if(err) {
@@ -994,7 +1088,6 @@ app.get('/process/editpost', function(req, res) {
 		var startDate = howmanydays.split(' ~ ')[0];
 		var endDate = howmanydays.split(' ~ ')[1];
 		app.set('edit_picpath',results[0].picpath);
-
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 		var context = {results : results[0], startDate : startDate, endDate : endDate, signTld : req.user.tld, signNick : req.user.nickname};
 		req.app.render('editpost', context, function(err, html) {
@@ -1140,16 +1233,30 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // �
 	}
 	tag = arrTag.join();
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
-	var posting = {
-		id : req.body.id,
-		howmanydays : dateRange,
-		title : req.body.title,
-		picpath : req.body.picpath,
-		post : req.body.post,
-		views : req.body.views,
-		hashtag : tag + ', ',
-		members_id : req.body.id
-	};
+	console.log('tags.length가 몇일까 -> ' + tags.length);
+	if(tags.length < 2) {
+		var posting = {
+			id : req.body.id,
+			howmanydays : dateRange,
+			title : req.body.title,
+			picpath : req.body.picpath,
+			post : req.body.post,
+			views : req.body.views,
+			hashtag : tag + '',
+			members_id : req.body.id
+		};
+	} else {
+		var posting = {
+			id : req.body.id,
+			howmanydays : dateRange,
+			title : req.body.title,
+			picpath : req.body.picpath,
+			post : req.body.post,
+			views : req.body.views,
+			hashtag : tag + ', ',
+			members_id : req.body.id
+		};
+	}
 	var sql = 'INSERT INTO postings SET ?, p_created_at = now()';
 	conn.query(sql, posting, function(err, results) {
 		if(err) {

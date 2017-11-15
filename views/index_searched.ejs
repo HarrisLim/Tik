@@ -5,7 +5,7 @@
 		<script>
 			<%- include searchTag.js%>
 		</script>
-		<title>Main</title>
+		<title>Search results</title>
 	</head>
 	<body>
 		<form method="get" method="/process/searched" id="searched">
@@ -24,14 +24,17 @@
 		<a href="/process/signin">Sign in</a> | 
 		<a href="/process/signup">Sign up</a>
 		</div>
-		<div class="ui two column grid" style="padding:2% 3%">
+		<div style="text-align:center;padding:10px 0 40px">
+			<h1><%=gettag%></h1>
+		</div>
+		<div class="ui two column grid" style="padding:1% 3%">
 			<%- include pagination.ejs%>
 		</div>
-		<div style="text-align:center;padding:3% 0 10% 0;">
+		<div style="text-align:center;padding:5% 0 10% 0;">
 			<% 
 				for(var j=0; j<results.length/4; j++) {
 			%>
-				<a href="/process/main/<%= j+1%>" style="padding:5%"><%= j+1%></a>&emsp;
+				<a href="/process/main/<%= j+1%>?gettag=<%=gettag%>" style="padding:5%"><%= j+1%></a>&emsp;
 			<%
 				}
 			%>

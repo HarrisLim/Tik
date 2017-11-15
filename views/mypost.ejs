@@ -7,24 +7,23 @@
 	<body>
 		
 	<%- include rightTop.ejs %>
-		<h1>Welcome to TiK !</h1>
-		<br><br>
+		<br>
 		<% if(results.length === 0) {%>
 			You don't have a posting. <br>
 		<% } else {%>
-			<%- include pagination.ejs%>
+			<div class="ui two column grid" style="padding:0 3% 1%">
+				<%- include pagination.ejs%>
+			</div>
 		<% } %>
 		<br>
-		<tr>
-			<td colspan="5">
+		<div style="text-align:center;padding:3% 0 10% 0">
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					<a href="/process/mypost/<%= j+1%>"><%= j+1%></a>&emsp;
+					<a href="/process/mypost/<%= j+1%>" style="padding:5%"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>
-			</td>
-		</tr>
+		</div>
 	</body>
 </html>

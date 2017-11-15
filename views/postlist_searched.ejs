@@ -10,17 +10,6 @@
 		</style>
 
 		<title>Main</title>
-
-			<%# 이거 클라이언트에서 서버로 데이터 보낼 때 사용. 병기가 알려준 것. 밑에 form 태그와 함께.
-				function view(num, id, leng) {
-					alert(num);
-
-					$('#postnum').val(num);
-					$('#memberId').val(id);
-
-					$('#frm').submit();
-
-				}%>
 	</head>
 	<body>
 		<form method="get" method="/process/searched" id="searched">
@@ -34,13 +23,11 @@
 			<div class="results"></div>
 		</div>
 		<%- include rightTop.ejs %>
-		<%# 병기가 알려준 것.
-			<form name="frm" id="frm" action="/process/showpost" method="get">
-				<input type="hidden" name="postnum" id="postnum">
-				<input type="hidden" name="memberId" id="memberId">
-			</form>
-		%>
 		<br>
+		<div style="text-align:center;margin-top:-20px;padding-bottom:40px">
+			<h1 id="tagname"><%=gettag%></h1>
+			<hr width="300px">
+		</div>
 		<div class="ui two column grid" style="padding:0 3% 1%">
 			<%- include pagination.ejs%>
 		</div>
@@ -49,7 +36,7 @@
 				<% 
 					for(var j=0; j<results.length/4; j++) {
 				%>
-					<a href="/process/main/<%= j+1%>" style="padding:3%"><%= j+1%></a>&emsp;
+					<a href="/process/main/<%= j+1%>?gettag=<%=gettag%>" style="padding:3%"><%= j+1%></a>&emsp;
 				<%
 					}
 				%>
