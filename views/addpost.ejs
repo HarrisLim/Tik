@@ -31,7 +31,7 @@
 			if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "")) {
 				alert('Plz, Fill required box.');
 			} else {
-				$('#submit_addpost').submit();	
+				$('#submit_addpost').submit();
 			}
 		}
 
@@ -54,20 +54,47 @@
 				},
 				success: function(result) {
 					if ( result['result'] == true ) {
-
+						var getTag = result['msg'];
 						var tempT = [];
 						var tag = [];
 						var tags = result['tags'][0].split(', ');
 						var reg = / /gim;
-						// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
-						$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
-						$('#tempTag').val(result['tag'].replace(reg,'').toLowerCase());
-						
+						if(getTag.indexOf(',') !== -1) {
+							alert("you can not put ',' in box.");
+						} else {
+							// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
+							$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
+							$('#tempTag').val(result['tag'].replace(reg,'').toLowerCase());
+						}
 					}
 				}
 			});
 			$('#tag').val('');
 		};
+
+		function checkComma() {
+			var tag = $('#tag').val();
+			if(tag.indexOf(',') !== -1) {
+				alert("you can not put ',' in box.");
+			} else {
+				return true;
+			}
+		}
+		// 	var objEv = event.srcElement;
+		// 	var num =",";    //입력을 막을 특수문자 기재.
+		// 	event.returnValue = true;
+
+		// 	for (var i=0;i<objEv.value.length;i++) {
+		// 		if(-1 != num.indexOf(objEv.value.charAt(i)))
+		// 			event.returnValue = false;
+		// 	}
+
+		// 	if (!event.returnValue) {
+		// 		alert("특수문자는 입력하실 수 없습니다.");
+		// 		objEv.value="";
+		// 	}
+		// } 
+
 		</script>
 
 		<title>Add Post</title>
@@ -142,7 +169,7 @@
 						<p id="tagParent"></p>
 						<a href="javascript:tag();" style="padding-right:15px">Add tag</a>|
 						<a href="javascript:delTag();" style="color:red;padding-left:15px">Delete tag</a>
-						<input type="hidden" name="tag" id="tempTag">
+						<input type="text" name="tag" id="tempTag">
 					</div>
 				</div>
 			</div>

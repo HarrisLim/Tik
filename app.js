@@ -122,8 +122,11 @@ app.get('/process/main', function(req, res){
 app.get('/process/main/:page', function(req, res){
 	if(req.query.gettag){ // 태그 검색 시
 		if(req.user && req.user.email) { // Signin
-			var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
-			conn.query(sql, function(err, results) {
+			console.log('here ?' + req.query.gettag);
+			var sql = "SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id WHERE hashtag LIKE ? ORDER BY postnum DESC";
+			conn.query(sql, '%'+req.query.gettag + ',%', function(err, results) {
+				console.log('results -> ' + results);
+				console.log('results -> ' + sql);
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 				var page = req.params.page;
 				console.log('page -> ' + page);
@@ -135,7 +138,7 @@ app.get('/process/main/:page', function(req, res){
 					}
 				};
 				app.set('countMypost',countMypost);
-				console.log('results[0].nickname -> ' + results[1].nickname);
+				// console.log('results[0].nickname -> ' + results[1].nickname);
 				console.log('countMypost -> ' + app.get('countMypost'));
 				console.log('req.get(host) -> ' + req.get('host'));
 
@@ -182,8 +185,8 @@ app.get('/process/main/:page', function(req, res){
 				});
 			});
 		} else { // not Signin
-			var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
-			conn.query(sql, function(err, results) {
+			var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id WHERE hashtag LIKE ? ORDER BY postnum DESC';
+			conn.query(sql, '%'+req.query.gettag + ',%', function(err, results) {
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 				var page = req.params.page;
 				var leng = Object.keys(results).length -1;
@@ -1216,7 +1219,7 @@ app.post('/process/tag', function(req, res) {
     tags.push(tagx);
     // console.log('tags.length111 -> ' +resultLeng.length);
     // res.send({result:true, tag:tag});
-    res.send({result:true, tag:tag, tags:tags});
+    res.send({result:true, msg:msg, tag:tag, tags:tags});
 });
 
 app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
