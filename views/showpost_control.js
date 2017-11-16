@@ -122,6 +122,12 @@ function getwant() {
 	}
 };
 
+function toMain(i) {
+	var curTag = $('#curTag'+i).text();
+	$('#tempTag'+i).val(curTag);
+	$("#submit_main"+i).submit();
+}
+
 window.onload = function() {
 	
 }
