@@ -5,96 +5,96 @@
 
 		<script src="../ckeditor2/ckeditor.js"></script>
 		<script>
-		window.onload = function() {
-			CKEDITOR.replace('editor1', {
-				filebrowserUploadUrl : '/process/photo',
-				extraPlugins : 'image2',
-				extraPlugins : 'confighelper'
-			});
+			window.onload = function() {
+				CKEDITOR.replace('editor1', {
+					filebrowserUploadUrl : '/process/photo',
+					extraPlugins : 'image2',
+					extraPlugins : 'confighelper'
+				});
 
-			$('#rangestart').calendar({
-				type: 'date',
-				endCalendar: $('#rangeend')
-			});
-			$('#rangeend').calendar({
-				type: 'date',
-				startCalendar: $('#rangestart')
-			});
-		};
+				$('#rangestart').calendar({
+					type: 'date',
+					endCalendar: $('#rangeend')
+				});
+				$('#rangeend').calendar({
+					type: 'date',
+					startCalendar: $('#rangestart')
+				});
+			};
 
-		function addpost() {
-			var ckeditor = CKEDITOR.instances.editor1;
-			var startDate = $('#startDate').val();
-			var endDate = $('#endDate').val();
-			var title = $('#title').val();
-			var editor1 = $('#editor1').val();
-			if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "")) {
-				alert('Plz, Fill required box.');
-			} else {
-				$('#submit_addpost').submit();
+			function addpost() {
+				var ckeditor = CKEDITOR.instances.editor1;
+				var startDate = $('#startDate').val();
+				var endDate = $('#endDate').val();
+				var title = $('#title').val();
+				var editor1 = $('#editor1').val();
+				if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "")) {
+					alert('Plz, Fill required box.');
+				} else {
+					$('#submit_addpost').submit();
+				}
 			}
-		}
 
+			function delTag() {
+				// $('#pp').children().eq(0).remove();
+				$('#tagParent').children().remove();
+				$('#tempTag').val('');
+			}
 
-		function delTag() {
-			// $('#pp').children().eq(0).remove();
-			$('#tagParent').children().remove();
-			$('#tempTag').val('');
-		}
-
-		function tag() {
-			var tags = [];
-			$.ajax({
-				url: '/process/tag',
-				dataType: 'json',
-				type: 'POST',
-				data: {
-					'msg':$('#tag').val(),
-					'result':$('#tempTag').val()
-				},
-				success: function(result) {
-					if ( result['result'] == true ) {
-						var getTag = result['msg'];
-						var tempT = [];
-						var tag = [];
-						var tags = result['tags'][0].split(', ');
-						var reg = / /gim;
-						if(getTag.indexOf(',') !== -1) {
-							alert("you can not put ',' in box.");
-						} else {
-							// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
-							$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
-							$('#tempTag').val(result['tag'].replace(reg,'').toLowerCase());
+			function tag() {
+				var tags = [];
+				$.ajax({
+					url: '/process/tag',
+					dataType: 'json',
+					type: 'POST',
+					data: {
+						'msg':$('#tag').val(),
+						'result':$('#tempTag').val()
+					},
+					success: function(result) {
+						if ( result['result'] == true ) {
+							var getTag = result['msg'];
+							var tempT = [];
+							var tag = [];
+							var tags = result['tags'][0].split(', ');
+							var reg = / /gim;
+							if(getTag.indexOf(',') !== -1) {
+								alert("you can not put ',' in box.");
+							} else {
+								// $('#pp').append('<a id="result" class="ui tag label" style="margin:10px">' + tags[0] + '<i class="delete icon" onClick="delTag();"></i></a>'); 태그 옆에 x를 눌러서 하나씩 지우는 기능 만들어야해.
+								$('#tagParent').append('<a id="result" class="ui tag label" style="margin:10px 10px 0px 10px">' + tags[0].replace(reg, '').toLowerCase() + '</a>');
+								$('#tempTag').val(result['tag'].replace(reg,'').toLowerCase());
+							}
 						}
 					}
+				});
+				$('#tag').val('');
+			};
+
+			function checkComma() {
+				var tag = $('#tag').val();
+				if(tag.indexOf(',') !== -1) {
+					alert("you can not put ',' in box.");
+				} else {
+					return true;
 				}
-			});
-			$('#tag').val('');
-		};
-
-		function checkComma() {
-			var tag = $('#tag').val();
-			if(tag.indexOf(',') !== -1) {
-				alert("you can not put ',' in box.");
-			} else {
-				return true;
 			}
-		}
-		// 	var objEv = event.srcElement;
-		// 	var num =",";    //입력을 막을 특수문자 기재.
-		// 	event.returnValue = true;
+			// 	var objEv = event.srcElement;
+			// 	var num =",";    //입력을 막을 특수문자 기재.
+			// 	event.returnValue = true;
 
-		// 	for (var i=0;i<objEv.value.length;i++) {
-		// 		if(-1 != num.indexOf(objEv.value.charAt(i)))
-		// 			event.returnValue = false;
-		// 	}
+			// 	for (var i=0;i<objEv.value.length;i++) {
+			// 		if(-1 != num.indexOf(objEv.value.charAt(i)))
+			// 			event.returnValue = false;
+			// 	}
 
-		// 	if (!event.returnValue) {
-		// 		alert("특수문자는 입력하실 수 없습니다.");
-		// 		objEv.value="";
-		// 	}
-		// } 
+			// 	if (!event.returnValue) {
+			// 		alert("특수문자는 입력하실 수 없습니다.");
+			// 		objEv.value="";
+			// 	}
+			// } 
 
+			<%- include searchTag.js%>
 		</script>
 
 		<title>Add Post</title>

@@ -2,11 +2,14 @@
 <html>
 	<head>
 		<%- include header.ejs %>
+		<script>
+			<%- include searchTag.js%>
+		</script>
+
 		<title>My post</title>
 	</head>
 	<body>
-		
-	<%- include rightTop.ejs %>
+		<%- include rightTop.ejs %>
 		<br>
 		<% if(results.length === 0) {%>
 			You don't have a posting. <br>

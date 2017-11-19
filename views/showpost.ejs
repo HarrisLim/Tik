@@ -79,10 +79,7 @@
 		<h3>Tag</h3>
 		<div class="ui container">
 			<%for(var i =0; i < curTags.length -1; i++) {%>
-				<div style="display:inline-block">
-					<form method="get" action="/process/main/1?gettag=<%= curTags[i]%>" id="submit_main<%=i%>"><input type="hidden" name="gettag" value="" id="tempTag<%=i%>"></form>
-					<a class="ui tag label" id="curTag<%=i%>" style="margin:10px 10px 0px 10px" onclick="toMain(<%=i%>);"><%= curTags[i]%></a>
-				</div>
+					<a href="/process/main/1?gettag=<%=curTags[i]%>" class="ui tag label" id="curTag<%=i%>" style="margin:10px 10px 0px 10px"><%= curTags[i]%></a>
 			<%}%>
 		</div>
 		<br>

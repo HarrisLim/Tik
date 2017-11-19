@@ -7,9 +7,19 @@
 	}
 	
 	function requestManager() {
-		alert('You do not have an authority.\nPlz, Repuest to manager.');
+		alert('You do not have an authority.\nPlz, Request to manager.');
 	};
 </script>
+<form method="get" action="../../process/main/1" id="searched">
+	<input type="hidden" value="" id="gettag" name="gettag">
+</form>
+<div class="ui search" style="float:left">
+	<div class="ui icon input right">
+		<input class="prompt" type="text" placeholder="Search tag...">
+		<i class="search icon"></i>
+	</div>
+	<div class="results"></div>
+</div>
 <a href="/process/main" style="font-size:23px;float:right">Talk<br>T&nbsp;iK</a>
 <hr noshade style="margin-top:50px">
 <div style="text-align:right;width:100%"> 
@@ -30,6 +40,7 @@
 			<a href="/process/signout">Sign out</a>
 		</div>
 	<% } else {%>
+	<a href="/process/ask">Ask</a> | 
 	<% if(countMypost < curPermissionpost) {%>
 			<a href="/process/addpost">Add post</a> | 
 		<% } else {%>

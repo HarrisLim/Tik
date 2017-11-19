@@ -5,15 +5,17 @@ window.onload = function() {
 	var arrTemp = [];
 	var arrTag = [];
 
-	<%for(var j=0; j < results.length; j++) {%>
-		s_tag = '<%=results[j].hashtag%>';
+	<%for(var j=0; j < mainResults.length; j++) {%>
+		s_tag = '<%=mainResults[j].hashtag%>';
 		s_tags.push(s_tag);
 	<%}%>
+
 	var joinTag = s_tags.join();
 	var arrTemp = joinTag.split(', ');
 	for(var i = 0; i < arrTemp.length -1; i++) {
 		arrTag.push(arrTemp[i].replace(',',''));
 	}
+
 	var sorted_tag = arrTag.sort();
 	var results = [];
 
@@ -24,10 +26,9 @@ window.onload = function() {
 	}
 
 	var content = [];
-	for(var i = 0; i < results.length - 1; i++) { // 맨 마지막은 공백이기 때문에 -1
+	for(var i = 0; i < results.length; i++) {
 		content.push({ title: results[i] });
 	}
-
 
 	$('.ui.search').search({
 		source: content,

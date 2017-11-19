@@ -40,6 +40,7 @@ Tik은 메일로 한 번에 문의하여 신청할 수 있고, 다른 비용없�
 * I wanna go ajax
 * 태그 추가
 * tag 찾기
+* email 문의
 
 ## TO DO
 

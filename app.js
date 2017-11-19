@@ -125,8 +125,6 @@ app.get('/process/main/:page', function(req, res){
 			console.log('here ?' + req.query.gettag);
 			var sql = "SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id WHERE hashtag LIKE ? ORDER BY postnum DESC";
 			conn.query(sql, '%'+req.query.gettag + ',%', function(err, results) {
-				console.log('results -> ' + results);
-				console.log('results -> ' + sql);
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 				var page = req.params.page;
 				console.log('page -> ' + page);
@@ -146,7 +144,7 @@ app.get('/process/main/:page', function(req, res){
 				var leng = Object.keys(results).length -1;
 				var pagenum = 4;
 				var signTld = req.user.tld;
-				var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost, gettag : req.query.gettag};
+				var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost, gettag : req.query.gettag, mainResults : app.get('mainResults')};
 				req.app.render('postlist_searched', context, function(err, html) {
 					if(err) {
 						console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -192,7 +190,7 @@ app.get('/process/main/:page', function(req, res){
 				var leng = Object.keys(results).length -1;
 				var pagenum = 4;
 
-				var context = {results : results, leng : leng, pagenum : pagenum, page : page, gettag : req.query.gettag};
+				var context = {results : results, leng : leng, pagenum : pagenum, page : page, gettag : req.query.gettag, mainResults : app.get('mainResults')};
 				console.log('results[0].members_id -->' + results[0].members_id);
 				// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 				req.app.render('index_searched', context, function(err, html) {
@@ -208,6 +206,8 @@ app.get('/process/main/:page', function(req, res){
 	} else if(req.user && req.user.email) { // Signin
 		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
+			console.log('results.hashtag ->  ' + results);
+			console.log('results.hashtag ->  ' + results.hashtag);
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
 			console.log('page -> ' + page);
@@ -227,7 +227,7 @@ app.get('/process/main/:page', function(req, res){
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 			var signTld = req.user.tld;
-			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost};
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, leng : leng, pagenum : pagenum, page : page, signTld : signTld, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), curPermissionpost : req.user.permissionpost, countMypost : countMypost, mainResults : app.get('mainResults')};
 			req.app.render('postlist', context, function(err, html) {
 				if(err) {
 					console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -268,12 +268,13 @@ app.get('/process/main/:page', function(req, res){
 	} else { // not Signin
 		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
+			app.set('mainResults', results);
 			res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
 			var page = req.params.page;
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 
-			var context = {results : results, leng : leng, pagenum : pagenum, page : page};
+			var context = {results : results, leng : leng, pagenum : pagenum, page : page, mainResults : app.get('mainResults')};
 			console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
@@ -556,7 +557,7 @@ app.get('/process/showpost', function(req, res) {
 		views = views || 0;
 		var view = {
 			views : parseInt(views) + 1
-		}		
+		}
 	 	var sql = 'SELECT m.id, m.nickname, m.tld, m.insid, p.p_created_at, p.p_updated_at ,p.title, p.picpath, p.post, p.getwant, p.getwant_members, p.getwant_ip, p.hashtag, p.postnum, p.views, p.howmanydays, p.members_id, c.c_id, c.groupnum, c.grconum ,c.c_nickname ,c.comment, c.c_tld ,c.c_members_id, c.postings_postnum, c.depth, c.c_created_at FROM (members m JOIN postings p ON m.id = p.members_id)LEFT JOIN comments c ON c.postings_postnum = p.postnum WHERE p.postnum=? ORDER BY c.groupnum ASC, c.grconum ASC; UPDATE postings SET ? WHERE postnum=?';
 	 	conn.query(sql, [postnum, view, postnum], function(err, results) {
 	 		var tag = results[0][0].hashtag;
@@ -567,7 +568,7 @@ app.get('/process/showpost', function(req, res) {
 			console.log('created_at -> ' + results[0][0].p_created_at);
 	 		// console.log('results[0].id  -> ' + results[0].id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address(), curTags : tags, ip : ip.address()};
+			var context = {curSigninId : req.user.id, results : results[0], signNick : req.user.nickname, signTld : req.user.tld, notSign : notSign, curTld : curTld, curPermission : req.user.permission, curIp : ip.address(), curTags : tags, ip : ip.address(), mainResults : app.get('mainResults')};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -596,7 +597,7 @@ app.get('/process/showpost', function(req, res) {
 	 		var tags = tag.split(', ');
 	 		// console.log('results[0].id  -> ' + results[0].members_id);
 			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
-			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address(), curTags : tags, ip : ip.address()};
+			var context = {curSigninId : false, results : results[0], notSign : notSign, curIp : ip.address(), curTags : tags, ip : ip.address(), mainResults : app.get('mainResults')};
 			req.app.render('showpost', context,  function(err, html) {
 			 	if(err) {
 			 		console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -864,7 +865,7 @@ app.get('/process/mypost/:page', function(req, res) {
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-				var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
+				var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), mainResults : app.get('mainResults')};
 				req.app.render('mypost', context, function(err, html) {
 					if(err) {
 						console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -882,7 +883,7 @@ app.get('/process/mypost/:page', function(req, res) {
 			var leng = Object.keys(results).length -1;
 			var pagenum = 4;
 
-			var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, leng : leng, pagenum : pagenum, page : page, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost')};
+			var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, results : results, leng : leng, pagenum : pagenum, page : page, permission : req.user.permission, curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), mainResults : app.get('mainResults')};
 			req.app.render('mypost', context, function(err, html) {
 				if(err) {
 					console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -916,7 +917,7 @@ app.get('/process/myinfo', function(req, res) {
 	sql = 'SELECT * FROM members WHERE email=?';
 	conn.query(sql, memberEmail, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), permissionMessage : req.flash('permissionMessage')};
+		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), permissionMessage : req.flash('permissionMessage'), mainResults : app.get('mainResults')};
 		req.app.render('myinfo', context, function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
@@ -1222,6 +1223,26 @@ app.post('/process/tag', function(req, res) {
     res.send({result:true, msg:msg, tag:tag, tags:tags});
 });
 
+app.get('/process/ask', function(req, res) {
+	console.log('in ask');
+	var sql = 'select * from members';
+	conn.query(sql, function(err, results) {
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		var context = {results : results, email : req.user.email, nickname : req.user.nickname, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), signTld : req.user.tld, countMypost : app.get('countMypost'), curPermissionpost : req.user.permissionpost, mainResults : app.get('mainResults')};
+		req.app.render('ask', context, function(err, html) {
+			if(err) {
+				console.error('뷰 렌더링 중 오류 발생 : ' + err.stack);
+
+				req.app.render('error', function(err, html) {
+					res.end(html);
+				});
+			}
+		console.log('*** rendered, /process/authorize ***');
+		res.end(html);
+		});
+	});
+})
+
 app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var tag = req.body.tag;
 	var tags = [];
@@ -1277,7 +1298,7 @@ app.get('/process/addpost', function(req, res) { // photo추가 기능 넣고, p
 		console.log('results --> ' + results[0].email);
 		// app.set('showpostMembersId', results[0].id);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {results : results[0], email : req.user.email, nickname : req.user.nickname, signTld : req.user.tld, permission : req.user.permission, countMypost : app.get('countMypost'), curPermissionpost : req.user.permissionpost};
+		var context = {results : results[0], email : req.user.email, nickname : req.user.nickname, signTld : req.user.tld, permission : req.user.permission, countMypost : app.get('countMypost'), curPermissionpost : req.user.permissionpost, mainResults : app.get('mainResults')};
 		req.app.render('addpost', context,  function(err, html) {
 			if(err) {
 				console.log('뷰 렌더링 중 오류 발생 : ' + err.stack);
