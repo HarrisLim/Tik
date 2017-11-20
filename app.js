@@ -1106,10 +1106,9 @@ app.get('/process/editpost', function(req, res) {
 		});
 	});
 });
-
 // 이메일 인증
 var rand, mailOptions, host, link;
-function sendEmail(cliHost, cliTo, userNickname, way) {
+function sendEmail(cliHost, cliTo, userNickname, way, ask_name, ask_email, ask_startDate, ask_endDate, ask_travelArea, ask_accommodation, ask_food, ask_activity, ask_detail) {
 	var transporter = nodemailer.createTransport({
 		service : 'gmail',
 		auth : {
@@ -1123,22 +1122,29 @@ function sendEmail(cliHost, cliTo, userNickname, way) {
 	app.set('emailCode', rand);
 	console.log("app.get(emailCode) -> " + app.get('emailCode'));
 	console.log('way -> ' + way);
-	console.log('userNickname -> '+ userNickname)
-	if(way === "forgotpw") {
+	console.log('userNickname -> '+ userNickname);
+	if (way === "ask") {
+		mailOptions = {
+			from : 'TiK(Travel in Korea) <harris19921204@gmail.com>',
+			to : cliTo,
+			subject : "Harris, It's time to play :)",
+			html : '<br><br>Name : ' + ask_name +'<hr> E-mail : ' + ask_email + '<hr> Start date : ' + ask_startDate + '<hr> End date : ' + ask_endDate + '<hr> Travel area : ' + ask_travelArea + '<hr> Accommodation : ' + ask_accommodation + '<hr> Food : ' + ask_food + '<hr> Activity : ' + ask_activity + '<hr> Detail : ' + ask_detail + '</div>'
+		}
+	} else if(way === "forgotpw") {
 		link = 'http://' + cliHost + '/process/forgotpw?id='+rand;
 		mailOptions = {
 			from : 'TiK(Travel in Korea) <harris19921204@gmail.com>', // sender address
 			to : cliTo, // list of receivers
-				subject : "Hello. This is TiK ! forgot password ?",
-				html : "Hello, " +userNickname+ "<br> Please Click on the link and then set new password.<br><a href="+link+">Click here to set new password</a>"
+			subject : "Hello. This is TiK ! forgot password ?",
+			html : "Hello, " +userNickname+ "<br> Please Click on the link and then set new password.<br><a href="+link+">Click here to set new password</a>"
 		};
 	} else {
 		link = 'http://' + cliHost + '/process/main/1?id='+rand;
 		mailOptions = {
 			from : 'TiK(Travel in Korea) <harris19921204@gmail.com>', // sender address
 			to : cliTo, // list of receivers
-				subject : "Welcome to TiK ! This is the permission Email.", // Subject line
-				html : "Hello, " +userNickname+ "<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" // html body
+			subject : "Welcome to TiK ! This is the permission Email.", // Subject line
+			html : "Hello, " +userNickname+ "<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" // html body
 		};
 	}
 
@@ -1223,8 +1229,23 @@ app.post('/process/tag', function(req, res) {
     res.send({result:true, msg:msg, tag:tag, tags:tags});
 });
 
+app.post('/process/ask', function(req, res) {
+	console.log('in ask(post)');
+	var name = req.body.name;
+	var email = req.body.email;
+	var startDate = req.body.startDate;
+	var endDate = req.body.endDate;
+	var travelArea = req.body.travelArea;
+	var accommodation = req.body.accommodation;
+	var food = req.body.food;
+	var activity = req.body.activity;
+	var detail = req.body.detail;
+	sendEmail(req.get('host'), 'harris19921204@gmail.com', '', "ask", name, email, startDate, endDate, travelArea, accommodation, food, activity, detail);
+	res.redirect('/process/main/1');
+});
+
 app.get('/process/ask', function(req, res) {
-	console.log('in ask');
+	console.log('in ask(get)');
 	var sql = 'select * from members';
 	conn.query(sql, function(err, results) {
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -1241,7 +1262,7 @@ app.get('/process/ask', function(req, res) {
 		res.end(html);
 		});
 	});
-})
+});
 
 app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
 	var tag = req.body.tag;

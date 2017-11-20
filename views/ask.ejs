@@ -3,6 +3,8 @@
 	<head>
 		<%- include header.ejs %>
 		<script>
+			
+
 			window.onload = function() {
 				$('#rangestart').calendar({
 					type: 'date',
@@ -13,7 +15,28 @@
 					startCalendar: $('#rangestart')
 				});
 			};
+
+			function submit_ask() {
+				var okReview = $('#okReview').is(':checked');
+				var name = $('#name').val();
+				var email = $('#email').val();
+				var startDate = $('#startDate').val();
+				var endDate = $('#endDate').val();
+				var travelArea = $('#travelArea').val();
+				var detail = $('#detail').val();
+				if ((name === "") || (email === "") || (startDate === "") || (endDate === "") || (travelArea === "") || (detail === "")){
+					alert('Please fill in required one.');					
+				} else if(okReview === false) {
+					alert('Please check the box at the bottom of this page If you agree.');
+				} else {
+					alert('Good job. Please wait my answer.');
+					$('#ask').submit();
+				}
+			}
+
+			<%- include searchTag.js%>
 		</script>
+
 		<title>Ask</title>
 	</head>
 	<body>
@@ -21,61 +44,63 @@
 		<br>
 		<div class="ui container">
 			<div class="ui form">
-				<div class="required field">
-				    <label>Name</label>
-				    <input type="text" placeholder="name">
-				</div>
-				<div class="required field">
-				    <label>E-mail</label>
-				    <input type="email" placeholder="example@email.com">
-				</div>
-				<div class="two fields">
+				<form method="post" action="/process/ask" id="ask">
 					<div class="required field">
-					<label>Start date</label>
-						<div class="ui calendar" id="rangestart">
-							<div class="ui input left icon">
-								<i class="calendar icon"></i>
-								<input type="text" placeholder="START" id="startDate" name="startDate">
+					    <label>Name</label>
+					    <input type="text" placeholder="Name" name="name" id="name">
+					</div>
+					<div class="required field">
+					    <label>E-mail</label>
+					    <input type="email" placeholder="example@email.com" name="email" id="email">
+					</div>
+					<div class="two fields">
+						<div class="required field">
+						<label>Start date</label>
+							<div class="ui calendar" id="rangestart">
+								<div class="ui input left icon">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="START" id="startDate" name="startDate">
+								</div>
+							</div>
+						</div>
+						<div class="required field">
+						<label>End date</label>
+							<div class="ui calendar" id="rangeend">
+								<div class="ui input left icon">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="END" id="endDate" name="endDate">
+								</div>
 							</div>
 						</div>
 					</div>
 					<div class="required field">
-					<label>End date</label>
-						<div class="ui calendar" id="rangeend">
-							<div class="ui input left icon">
-								<i class="calendar icon"></i>
-								<input type="text" placeholder="END" id="endDate" name="endDate">
-							</div>
-						</div>
+					    <label>Travel area</label>
+					    <input type="text" placeholder="Ex. Seoul" name="travelArea" id="travelArea">
 					</div>
-				</div>
-				<div class="required field">
-				    <label>Travel area</label>
-				    <input type="text" placeholder="seoul">
-				</div>
-				<div class="field">
-				    <label>Accommodation</label>
-				    <input type="text" placeholder="guesthouse, hotel or anywhere.">
-				</div>
-				<div class="field">
-				    <label>Food</label>
-				    <input type="text" placeholder="Bibimbap, Tteokbokki and anything you want.">
-				</div>
-				<div class="field">
-				    <label>Activity</label>
-				    <input type="text" placeholder="Going up N Seoul Tower or Experience a Hanbok.">
-				</div>
-				<div class="required field">
-				    <label>Detail</label>
-				    <textarea placeholder="Tell about your travel style."></textarea>
-				</div>
-				<div class="ui checkbox">
-			        <input type="checkbox" tabindex="0" class="hidden">
-			        <label>Yes, I upload review with photo in TiK after traveling.</label>
-		      	</div>
-		      	<div class="field" style="padding:30px 0px 40px; text-align:center">
-		      		<input type="button" value="Travel in Korea !">
-				</div>
+					<div class="field">
+					    <label>Accommodation type</label>
+					    <input type="text" placeholder="Ex. Guesthouse, hotel or anywhere." name="accommodation">
+					</div>
+					<div class="field">
+					    <label>Food type</label>
+					    <input type="text" placeholder="Ex. Bibimbap, Tteokbokki and anything you want." name="food">
+					</div>
+					<div class="field">
+					    <label>Activity</label>
+					    <input type="text" placeholder="Ex. Going up N Seoul Tower or Experience wearing a Hanbok." name="activity">
+					</div>
+					<div class="required field">
+					    <label>Detail</label>
+					    <textarea placeholder="Tell about your travel style." name="detail" id="detail"></textarea>
+					</div>
+					<div class="ui checkbox">
+				        <input type="checkbox" tabindex="0" id="okReview">
+				        <label for="okReview">Yes, I will upload review with photo in TiK after traveling.</label>
+			      	</div>
+			      	<div class="field" style="padding:30px 0px 40px; text-align:center">
+			      		<input type="button" value="Travel in Korea !" onclick="submit_ask()">
+					</div>
+				</form>
 		 	</div>
 	  	</div>
 	</body>
