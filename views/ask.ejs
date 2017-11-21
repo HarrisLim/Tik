@@ -14,6 +14,8 @@
 					type: 'date',
 					startCalendar: $('#rangestart')
 				});
+
+				<%- include searchTag.js%>
 			};
 
 			function submit_ask() {
@@ -33,8 +35,6 @@
 					$('#ask').submit();
 				}
 			}
-
-			<%- include searchTag.js%>
 		</script>
 
 		<title>Ask</title>

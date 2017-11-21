@@ -861,7 +861,7 @@ app.get('/process/mypost/:page', function(req, res) {
 		console.log('req.user.nickname --> ' + req.user.nickname);
 
 		var memberId = req.user.id;
-		sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission FROM postings p JOIN members m ON m.id = p.members_id AND members_id=? ORDER BY p.postnum DESC';
+		sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, m.nickname, m.permission, m.tld FROM postings p JOIN members m ON m.id = p.members_id AND members_id=? ORDER BY p.postnum DESC';
 		conn.query(sql, memberId, function(err, results){
 			if(results[0] == undefined) { // 글이 없다면
 				res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
@@ -893,6 +893,7 @@ app.get('/process/mypost/:page', function(req, res) {
 				}
 				// console.log('results --> ' + results[0].title);
 				console.log('*** rendered, /process/mypage ***');
+				console.log('signTld -> ' + req.user.tld);
 				res.end(html);
 			});
 		}
@@ -1016,7 +1017,8 @@ app.get('/process/editinfo', function(req, res) {
 		console.log('arr -> ' + arrNick);
 		console.log('nickLeng ->' + nickLeng);
 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		var context = {curNickname : req.user.nickname, curEmail : req.user.email, results : results, arrNick : arrNick, checkoriginpw : req.flash('checkoriginpw')};
+		// var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results[0], curPermissionpost : req.user.permissionpost, countMypost : app.get('countMypost'), permissionMessage : req.flash('permissionMessage'), mainResults : app.get('mainResults')};
+		var context = {nickname : req.user.nickname, email : req.user.email, signTld : req.user.tld, permission : req.user.permission, results : results, arrNick : arrNick, checkoriginpw : req.flash('checkoriginpw'), countMypost : app.get('countMypost'), mainResults : app.get('mainResults'), curPermissionpost : req.user.permissionpost, permissionMessage : req.flash('permissionMessage')};
 		app.set('postLeng', Object.keys(results).length);
 		console.log('results[1] -> ' + results[1][1].nickname);
 		req.app.render('editinfo', context, function(err, html) {
@@ -1264,7 +1266,11 @@ app.get('/process/ask', function(req, res) {
 	});
 });
 
-app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+app.post('/process/addpost', upload.array('picpath', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+	var files = req.files;
+		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+		console.dir(req.files[0]);
+		console.dir('#==============================#');
 	var tag = req.body.tag;
 	var tags = [];
 	tags = tag.split(',');
@@ -1279,12 +1285,13 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // �
 	tag = arrTag.join();
 	var dateRange = req.body.startDate + ' ~ ' + req.body.endDate;
 	console.log('tags.length가 몇일까 -> ' + tags.length);
+	console.log('picpath -> ' + req.body.picpath);
 	if(tags.length < 2) {
 		var posting = {
 			id : req.body.id,
 			howmanydays : dateRange,
 			title : req.body.title,
-			picpath : req.body.picpath,
+			picpath : files[0].filename,
 			post : req.body.post,
 			views : req.body.views,
 			hashtag : tag + '',
@@ -1295,7 +1302,7 @@ app.post('/process/addpost', upload.array('photo', 1), function(req, res) { // �
 			id : req.body.id,
 			howmanydays : dateRange,
 			title : req.body.title,
-			picpath : req.body.picpath,
+			picpath : files[0].filename,
 			post : req.body.post,
 			views : req.body.views,
 			hashtag : tag + ', ',
@@ -1415,53 +1422,55 @@ app.locals.replHelper = function (sentence, arr, src, style){ // showpost에서 
 // });
 
 // 책에 있던 photo upload except CKeditor
-// app.post('/process/photo', upload.array('photo', 1), function(req, res) {
-// 	console.log('/process/photo 호출됨.');
+app.post('/process/travelmap', upload.array('photo', 1), function(req, res) {
+	console.log('/process/photo 호출됨.');
 
-// 	try {
-// 		var files = req.files;
+	try {
+		// console.log('picpaht -> ' + req.body.picpath);
+		var files = req.files;
 
-// 		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
-// 		console.dir(req.files[0]);
-// 		console.dir('#=====#');
-// 		// 현재의 파일 정보를 저장할 변수 선언
-// 		var originalname = '';
-// 		var filename = '';
-// 		var mimetype = '';
-// 		var size = 0;
+		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+		console.dir(req.files[0]);
+		console.dir('#=====#');
+		// 현재의 파일 정보를 저장할 변수 선언
+		var originalname = '';
+		var filename = '';
+		var mimetype = '';
+		var size = 0;
 
-// 		if(Array.isArray(files)) {
-// 			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
+		if(Array.isArray(files)) {
+			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
 
-// 			for(var i = 0; i < files.length; i++) {
-// 				originalname = files[i].originalname;
-// 				filename = files[i].filename;
-// 				mimetype = files[i].mimetype;
-// 				size = files[i].size;
-// 			}
-// 		} else {
-// 			console.log('파일 갯수 : 1');
+			for(var i = 0; i < files.length; i++) {
+				originalname = files[i].originalname;
+				filename = files[i].filename;
+				mimetype = files[i].mimetype;
+				size = files[i].size;
+			}
+		} else {
+			console.log('파일 갯수 : 1');
 
-// 			originalname = files[i].originalname;
-// 			filename = files[i].name;
-// 			mimetype = files[i].mimetype;
-// 			size = files[i].size;
-// 		}
+			originalname = files[i].originalname;
+			filename = files[i].name;
+			mimetype = files[i].mimetype;
+			size = files[i].size;
+		}
 
-// 		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
+		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
 
-// 		// 클라이언트에 응답 전송
-// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-// 		res.write('<h3>파일 업로드 성공</h3>');
-// 		res.write('<hr>');
-// 		res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
-// 		res.write('<p>MIME TYPE : ' + mimetype + '</p>');
-// 		res.write('<p>파일 크기 : '+ size +'</p>');
-// 		res.end();
-// 	} catch(err) {
-// 		console.dir(err.stack);
-// 	}
-// });
+		// 클라이언트에 응답 전송
+		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+		// res.write('<h3>파일 업로드 성공</h3>');
+		// res.write('<hr>');
+		res.write('<img src="../uploads/'+filename+'" style="max-width:150px">')
+		// res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
+		// res.write('<p>MIME TYPE : ' + mimetype + '</p>');
+		// res.write('<p>파일 크기 : '+ size +'</p>');
+		res.end();
+	} catch(err) {
+		console.dir(err.stack);
+	}
+});
 
 
 // 모든 router 처리 끝난 후 404 오류 페이지 처리

@@ -1,4 +1,4 @@
-window.onload = function() {
+	// window.onload = function() {안에 넣어야 동작.}
 	// 태그 검색
 	var s_tags = [];
 	var s_tag = [];
@@ -39,4 +39,3 @@ window.onload = function() {
 			return false;
 		}
 	});
-}

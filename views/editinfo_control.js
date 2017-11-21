@@ -9,6 +9,7 @@
 	window.onload = function() {
 		var agegroupVal = document.getElementById('ages').value;
 		$('#ageSel').text(agegroupVal);
+		$('#ageSel2').val(agegroupVal);
 
 		comboboxSelect();
 
@@ -35,7 +36,6 @@
 		var existingNick = "<%= curNickname%>";
 
 		var arrNick = [];
-		console.log("<%=arrNick%>")
 		arrNick = "<%=arrNick%>".split(',');
 		var nicks = arrNick;
 
@@ -43,7 +43,7 @@
 			alert('Sorry, you can not put in some special character.\nex -> !, %, $, (, ), {, }, &, etc..');
 		} else if(curNick === "") { <%# 입력값이 공백 %>
 			alert('Fill box plz.');
-		} else if((nicks.indexOf(curNick) === -1) || (curNick === "<%=curNickname%>")) { <%# 닉네임 목록에서 입력받은 닉네임 체크 %>
+		} else if((nicks.indexOf(curNick) === -1) || (curNick === "<%=nickname%>")) { <%# 닉네임 목록에서 입력받은 닉네임 체크 %>
 			alert('OK.');
 			$("#tempNick").val(curNick);
 		} else {

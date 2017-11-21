@@ -4,6 +4,9 @@
 		<%- include header.ejs %>
 		<script>
 			<%- include editinfo_control.js%>
+			window.onload = function() {
+				<%- include searchTag.js%>
+			}
 		</script>
 
 		<style>
@@ -22,13 +25,7 @@
 			var curInsid = results[0][0].insid;
 			var curTld = results[0][0].tld;
 		%>
-		<a href="/process/main"><h3>Talk<br>T ik</h3></a>
-		<hr>
-		<br> <h2>Hello. <i class="<%=curTld%> flag"></i><%= curNickname%> !</h2>
-		<br><br>
-		<a href="/process/mypost">My post</a>
-		<br><br><a href='/process/myinfo'>My info</a>
-		<p>
+		<%- include rightTop.ejs %>
 		<form action="/process/showpost" method="post">
 			<input type="hidden" id="ages" value="<%= curAgegroup%>">
 		</form>
@@ -37,37 +34,38 @@
 		<input type="hidden" value="secPW" id="tempSecPW">
 		<input type="hidden" value="<%=arrNick%>">
 		<form method="post" action="/process/editinfo" id="editinfo">
-			<table>
-				<tr>
-					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname" value="<%= curNickname%>" id="nickname" placeholder="can not fill some special character.">
-					<input type="button" value="Duplication check" onClick="checkNickname()"></td>
-				</tr>
-				<tr>
-					<td><label>Email : </label></td>
-					<td><%=curEmail%><input type="hidden" name="username" id="email" value="<%=curEmail%>"></td>
-				</tr>
-				<tr>
-					<td><label>originPassword : </label></td> 
-					<td><input type="password" name="password" value="" id="oriPassword"><div style="color:red"><%=checkoriginpw%></div></td>
-				</tr>
-				<tr>
-					<td><label>Password : </label></td>
-					<td><input type="password" id="firPW"></td>
-				</tr>
-				<tr>
-					<td><label>Password (repeat) : </label></td>
-					<td><input type="password" name="passwd" id="secPW"><input type="button" value="Check password" onClick="checkPW()"></td>
-				</tr>
-				<tr>
-					<td><label>Country : </label></td>
-					<td><input type="text" name="country" value="<%= curCountry%>"></td>
-				</tr>
-				<tr>
-					<td><label>Age group : </label></td>
-					<td>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<label>Nickname</label>
+						<input type="text" name="nickname" value="<%= curNickname%>" id="nickname" placeholder="can not fill some special character.">
+						<input type="button" value="Duplication check" onClick="checkNickname()" style="float:right">
+					</div>
+					<div class="field">
+						<label>Email (not able to change)</label>
+						<div style="padding:.67857143em 1em;border:1px solid rgba(34,36,38,.15);border-radius:.28571429rem"><%=curEmail%></div>
+						<input type="hidden" name="username" id="email" value="<%=curEmail%>">
+					</div>
+					<div class="field">
+						<label>originPassword</label>
+						<input type="password" name="password" value="" id="oriPassword"><div style="color:red"><%=checkoriginpw%></div>
+					</div>
+					<div class="field">
+						<label>Password</label>
+						<input type="password" id="firPW">
+					</div>
+					<div class="field">
+						<label>Password (repeat)</label>
+						<input type="password" name="passwd" id="secPW"><input type="button" value="Check password" onClick="checkPW()" style="float:right">
+					</div>
+					<div class="field">
+						<label>Country</label>
+						<input type="text" name="country" value="<%= curCountry%>">
+					</div>
+					<div class="field">
+						<label>Age group</label>
 						<div class="ui fluid search selection dropdown">
-							<input type="hidden" name="agegroup">
+							<input type="hidden" name="agegroup" id="ageSel2">
 							<i class="dropdown icon"></i>
 							<div class="default text" id="ageSel">Select Age group</div>
 							<div class="menu">
@@ -83,19 +81,18 @@
 								<div class="item" data-value="100s">100s</div>
 							</div>
 						</div>
-					</td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : </label></td>
-					<td><input type="text" name="insid" value="<%= curInsid%>"></td>
-				</tr>
-				<tr>
-					<td><br><br><input type="button" value="Cancel my membership. : (" onClick="cancelMembership()"></td>
-				</tr>
-			</table>
-			<p><br>
-			<input type="button" value="submit : )" onClick="checkEmpty()">
-			<a href="/process/myinfo"><input type="button" value="Cancle : )"></a>
+					</div>
+					<div class="field">
+						<label>Instagram</label>
+						<input type="text" name="insid" value="<%= curInsid%>">
+					</div>
+				</div><br>
+				<input type="button" value="submit : )" onClick="checkEmpty()">
+				<a href="/process/myinfo"><input type="button" value="Cancle : )"></a>
+				<div style="padding:30px 0px">
+					<input type="button" value="Cancel my membership. : (" onClick="cancelMembership()" style="color:red">
+				</div>
+			</div>
 		</form>
 		<form method="post" action="/process/cancelmember" id="cancelMember">
 			<input type="hidden" name="curEmail" value="<%=curEmail%>">

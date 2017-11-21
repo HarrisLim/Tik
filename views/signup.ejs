@@ -26,62 +26,64 @@
    	<input type="hidden" value="secPW" id="tempSecPW"> 
    	<input type="hidden" value="testemail" id="tempEmail"> 
 		<form method="post" action="/process/signup" id="signup">
-			<table>
-				<tr>
-					<td><label>Nickname : </label></td>
-					<td><input type="text" name="nickname" id="nickname" placeholder="can not fill some special character."></td>
-					<td><input type="button" value="Duplication check" onClick="checkNickname()"></td>
-				</tr>
-				<tr>
-					<td><label>Email : </label></td>
-					<td><input type="email" name="email" id="email"></td>
-					<td><input type="button" value="Duplication check" onClick="checkEmail()"></td>
-				</tr>
-				<tr>
-					<td><label>Password : </label></td>
-					<td><input type="password" id="firPW"></td>
-				</tr>
-				<tr>
-					<td><label>Confirm password : </label></td>
-					<td><input type="password" name="passwd" id="secPW"></td>
-					<td><input type="button" value="Check password" onClick="checkPW()"></td>
-				</tr>
-				<tr>
-					<td><label>Country : </label></td>
-					<td>
-						<input type="hidden" value="" id="getCountry" name="country">
-						<%- include countrylist.ejs%>
-					</td>
-				</tr>
-				<tr>
-					<td><label>Age group : </label></td>
-					<td>
-						<div class="ui fluid search selection dropdown">
-							<input type="hidden" name="agegroup">
-							<i class="dropdown icon"></i>
-							<div class="default text" id="agegroup">Select Age group</div>
-							<div class="menu">
-								<div class="item" data-value="10s">10s</div>
-								<div class="item" data-value="20s">20s</div>
-								<div class="item" data-value="30s">30s</div>
-								<div class="item" data-value="40s">40s</div>
-								<div class="item" data-value="50s">50s</div>
-								<div class="item" data-value="60s">60s</div>
-								<div class="item" data-value="70s">70s</div>
-								<div class="item" data-value="80s">80s</div>
-								<div class="item" data-value="90s">90s</div>
-								<div class="item" data-value="100s">100s</div>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<td><label>Nickname : </label></td>
+						<td><input type="text" name="nickname" id="nickname" placeholder="can not fill some special character."></td>
+						<td><input type="button" value="Duplication check" onClick="checkNickname()" style="float:right"></td>
+					</div>
+					<div class="field">
+						<td><label>Email : </label></td>
+						<td><input type="email" name="email" id="email"></td>
+						<td><input type="button" value="Duplication check" onClick="checkEmail()" style="float:right"></td>
+					</div>
+					<div class="field">
+						<td><label>Password : </label></td>
+						<td><input type="password" id="firPW"></td>
+					</div>
+					<div class="field">
+						<td><label>Confirm password : </label></td>
+						<td><input type="password" name="passwd" id="secPW"></td>
+						<td><input type="button" value="Check password" onClick="checkPW()" style="float:right"></td>
+					</div>
+					<div class="field">
+						<td><label>Country : </label></td>
+						<td>
+							<input type="hidden" value="" id="getCountry" name="country">
+							<%- include countrylist.ejs%>
+						</td>
+					</div>
+					<div class="field">
+						<td><label>Age group : </label></td>
+						<td>
+							<div class="ui fluid search selection dropdown">
+								<input type="hidden" name="agegroup">
+								<i class="dropdown icon"></i>
+								<div class="default text" id="agegroup">Select Age group</div>
+								<div class="menu">
+									<div class="item" data-value="10s">10s</div>
+									<div class="item" data-value="20s">20s</div>
+									<div class="item" data-value="30s">30s</div>
+									<div class="item" data-value="40s">40s</div>
+									<div class="item" data-value="50s">50s</div>
+									<div class="item" data-value="60s">60s</div>
+									<div class="item" data-value="70s">70s</div>
+									<div class="item" data-value="80s">80s</div>
+									<div class="item" data-value="90s">90s</div>
+									<div class="item" data-value="100s">100s</div>
+								</div>
 							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td><label>Instagram ID : </label></td>
-					<td><input type="text" name="insid"></td>
-				</tr>
-			</table>
-			<input type="button" value="Sign Up : )" onClick="checkEmpty()">
-			<a href="/process/main"><input type="button" value="Cancle : ("></a>
+						</td>
+					</div>
+					<div class="field">
+						<td><label>Instagram ID : </label></td>
+						<td><input type="text" name="insid"></td>
+					</div>
+					<input type="button" value="Sign Up : )" onClick="checkEmpty()" style="margin:10px 0px 30px">
+					<a href="/process/main"><input type="button" value="Cancle : ("></a>
+				</div>
+			</div>
 		</form>
 	</body>
 </html>

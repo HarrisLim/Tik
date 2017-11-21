@@ -20,6 +20,8 @@
 					type: 'date',
 					startCalendar: $('#rangestart')
 				});
+
+				<%- include searchTag.js%>
 			};
 
 			function addpost() {
@@ -79,22 +81,8 @@
 					return true;
 				}
 			}
-			// 	var objEv = event.srcElement;
-			// 	var num =",";    //입력을 막을 특수문자 기재.
-			// 	event.returnValue = true;
 
-			// 	for (var i=0;i<objEv.value.length;i++) {
-			// 		if(-1 != num.indexOf(objEv.value.charAt(i)))
-			// 			event.returnValue = false;
-			// 	}
-
-			// 	if (!event.returnValue) {
-			// 		alert("특수문자는 입력하실 수 없습니다.");
-			// 		objEv.value="";
-			// 	}
-			// } 
-
-			<%- include searchTag.js%>
+			
 		</script>
 
 		<title>Add Post</title>
@@ -110,7 +98,7 @@
 		<h1>Add post !</h1>
 		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
 	   	<br><br>
-	   		<form method="post" action="/process/addpost" id="submit_addpost">
+	   		<form method="post" action="/process/addpost" enctype="multipart/form-data" id="submit_addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
 			<h3>Date range</h3>
 			<div class="ui container">
@@ -137,7 +125,7 @@
 					</div>
 				</div>
 			</div>
-			<h3>Travel map</h3>
+			<h3>Travel map (have got from manager)</h3>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
@@ -169,7 +157,7 @@
 						<p id="tagParent"></p>
 						<a href="javascript:tag();" style="padding-right:15px">Add tag</a>|
 						<a href="javascript:delTag();" style="color:red;padding-left:15px">Delete tag</a>
-						<input type="text" name="tag" id="tempTag">
+						<input type="hidden" name="tag" id="tempTag">
 					</div>
 				</div>
 			</div>

@@ -4,7 +4,9 @@
 		<%- include header.ejs %>
 		<script>
 			<%- include showpost_control.js%>
-			<%- include searchTag.js%>
+			window.onload = function() {
+				<%- include searchTag.js%>
+			}
 		</script>
 
 		<title>Show post</title>

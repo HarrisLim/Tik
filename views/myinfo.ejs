@@ -3,7 +3,9 @@
 	<head>
 		<%- include header.ejs %>
 		<script>
-			<%- include searchTag.js%>
+			window.onload = function() {
+				<%- include searchTag.js%>
+			}
 		</script>
 
 		<title>My info</title>
@@ -19,30 +21,23 @@
 			var curInsid = results.insid;
 		%>
 		<%- include rightTop.ejs %>
-		<h1>Hello. <img src="../flags-mini/<%=curTld%>.png"> <%= nickname%> !</h1>
-		<br><br>
-		-----------나중에 카드 형식으로 바꿔-----------
-		<h3>Nickname</h3>
-		<div class="ui container">
-			<%= curNickname%>
+		<div class="ui centered card">
+			<a href="/process/editinfo" style="text-align:right;padding:5px">Change own info</a>
+			<div class="image">
+				<img src="../flags(short)/<%=curTld%>.png">
+			</div>
+			<div class="content">
+				<p class="header" style="text-align:center;font-size:25px;margin-bottom:0px"><%= nickname%></p>
+				<hr width="200px">
+				<i class="address card outline icon"></i> <%= curEmail%><br>
+				<i class="flag outline icon"></i> <%= curCountry%><br>
+				<i class="user outline icon"></i> <%= curAgegroup%>
+			</div>
+			<div class="extra content">
+				<a>
+					<a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid%></a>%>
+				</a>
+			</div>
 		</div>
-		<h3>Email</h3>
-		<div class="ui container">
-			<%= curEmail%>
-		</div>
-		<h3>country</h3>
-		<div class="ui container">
-			<img src="../flags-mini/<%=signTld%>.png"> <%= curCountry%>
-		</div>
-		<h3>Age group</h3>
-		<div class="ui container">
-			<%= curAgegroup%>
-		</div>
-		<h3>Instagram</h3>
-		<div class="ui container">
-			<a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid%></a>%>
-		</div>
-		<p><br>
-		<a href="/process/editinfo">Change own info</a>
 	</body>
 </html>

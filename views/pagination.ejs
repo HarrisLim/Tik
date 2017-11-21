@@ -12,13 +12,14 @@
 			var curNickname = results[i].nickname;
 			var curPicpath = results[i].picpath;
 			var curFlag = results[i].flag;	
-			var curTld = results[i].tld;	
+			var curTld = results[i].tld;
+			console.log('curTld -> ' + curTld)	
 		%>
 
 		  <div class="column" style="padding-top:0px">
 		    <div class="ui segment" style="text-align:center;padding:3px;padding-bottom:20px;margin:3px">
 		    	<div style="text-align:right"><%= formatDateHelper(curCreated_at)%></div>
-		       <a href="/process/showpost?postnum=<%=curPostnum%>&views=<%=curViews%>"><img src="../../<%- curPicpath%>" style="width:99%;height:auto;"><h3 style="margin:0px 0px 5px 0px"><%= curTitle %></h3></a><img src="../../flags-mini/<%=curTld%>.png">  <%= curNickname%><br>views : <%= curViews%> wanna go : <%= curGetwant%>
+		       <a href="/process/showpost?postnum=<%=curPostnum%>&views=<%=curViews%>"><img src="../../uploads/<%- curPicpath%>" style="width:99%;height:auto;"><h3 style="margin:0px 0px 5px 0px"><%= curTitle %></h3></a><img src="../../flags-mini/<%=curTld%>.png">  <%= curNickname%><br>views : <%= curViews%> wanna go : <%= curGetwant%>
 		    </div>
 		  </div>
 		

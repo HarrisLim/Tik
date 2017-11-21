@@ -3,7 +3,9 @@
 	<head>
 		<%- include header.ejs %>
 		<script>
-			<%- include searchTag.js%>
+			window.onload = function() {
+				<%- include searchTag.js%>
+			}
 		</script>
 
 		<title>My post</title>
