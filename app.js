@@ -1422,55 +1422,55 @@ app.locals.replHelper = function (sentence, arr, src, style){ // showpost에서 
 // });
 
 // 책에 있던 photo upload except CKeditor
-app.post('/process/travelmap', upload.array('photo', 1), function(req, res) {
-	console.log('/process/photo 호출됨.');
+// app.post('/process/photo', upload.array('photo', 1), function(req, res) {
+// 	console.log('/process/photo 호출됨.');
 
-	try {
-		// console.log('picpaht -> ' + req.body.picpath);
-		var files = req.files;
+// 	try {
+// 		// console.log('picpaht -> ' + req.body.picpath);
+// 		var files = req.files;
 
-		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
-		console.dir(req.files[0]);
-		console.dir('#=====#');
-		// 현재의 파일 정보를 저장할 변수 선언
-		var originalname = '';
-		var filename = '';
-		var mimetype = '';
-		var size = 0;
+// 		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+// 		console.dir(req.files[0]);
+// 		console.dir('#=====#');
+// 		// 현재의 파일 정보를 저장할 변수 선언
+// 		var originalname = '';
+// 		var filename = '';
+// 		var mimetype = '';
+// 		var size = 0;
 
-		if(Array.isArray(files)) {
-			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
+// 		if(Array.isArray(files)) {
+// 			console.log('배열에 들어있는 파일 갯수 : %d', files.length);
 
-			for(var i = 0; i < files.length; i++) {
-				originalname = files[i].originalname;
-				filename = files[i].filename;
-				mimetype = files[i].mimetype;
-				size = files[i].size;
-			}
-		} else {
-			console.log('파일 갯수 : 1');
+// 			for(var i = 0; i < files.length; i++) {
+// 				originalname = files[i].originalname;
+// 				filename = files[i].filename;
+// 				mimetype = files[i].mimetype;
+// 				size = files[i].size;
+// 			}
+// 		} else {
+// 			console.log('파일 갯수 : 1');
 
-			originalname = files[i].originalname;
-			filename = files[i].name;
-			mimetype = files[i].mimetype;
-			size = files[i].size;
-		}
+// 			originalname = files[i].originalname;
+// 			filename = files[i].name;
+// 			mimetype = files[i].mimetype;
+// 			size = files[i].size;
+// 		}
 
-		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
+// 		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', ' + mimetype + ', ' + size);
 
-		// 클라이언트에 응답 전송
-		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-		// res.write('<h3>파일 업로드 성공</h3>');
-		// res.write('<hr>');
-		res.write('<img src="../uploads/'+filename+'" style="max-width:150px">')
-		// res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
-		// res.write('<p>MIME TYPE : ' + mimetype + '</p>');
-		// res.write('<p>파일 크기 : '+ size +'</p>');
-		res.end();
-	} catch(err) {
-		console.dir(err.stack);
-	}
-});
+// 		// 클라이언트에 응답 전송
+// 		res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+// 		// res.write('<h3>파일 업로드 성공</h3>');
+// 		// res.write('<hr>');
+// 		res.write('<img src="../uploads/'+filename+'" style="max-width:150px">')
+// 		// res.write('<p>원본 파일 이름 : ' + originalname + ' -> 파일 저장명 : ' + filename + '</p>');
+// 		// res.write('<p>MIME TYPE : ' + mimetype + '</p>');
+// 		// res.write('<p>파일 크기 : '+ size +'</p>');
+// 		res.end();
+// 	} catch(err) {
+// 		console.dir(err.stack);
+// 	}
+// });
 
 
 // 모든 router 처리 끝난 후 404 오류 페이지 처리

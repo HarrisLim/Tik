@@ -3,12 +3,13 @@
 	<head>
 		<%- include header.ejs %>
 
-		<script src="../ckeditor2/ckeditor.js"></script>
+		<script src="../ckeditor3/ckeditor.js"></script>
 		<script>
 			window.onload = function() {
 				CKEDITOR.replace('editor1', {
 					filebrowserUploadUrl : '/process/photo',
 					extraPlugins : 'image2',
+					// removePlugins : 'image',
 					extraPlugins : 'confighelper'
 				});
 
@@ -21,7 +22,7 @@
 					startCalendar: $('#rangestart')
 				});
 
-				<%- include searchTag.js%>
+				<%# include searchTag.js%>
 			};
 
 			function addpost() {

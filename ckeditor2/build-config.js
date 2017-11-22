@@ -25,7 +25,8 @@
  */
 
 var CKBUILDER_CONFIG = {
-	skin: 'moono-lisa',
+	// skin: 'moono-lisa',
+	skin: 'office2013',
 	preset: 'full',
 	ignore: [
 		'.DS_Store',
@@ -77,6 +78,8 @@ var CKBUILDER_CONFIG = {
 		'htmlwriter' : 1,
 		'iframe' : 1,
 		'image' : 1,
+		// 'image2' : 1,
+		// 'lineutils' : 1,
 		'indentblock' : 1,
 		'indentlist' : 1,
 		'justify' : 1,
@@ -108,6 +111,8 @@ var CKBUILDER_CONFIG = {
 		'tableselection' : 1,
 		'tabletools' : 1,
 		'templates' : 1,
+		// 'widget' : 1,
+		// 'widgetselection' : 1,
 		'toolbar' : 1,
 		'undo' : 1,
 		'wsc' : 1,
