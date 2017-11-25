@@ -10,7 +10,8 @@
 					filebrowserUploadUrl : '/process/photo',
 					extraPlugins : 'image2',
 					// removePlugins : 'image',
-					extraPlugins : 'confighelper'
+					extraPlugins : 'confighelper',
+					height : 400
 				});
 
 				$('#rangestart').calendar({
@@ -22,7 +23,7 @@
 					startCalendar: $('#rangestart')
 				});
 
-				<%# include searchTag.js%>
+				<%- include searchTag.js%>
 			};
 
 			function addpost() {
@@ -86,6 +87,12 @@
 			
 		</script>
 
+		<style>
+			.required {
+				padding:15px 0px;
+			}
+		</style>
+
 		<title>Add Post</title>
 	</head>
 	<body>
@@ -96,12 +103,13 @@
 				var curTld = results.tld;
 			%>
 		<%- include rightTop.ejs %>
-		<h1>Add post !</h1>
-		<h1> Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%></h1>
-	   	<br><br>
 	   		<form method="post" action="/process/addpost" enctype="multipart/form-data" id="submit_addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
-			<h3>Date range</h3>
+		   	<div class="ui form">	
+			   	<div class="required field">
+					<label style="font-size:20px">Date range</label>
+				</div>
+		   	</div>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="two fields">
@@ -126,7 +134,11 @@
 					</div>
 				</div>
 			</div>
-			<h3>Travel map (have got from manager)</h3>
+			<div class="ui form">	
+			   	<div class="required field">
+					<label style="font-size:20px">Travel map (have got from manager)</label>
+				</div>
+		   	</div>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
@@ -134,23 +146,11 @@
 					</div>
 				</div>
 			</div>
-			<h3>Title</h3>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
-						<input type="text" name="title" id="title" placeholder="TITLE">
-					</div>
+			<div class="ui form">	
+			   	<div class="field">
+					<label style="font-size:20px;padding:15px 0px">Tag</label>
 				</div>
-			</div>
-			<h3>Text</h3>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
-						<textarea name="post" id="editor1" placeholder="TEXT"></textarea>
-					</div>
-				</div>
-			</div>
-			<h3>Tag</h3>
+		   	</div>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
@@ -162,7 +162,35 @@
 					</div>
 				</div>
 			</div>
-			<h3>Instagram</h3>
+			<div class="ui form">	
+			   	<div class="required field">
+					<label style="font-size:20px">Title</label>
+				</div>
+		   	</div>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<input type="text" name="title" id="title" placeholder="TITLE">
+					</div>
+				</div>
+			</div>
+			<div class="ui form">	
+			   	<div class="required field">
+					<label style="font-size:20px">Text</label>
+				</div>
+		   	</div>
+			<div class="ui container">
+				<div class="ui form">
+					<div class="field">
+						<textarea name="post" id="editor1" placeholder="TEXT"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="ui form">	
+			   	<div class="field">
+					<label style="font-size:20px;padding:15px 0px">Instagram</label>
+				</div>
+		   	</div>
 			<div class="ui container">
 				<div class="ui form">
 					<div class="field">
