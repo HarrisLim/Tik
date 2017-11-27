@@ -2,13 +2,14 @@
 <html>
 	<head>
 		<%- include header.ejs %>
-		<script src="../ckeditor2/ckeditor.js"></script>
+		<script src="../ckeditor3/ckeditor.js"></script>
 		<script>
 			window.onload = function() {
 				CKEDITOR.replace('editor1', {
 					filebrowserUploadUrl : '/process/photo',
 					extraPlugins : 'image2',
-					extraPlugins : 'confighelper'
+					extraPlugins : 'confighelper',
+					height : 400
 				});
 
 				$('#rangestart').calendar({
@@ -95,7 +96,7 @@
 
 		    return [year, month, day].join('-');
 			};
-		%><a href="/process/main" style="font-size:23px;float:right">Talk<br>T&nbsp;iK</a><br>
+		%><a href="/process/main" style="font-size:23px;float:right"><img src="../../images/logo.png" style="width:70px"></a><br>
 		<div style="text-align:left">
 		Hi ! <img src="../flags-mini/<%=signTld%>.png"> <%=signNick%>
 		</div>
@@ -117,12 +118,10 @@
 				</a><br><br>
 				Written by <img src="../flags-mini/<%=signTld%>.png"> <%= curNickname%> !</h4>
 			</div>
-		</div><br>
-		<div class="ui container">
 			<div class="ui form">
 				<h1 style="text-align:center"><input type="text" name="title" value="<%= curTitle%>" placeholder="TITLE"></h1><br>
 			</div>
-			<div style="text-align:right">
+			<div style="text-align:left">
 				<div class="ui container">
 					<div class="ui form">
 						<div class="two fields">
@@ -148,21 +147,17 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<h3>Text</h3>
-		<div class="ui container">
 			<div class="ui form">
 				<div class="field">
+					<label>Text</label>
 					<textarea name="post" id="editor1" placeholder="TEXT"><%= curPost%></textarea>
 				</div>
 			</div>
-		</div>
-		<h3>Tag</h3>
-		<div class="ui container">
 			<div class="ui form">
 				<div class="field">
+					<label style="padding-top:15px">Tag</label>
 					<input type="text" id="tag" placeholder="TAG">
-					<p id="tagParent">
+					<p id="tagParent" style="margin-bottom:0px">
 						<%
 						var ArrTag = curHashTag.split(', ');
 						console.log('ArrTag -> ' + ArrTag)
@@ -177,22 +172,26 @@
 					<input type="hidden" name="tag" id="tempTag" value="<%=curHashTag%>">
 				</div>
 			</div>
-		</div>
-		<br>
-		<div class="ui labeled button" tabindex="0">
-			<div class="ui blue button">
-				<i class="plane icon"></i> I wanna go
+			<br>
+			<div class="ui labeled button" tabindex="0">
+				<div class="ui blue button">
+					<i class="plane icon"></i> I wanna go
+				</div>
+				<a class="ui basic blue left pointing label">
+				<%=curGetwant%>
+				</a>
 			</div>
-			<a class="ui basic blue left pointing label">
-			<%=curGetwant%>
-			</a>
-		</div>
-		<h3>Instagram</h3>
-		<div class="ui container">
-			<label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+			<div class="ui form">	
+			   	<div class="field">
+					<label style="padding-top:15px">Instagram</label>
+					<a href="https://www.instagram.com/" target="_blank"><i class="instagram icon"></i><%= curInsid %></a>
+				</div>
+		   	</div>
 		</div><br>
+		<div style="padding-left:2%">
 			<input type="submit" value="Update : )">
 			<a href="/process/showpost?postnum=<%=curPostnum%>"><input type="button" value="Cancle : )"></a>
+		</div>
 		</form><br>
 	</body>
 </html>

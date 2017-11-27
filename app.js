@@ -28,7 +28,7 @@ var multer = require('multer');
 var fs = require('fs');
 
 // 이것은 mysql의 user, password와 nodemailer에 필요한 정보가 있는 JSON파일을 가져오는 것.
-var data = fs.readFileSync("../Tik's_secret/client_id.json");
+var data = fs.readFileSync("../Tik_secret/client_id.json");
 var jsonData = JSON.parse(data);
 
 // 클라이언트에서 ajax로 요청했을 때 CORS(다중 서버 접속) 지원
@@ -219,7 +219,7 @@ app.get('/process/main/:page', function(req, res){
 				}
 			};
 			app.set('countMypost',countMypost);
-			console.log('results[0].nickname -> ' + results[1].nickname);
+			// console.log('results[0].nickname -> ' + results[1].nickname);
 			console.log('countMypost -> ' + app.get('countMypost'));
 			console.log('req.get(host) -> ' + req.get('host'));
 
@@ -275,7 +275,7 @@ app.get('/process/main/:page', function(req, res){
 			var pagenum = 4;
 
 			var context = {results : results, leng : leng, pagenum : pagenum, page : page, mainResults : app.get('mainResults')};
-			console.log('results[0].members_id -->' + results[0].members_id);
+			// console.log('results[0].members_id -->' + results[0].members_id);
 			// app.set('mainMembersId', results[0].members_id); // 이것을 0으로 하면 안되고 클릭받은 값으로 해야되는데.
 			req.app.render('index', context, function(err, html) {
 				console.log('*** rendered, /process/main(index) ***');

@@ -54,28 +54,34 @@
 		</form>
 		<a href="/process/main" style="font-size:23px;float:right;"><img src="../../images/logo.png" style="width:70px"></a>
 		<div style="text-align:left">&nbsp;<br>&nbsp;</div>
-		<hr>
-		<h1>Sign in !</h1>
+		<hr style="margin-top:12px">
+		<div style="text-align:right;width:100%">
+			<a href="/process/signin">Sign in</a> | 
+			<a href="/process/signup">Sign up</a>
+		</div>
+		<h1>Sign in</h1>
 		<br>
 		<form method="post" action="/process/signin" id="signin">
-			<div class="ui form">
-					<div class="field">
-						<label>Email</label>
-						<input type="email" placeholder="Email" name="username" id="email">
-					</div><br>
-					<div class="field">
-						<label>Password</label>
-						<input type="password" placeholder="Password" name="password" id="PW">
-					</div>
+			<div class="ui container">
+				<div class="ui form">
+						<div class="field">
+							<label>Email</label>
+							<input type="email" placeholder="Email" name="username" id="email">
+						</div><br>
+						<div class="field">
+							<label>Password</label>
+							<input type="password" placeholder="Password" name="password" id="PW">
+						</div>
+				</div>
+				<a href="javascript:showForgotpw()" style="color:red">forgot password ?</a><br>
+				<div class="ui form" style="display:none" id="forgot">
+					<input type="email" value="" placeholder="Put in your Email" id="tempEmail">
+					<input type="button" value="send" onClick="forgotpw()">
+				</div>
+				<h3 style="color:red"><%=signinmessage%></h3>
+				<input type="button" value="Sign in : )" onClick="checkEmpty()">
+				<a href="/process/main"><input type="button" value="Cancle : ("></a>
 			</div>
-			<a href="javascript:showForgotpw()" style="color:red">forgot password ?</a><br>
-			<div class="ui form" style="display:none" id="forgot">
-				<input type="email" value="" placeholder="Put in your Email" id="tempEmail">
-				<input type="button" value="send" onClick="forgotpw()">
-			</div>
-			<h3 style="color:red"><%=signinmessage%></h3>
-			<input type="button" value="Sign in : )" onClick="checkEmpty()">
-			<a href="/process/main"><input type="button" value="Cancle : ("></a>
 		</form>
 	</body>
 </html>

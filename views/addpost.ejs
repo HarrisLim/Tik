@@ -87,12 +87,6 @@
 			
 		</script>
 
-		<style>
-			.required {
-				padding:15px 0px;
-			}
-		</style>
-
 		<title>Add Post</title>
 	</head>
 	<body>
@@ -105,15 +99,16 @@
 		<%- include rightTop.ejs %>
 	   		<form method="post" action="/process/addpost" enctype="multipart/form-data" id="submit_addpost">
 		   	<input type="hidden" name="id" id="id" value='<%= curId%>'>
-		   	<div class="ui form">	
-			   	<div class="required field">
-					<label style="font-size:20px">Date range</label>
-				</div>
-		   	</div>
 			<div class="ui container">
+				<div class="ui form" style="padding-bottom:15px">
+					<div class="field required">
+						<label>Travel map (have got from manager)</label>
+						<input type="file" name="picpath" value="" placeholder="main picture(내(운영자)가 올리는 거야. 그 루트 짜준거 여기에 사진 하나 넣을 수 있도록 해.)"><br>
+					</div>
+				</div>
 				<div class="ui form">
 					<div class="two fields">
-						<div class="field">
+						<div class="field required">
 						<label>Start date</label>
 							<div class="ui calendar" id="rangestart">
 								<div class="ui input left icon">
@@ -122,7 +117,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="field">
+						<div class="field required">
 						<label>End date</label>
 							<div class="ui calendar" id="rangeend">
 								<div class="ui input left icon">
@@ -133,74 +128,44 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="ui form">	
-			   	<div class="required field">
-					<label style="font-size:20px">Travel map (have got from manager)</label>
-				</div>
-		   	</div>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
-						<input type="file" name="picpath" value="" placeholder="main picture(내(운영자)가 올리는 거야. 그 루트 짜준거 여기에 사진 하나 넣을 수 있도록 해.)"><br>
+				<div class="ui form">	
+				   	<div class="field">
+						<label>Tag</label>
 					</div>
-				</div>
-			</div>
-			<div class="ui form">	
-			   	<div class="field">
-					<label style="font-size:20px;padding:15px 0px">Tag</label>
-				</div>
-		   	</div>
-			<div class="ui container">
+			   	</div>
 				<div class="ui form">
 					<div class="field">
 						<input type="text" id="tag" placeholder="TAG">
-						<p id="tagParent"></p>
+						<p id="tagParent" style="margin-bottom:0px"></p>
 						<a href="javascript:tag();" style="padding-right:15px">Add tag</a>|
 						<a href="javascript:delTag();" style="color:red;padding-left:15px">Delete tag</a>
 						<input type="hidden" name="tag" id="tempTag">
 					</div>
 				</div>
-			</div>
-			<div class="ui form">	
-			   	<div class="required field">
-					<label style="font-size:20px">Title</label>
-				</div>
-		   	</div>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
+				<div class="ui form" style="padding-top:15px">
+					<div class="field required">
+						<label>Title</label>
 						<input type="text" name="title" id="title" placeholder="TITLE">
 					</div>
 				</div>
-			</div>
-			<div class="ui form">	
-			   	<div class="required field">
-					<label style="font-size:20px">Text</label>
-				</div>
-		   	</div>
-			<div class="ui container">
 				<div class="ui form">
-					<div class="field">
+					<div class="field required">
+						<label style="padding-top:15px">Text</label>
 						<textarea name="post" id="editor1" placeholder="TEXT"></textarea>
 					</div>
 				</div>
-			</div>
-			<div class="ui form">	
-			   	<div class="field">
-					<label style="font-size:20px;padding:15px 0px">Instagram</label>
-				</div>
-		   	</div>
-			<div class="ui container">
-				<div class="ui form">
-					<div class="field">
+				<div class="ui form">	
+				   	<div class="field">
+						<label style="padding-top:15px">Instagram</label>
 						<a href="https://www.instagram.com/" target="_blank"><i class="instagram icon"></i><%= curInsid %></a>
 					</div>
-				</div>
+			   	</div>
 			</div>
 			<br>
-			<input type="button" value="add Post : )" onclick="addpost()">
-			<a href="/process/main"><input type="button" value="Cancle : ("></a>
+			<div style="padding-left:2%">
+				<input type="button" value="add Post : )" onclick="addpost()">
+				<a href="/process/main"><input type="button" value="Cancle : ("></a>
+			</div>
 		</form><br>
 	</body>
 </html>
