@@ -1,4 +1,4 @@
-# Tik (Travel in Korea)
+# [Tik (Travel in Korea)](http://13.59.160.163:10468/process/main)
 
 외국인을 위한 무료 한국여행플래너. 여행 플랜으로 여행 후기를 구입한다.
 
@@ -15,7 +15,7 @@ TiK은 메일로 한 번에 문의하여 신청하고, 다른 비용없이 여�
 
 * [HTML](https://www.w3.org/html/)
 * [CSS](https://www.w3.org/Style/CSS/) (Framework - [Semantic-UI](https://semantic-ui.com/))
-* [Javascript](https://www.javascript.com/) (Library - [jQuery](https://jquery.com/)
+* [Javascript](https://www.javascript.com/) (Library - [jQuery](https://jquery.com/))
 * [node.js](https://nodejs.org/en/) - Server-side
 * [EJS](http://www.embeddedjs.com/) - Javascript View Template
 * [MySQL](https://www.mysql.com/) - Database
