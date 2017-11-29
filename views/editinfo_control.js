@@ -14,6 +14,7 @@
 		comboboxSelect();
 
 		$('.ui.dropdown').dropdown();
+		<%- include searchTag.js%>
 	};
 
 	function checkPW() {

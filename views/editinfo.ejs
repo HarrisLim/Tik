@@ -4,9 +4,6 @@
 		<%- include header.ejs %>
 		<script>
 			<%- include editinfo_control.js%>
-			window.onload = function() {
-				<%- include searchTag.js%>
-			}
 		</script>
 
 		<style>
@@ -34,12 +31,12 @@
 		<input type="hidden" value="secPW" id="tempSecPW">
 		<input type="hidden" value="<%=arrNick%>">
 		<form method="post" action="/process/editinfo" id="editinfo">
-			<div class="ui container">
+			<div class="ui container" style="padding-bottom:30px">
 				<div class="ui form">
 					<div class="field">
 						<label>Nickname</label>
 						<input type="text" name="nickname" value="<%= curNickname%>" id="nickname" placeholder="can not fill some special character.">
-						<input type="button" value="Duplication check" onClick="checkNickname()" style="float:right">
+						<input type="button" value="Duplication check" onClick="checkNickname()" class="ui secondary basic button" style="float:right;padding-top:8px;padding-bottom:8px;margin-top:5px">
 					</div>
 					<div class="field">
 						<label>Email (not able to change)</label>
@@ -56,7 +53,7 @@
 					</div>
 					<div class="field">
 						<label>Password (repeat)</label>
-						<input type="password" name="passwd" id="secPW"><input type="button" value="Check password" onClick="checkPW()" style="float:right">
+						<input type="password" name="passwd" id="secPW"><input type="button" value="Check password" class="ui secondary basic button" onClick="checkPW()" style="float:right;padding-top:8px;padding-bottom:8px;margin-top:5px">
 					</div>
 					<div class="field">
 						<label>Country</label>
@@ -87,10 +84,10 @@
 						<input type="text" name="insid" value="<%= curInsid%>">
 					</div>
 				</div><br>
-				<input type="button" value="submit : )" onClick="checkEmpty()">
-				<a href="/process/myinfo"><input type="button" value="Cancle : )"></a>
+				<input type="button" class="ui primary basic button" value="submit : )" onClick="checkEmpty()">
+				<a href="/process/myinfo"><input type="button" class="ui negative basic button" value="Cancle : )"></a>
 				<div style="padding:30px 0px">
-					<input type="button" value="Cancel my membership. : (" onClick="cancelMembership()" style="color:red">
+					<input type="button" class="ui negative button" value="Cancel my membership. : (" onClick="cancelMembership()" style="color:red;color:white;float:right">
 				</div>
 			</div>
 		</form>

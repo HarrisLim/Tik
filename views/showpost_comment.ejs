@@ -31,27 +31,27 @@
 								<div class="actions" style="text-align:right">
 									<%# reply button %>
 									<% if((notSign === false) && (curPermission === "ok")) { %>
-										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none">
-										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
-										<input type="button" value="reply" onClick="showSC(<%=i%>)">
+										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSubmit(<%=i%>)" style="display:none;padding:1px 10px" class="ui secondary basic button">
+										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none;padding:1px 10px" class="ui secondary basic button">
+										<input type="button" class="ui secondary basic button" value="reply" style="padding:1px 10px" onClick="showSC(<%=i%>)">
 									<% } else {%>
-										<input type="button" value="reply" onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
+										<input type="button" class="ui secondary basic button" value="reply" style="padding:1px 10px" onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
 									<% } %>
 										<%# update button %>
 										<% if(curMembersId == curSigninId) { %>
-											<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
+											<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" class="ui secondary basic button" style="padding:1px 10px;display:">
 										<% } else { %>
-											<input type="button" value="update" onClick='alert("you can not update.")'>
+											<input type="button" class="ui secondary basic button" style="padding:1px 10px" value="update" onClick='alert("you can not update.")'>
 										<% } %>
 										<%# delete button %>
 									<% if(notSign === false) { %>
 										<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-											<input type="button" value="delete" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
+											<input type="button" value="delete" class="ui secondary basic button" style="padding:1px 10px" onClick="button_delCommBu(<%= curGroupnum%>)"><br>
 										<% } else { %>
-											<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+											<input type="button" value="delete" class="ui secondary basic button" style="padding:1px 10px" onClick='alert("you can not delete.")'><br>
 										<% } %>
 									<% } else { %>
-										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+										<input type="button" value="delete" class="ui secondary basic button" style="padding:1px 10px" onClick='alert("you can not delete.")'><br>
 									<% } %>
 								</div>
 							</div>
@@ -79,24 +79,24 @@
 								<div class="actions">
 									<%# reply button %>
 									<% if(notSign === false) { %>
-										<input type="button" value="update" id="updaButton<%=i%>" onClick="updaSeSubmit(<%=i%>)" style="display:none">
-										<input type="button" value="cancel" id="updaCancel<%=i%>" onClick="updaCancleBu(<%=i%>)" style="display:none">
+										<input type="button" value="update" id="updaButton<%=i%>" class="ui secondary basic button" style="padding:1px 10px;display:none" onClick="updaSeSubmit(<%=i%>)">
+										<input type="button" value="cancel" id="updaCancel<%=i%>" class="ui secondary basic button" style="padding:1px 10px;display:none" onClick="updaCancleBu(<%=i%>)">
 									<% } %>
 										<%# update button %>
 										<% if(curMembersId == curSigninId) { %>
-											<input type="button" value="update" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>" style="display:">
+											<input type="button" value="update" class="ui secondary basic button" style="padding:1px 10px;display:" onClick="updaComment(<%=i%>)" id="showUpdaButton<%=i%>">
 										<% } else { %>
-											<input type="button" value="update" onClick='alert("you can not update.")'>
+											<input type="button" value="update" class="ui secondary basic button" style="padding:1px 10px" onClick='alert("you can not update.")'>
 										<% } %>
 										<%# delete button %>
 									<% if(notSign === false) { %>
 										<% if(curMembersId == curSigninId || curP_MembersId == curSigninId || signNick === "harrislim") { %>
-											<input type="button" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
+											<input type="button" class="ui secondary basic button" style="padding:1px 10px" value="delete" onClick="button_delSeCommBu(<%= curC_id%>)"><br>
 										<% } else { %>
-											<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+											<input type="button" value="delete" class="ui secondary basic button" style="padding:1px 10px" onClick='alert("you can not delete.")'><br>
 										<% } %>
 									<% } else { %>
-										<input type="button" value="delete" onClick='alert("you can not delete.")'><br>
+										<input type="button" value="delete" class="ui secondary basic button" style="padding:1px 10px" onClick='alert("you can not delete.")'><br>
 									<% } %>
 								</div>
 							</div>
@@ -124,7 +124,7 @@
 							<div class="ui container">
 								<div class="ui form">
 									<div class="field">
-										<img src="../flags-mini/<%=curCTld%>.png"><%= signNick%>'s reply
+										<img src="../flags-mini/<%=curTld%>.png"><%= signNick%>'s reply
 									</div>
 									<div class="field">
 										<textarea rows="2" name="secomment"></textarea>
@@ -140,8 +140,8 @@
 									<input type="hidden" name="maxGrconum" value="<%= maxHelper(maxGrconum)%>">
 									<div class="comment">
 										<div class="field actions">
-											<input type="submit" value="Add reply">
-											<input type="button" value="cancel" onClick="hideSC(<%=i%>)">
+											<input type="submit" class="ui secondary basic button" value="Add reply" style="padding:1px 10px">
+											<input type="button" class="ui secondary basic button" style="padding:1px 10px" value="cancel" onClick="hideSC(<%=i%>)">
 										</div>
 									</div>
 							</div>
@@ -181,9 +181,9 @@
 				</div>
 			</div><br>
 			<% if((notSign === false)  && (curPermission === "ok")) { %>
-				<input type="submit" value="add comment : ) ">
+				<input type="submit" class="ui secondary basic button" value="add comment : ) ">
 			<% } else { %>
-				<input type="button" value="add comment : ) " onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
+				<input type="button" class="ui secondary basic button" value="add comment : ) " onClick='alert("You do not have an authority.\nex) signing in or verifying email.")'>
 			<% } %>
 		</form><br>
 </div>

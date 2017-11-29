@@ -20,7 +20,8 @@
 		<hr style="margin-top:12px">
 		<div style="text-align:right;width:100%">
 			<a href="/process/signin">Sign in</a> | 
-			<a href="/process/signup">Sign up</a>
+			<a href="/process/signup">Sign up</a> |
+			<a href="/process/intro">About TiK</a>
 		</div>
 		<h1>sign up</h1>
 	   	<br>
@@ -34,12 +35,12 @@
 					<div class="field">
 						<td><label>Nickname : </label></td>
 						<td><input type="text" name="nickname" id="nickname" placeholder="can not fill some special character."></td>
-						<td><input type="button" value="Duplication check" onClick="checkNickname()" style="float:right"></td>
+						<td><input type="button" class="ui secondary basic button" value="Duplication check" onClick="checkNickname()" style="float:right;padding-top:8px;padding-bottom:8px;margin-top:5px""></td>
 					</div>
 					<div class="field">
 						<td><label>Email : </label></td>
 						<td><input type="email" name="email" id="email"></td>
-						<td><input type="button" value="Duplication check" onClick="checkEmail()" style="float:right"></td>
+						<td><input type="button" class="ui secondary basic button" value="Duplication check" onClick="checkEmail()" style="float:right;padding-top:8px;padding-bottom:8px;margin-top:5px""></td>
 					</div>
 					<div class="field">
 						<td><label>Password : </label></td>
@@ -48,7 +49,7 @@
 					<div class="field">
 						<td><label>Confirm password : </label></td>
 						<td><input type="password" name="passwd" id="secPW"></td>
-						<td><input type="button" value="Check password" onClick="checkPW()" style="float:right"></td>
+						<td><input type="button" class="ui secondary basic button" value="Check password" onClick="checkPW()" style="float:right;padding-top:8px;padding-bottom:8px;margin-top:5px"></td>
 					</div>
 					<div class="field">
 						<td><label>Country : </label></td>
@@ -83,8 +84,8 @@
 						<td><label>Instagram ID : </label></td>
 						<td><input type="text" name="insid"></td>
 					</div>
-					<input type="button" value="Sign Up : )" onClick="checkEmpty()" style="margin:10px 0px 30px">
-					<a href="/process/main"><input type="button" value="Cancle : ("></a>
+					<input type="button" class="ui primary basic button" value="Sign Up : )" onClick="checkEmpty()" style="margin:10px 0px 30px">
+					<a href="/process/main"><input class="ui negative basic button" type="button" value="Cancle : ("></a>
 				</div>
 			</div>
 		</form>

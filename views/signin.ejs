@@ -57,13 +57,14 @@
 		<hr style="margin-top:12px">
 		<div style="text-align:right;width:100%">
 			<a href="/process/signin">Sign in</a> | 
-			<a href="/process/signup">Sign up</a>
+			<a href="/process/signup">Sign up</a> |
+			<a href="/process/intro">About TiK</a>
 		</div>
 		<h1>Sign in</h1>
 		<br>
 		<form method="post" action="/process/signin" id="signin">
 			<div class="ui container">
-				<div class="ui form">
+				<div class="ui form" style="margin-bottom: 5px">
 						<div class="field">
 							<label>Email</label>
 							<input type="email" placeholder="Email" name="username" id="email">
@@ -76,11 +77,11 @@
 				<a href="javascript:showForgotpw()" style="color:red">forgot password ?</a><br>
 				<div class="ui form" style="display:none" id="forgot">
 					<input type="email" value="" placeholder="Put in your Email" id="tempEmail">
-					<input type="button" value="send" onClick="forgotpw()">
+					<input class="ui secondary basic button" type="button" value="send" onClick="forgotpw()" style="margin-top:5px">
 				</div>
 				<h3 style="color:red"><%=signinmessage%></h3>
-				<input type="button" value="Sign in : )" onClick="checkEmpty()">
-				<a href="/process/main"><input type="button" value="Cancle : ("></a>
+				<input class="ui primary basic button" type="button" value="Sign in : )" onClick="checkEmpty()">
+				<a href="/process/main"><input class="ui negative basic button" type="button" value="Cancle : ("></a>
 			</div>
 		</form>
 	</body>

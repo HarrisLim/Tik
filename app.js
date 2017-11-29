@@ -120,6 +120,8 @@ app.get('/process/main', function(req, res){
 	res.redirect('/process/main/1');
 });
 app.get('/process/main/:page', function(req, res){
+	console.log('---->>>> ',req.protocol+"://"+req.hostname);
+	console.log('---2->>>> ',req.hostname)
 	if(req.query.gettag){ // 태그 검색 시
 		if(req.user && req.user.email) { // Signin
 			console.log('here ?' + req.query.gettag);
@@ -286,6 +288,25 @@ app.get('/process/main/:page', function(req, res){
 			});
 		});
 	}
+});
+
+app.get('/process/intro', function(req, res) {
+	console.log('in intro.');
+	var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
+	conn.query(sql, function(err, results) {
+		if(req.user && req.user.email) { // sign in
+			var signTld = req.user.tld;
+			var context = {email : req.user.email, nickname : req.user.nickname, results : results, permission : req.user.permission, permissionMessage : req.flash('permissionMessage'), signTld : signTld, countMypost : app.get('countMypost'),curPermissionpost : req.user.permissionpost, mainResults : app.get('mainResults')};
+			req.app.render('intro_signin', context, function(err, html) {
+				res.end(html);
+			});
+		} else { // not sign in
+			var context = {results : results, mainResults : app.get('mainResults')};
+			req.app.render('intro', context, function(err, html) {
+				res.end(html);
+			});
+		}
+	});
 });
 
 app.get('/process/authorize', function(req, res) {

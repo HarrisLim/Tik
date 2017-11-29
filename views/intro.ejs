@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include header.ejs %>
+		<script>
+			window.onload = function() {
+				<%- include searchTag.js%>
+			}
+		</script>
+		<title>Main</title>
+	</head>
+	<body>
+		<form method="get" method="/process/searched" id="searched">
+			<input type="hidden" value="" id="gettag" name="gettag">
+		</form>
+		<div class="ui search" style="float:left">
+			<div class="ui icon input right">
+				<input class="prompt" type="text" placeholder="Search tag...">
+				<i class="search icon"></i>
+			</div>
+			<div class="results"></div>
+		</div>
+		<a href="/process/main" style="font-size:23px;float:right"><img src="../../images/logo.png" style="width:70px"></a>
+		<hr style="margin-top:50px">
+		<div style="text-align:right;width:100%;padding-bottom:20px">
+			<a href="/process/signin">Sign in</a> | 
+			<a href="/process/signup">Sign up</a> |
+			<a href="/process/intro">About TiK</a>
+		</div>
+		<div class="ui container" style="padding-bottom:20px">
+			<div class="ui basic center aligned segment">
+				<div class="ui blue segment" style="margin-bottom:30px;padding:10px">
+					<div style="font-size:16px;"><img src="../../images/double_quote1.png" style="width:25px;height:30px"> <strong>We will purchase your review.</strong> <img src="../../images/double_quote2.png" style="width:25px;height:30px"></div> 
+					<div style="font-size:15px;text-align:right;padding-top:10px">- Harris Lim</div></div>
+				<div style="padding:10px">Hi guys. We are TiK(Travel in Korea). We just want to make a travel plan for foreigner that wanted traveling in Korea except paying. We think there are too many travel planner companies all over the world. They show travel plans that made in advance on their website. People should choose one of their plans. This is not traveler own thinking, just their travel type, but TiK is different.<br>We just want to help your free traveling and <strong>be your travel helper.</strong><br><br>
+				It's so easy how to use TiK as you can see under images.</div>
+				<div class="ui mini steps" style="padding-bottom:20px">
+					<div class="step">
+						<i class="add user icon"></i>
+						<div class="content">
+							<div class="title">Sign up</div>
+							<div class="description">Be TiK's member</div>
+						</div>
+					</div>
+					<div class="step">
+						<i class="mail icon"></i>
+						<div class="content">
+							<div class="title">Ask</div>
+							<div class="description">Let me know your travel information</div>
+						</div>
+					</div>
+					<div class="step">
+						<i class="map icon"></i>
+						<div class="content">
+							<div class="title">Get a travel plan</div>
+							<div class="description">Just a second. you can get plan in your mail</div>
+						</div>
+					</div>
+					<div class="step">
+						<i class="plane icon"></i>
+						<div class="content">
+							<div class="title">Travel in Korea</div>
+							<div class="description">Enjoy your travel</div>
+						</div>
+					</div>
+					<div class="step">
+						<i class="edit icon"></i>
+						<div class="content">
+							<div class="title">Wirte a review</div>
+							<div class="description">Yeah! Don't mind short or long</div>
+						</div>
+					</div>
+				</div>
+				<div style="text-align:right">
+					<strong style="vertical-align:text-top;height:150px">Write by Harris Lim</strong>
+					<img src="../../images/i.png" style="">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

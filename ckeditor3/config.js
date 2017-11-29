@@ -18,7 +18,7 @@ CKEDITOR.editorConfig = function( config ) {
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
         ['NumberedList','BulletedList','Blockquote'],
         ['Image','Smiley'],
-        ['FontSize','TextColor','BGColor','Maximize']
+        ['FontSize','Maximize']
     ]
     config.enterMode = CKEDITOR.ENTER_BR;
 };

@@ -46,15 +46,15 @@
 		<div class="ui" style="text-align:right;width:100%;padding-bottom:50px">
 			<% if(notSign === false) { %>
 				<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
-					<input type="button" value="Edit" onClick="button_edit();">
-					<input type="submit" value="Delete : (" onClick="button_delPost();">
+					<input type="button" class="ui secondary basic button" value="Edit" onClick="button_edit();" style="padding-top:8px;padding-bottom:8px">
+					<input type="submit" class="ui secondary basic button" value="Delete : (" onClick="button_delPost();" style="padding-top:8px;padding-bottom:8px">
 					<form method="post" action="/process/deletepost" id="button_delPost"> <input type="hidden" name="postnum" value="<%= curPostnum%>">
 					</form>
 				<% } else { %>
-					<input type="button" value="Delete : (" onClick='alert("you cant delete.")'>
+					<input type="button" class="ui secondary basic button" value="Delete : (" onClick='alert("you cant delete.")' style="padding-top:8px;padding-bottom:8px">
 				<% } %>
 			<% } else { %>
-				<input type="button" value="Delete : (" onClick='alert("you can not delete.")'>
+				<input type="button" class="ui secondary basic button" value="Delete : (" onClick='alert("you can not delete.")' style="padding-top:8px;padding-bottom:8px">
 			<% } %>
 		</div>
 		<div class="ui container">
@@ -74,7 +74,7 @@
 		</div>
 		<h3>Post</h3>
 		<div class="ui container">
-			<div class="ui message">
+			<div class="ui message" style="background-color:white">
 				<%- curPost%>
 			</div>
 		</div>
@@ -107,7 +107,6 @@
 			<label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
 		</div>
 		<p>
-		<hr>
 		<br>
 		<%- include showpost_comment.ejs%>
 	</body>

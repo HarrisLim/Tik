@@ -27,7 +27,7 @@ function button_delSeCommBu(id) {
 function button_edit() {
 	if(confirm("Really want to edit this post ?") == true) {
 		// location.href="http://"+'<%=ip%>'+":10468/process/editpost";
-		location.href="http://13.59.160.163:10468/process/editpost";
+		location.href="http://13.59.160.163/process/editpost";
 	} else {
 		return;
 	}
