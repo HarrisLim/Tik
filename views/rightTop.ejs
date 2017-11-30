@@ -24,7 +24,7 @@
 <hr noshade style="margin-top:50px">
 <div style="text-align:right;width:100%"> 
 	<% if(nickname === "harrislim") {%> <%# permission code %>
-		<a href="/process/authorize">Authorizing</a> | 
+		<a href="/process/authorize" style="color:green">Authorizing</a> | 
 	<% } %>
 	<% if(permission === null) { %> 
 		<div class="ui form">
@@ -36,21 +36,21 @@
 			</form>
 			<a href="javascript:permission();" style="color:red" id="permission">Permission</a> | 
 			<a href="javascript:resend();" style="color:red" id="resend">Resend</a><br>
-			<a href="/process/myinfo">My info</a> | 
-			<a href="/process/signout">Sign out</a> |
-			<a href="/process/intro">About TiK</a>
+			<a href="/process/myinfo" style="color:green">My info</a> | 
+			<a href="/process/signout" style="color:green">Sign out</a> |
+			<a href="/process/intro" style="color:green">About TiK</a>
 		</div>
 	<% } else {%>
-	<a href="/process/ask">Ask</a> | 
+	<a href="/process/ask" style="color:green">Ask</a> | 
 	<% if(countMypost < curPermissionpost) {%>
-			<a href="/process/addpost">Add post</a> | 
+			<a href="/process/addpost" style="color:green">Add post</a> | 
 		<% } else {%>
-		<a href="" onClick='requestManager()'>Add post</a> | 
+		<a href="" onClick='requestManager()' style="color:green">Add post</a> | 
 		<%} %>
-		<a href="/process/mypost">My post</a> | 
-		<a href="/process/myinfo">My info</a> | 
-		<a href="/process/signout">Sign out</a> |
-			<a href="/process/intro">About TiK</a>
+		<a href="/process/mypost" style="color:green">My post</a> | 
+		<a href="/process/myinfo" style="color:green">My info</a> | 
+		<a href="/process/signout" style="color:green">Sign out</a> |
+			<a href="/process/intro" style="color:green">About TiK</a>
 	<% } %>
 	<div>
 		<div><p><i class="address card outline icon"></i> <%= email%></div>
