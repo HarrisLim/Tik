@@ -1000,7 +1000,7 @@ app.post('/process/editinfo', passport.authenticate('local', {
 			nickname : req.body.nickname || req.query.nickname,
 			passwd : hash,
 			salt : salt,
-			country : req.body.country || req.query.country,
+			// country : req.body.country || req.query.country,
 			agegroup : req.body.agegroup || req.query.agegroup,
 			insid : req.body.insid || req.query.insid
 		};

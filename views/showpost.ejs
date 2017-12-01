@@ -43,23 +43,22 @@
 			<div style="text-align:left;padding:2px 0px">&nbsp;<br>&nbsp;</div>
 		<% } %>
 		<hr>
-		<div class="ui" style="text-align:right;width:100%;padding-bottom:50px">
+		<div class="ui" style="text-align:left;width:100%;padding-bottom:20px">
 			<% if(notSign === false) { %>
 				<% if(curId == curSigninId || signNick === "harrislim") { %> <%# If sign in %>
+					<input type="submit" class="ui negative basic button" value="Delete : (" onClick="button_delPost();" style="padding-top:8px;padding-bottom:8px">
 					<input type="button" class="ui secondary basic button" value="Edit" onClick="button_edit();" style="padding-top:8px;padding-bottom:8px">
-					<input type="submit" class="ui secondary basic button" value="Delete : (" onClick="button_delPost();" style="padding-top:8px;padding-bottom:8px">
 					<form method="post" action="/process/deletepost" id="button_delPost"> <input type="hidden" name="postnum" value="<%= curPostnum%>">
 					</form>
 				<% } else { %>
-					<input type="button" class="ui secondary basic button" value="Delete : (" onClick='alert("you cant delete.")' style="padding-top:8px;padding-bottom:8px">
+					<input type="button" class="ui negative basic button" value="Delete : (" onClick='alert("you cant delete.")' style="padding-top:8px;padding-bottom:8px">
 				<% } %>
 			<% } else { %>
-				<input type="button" class="ui secondary basic button" value="Delete : (" onClick='alert("you can not delete.")' style="padding-top:8px;padding-bottom:8px">
+				<input type="button" class="ui negative basic button" value="Delete : (" onClick='alert("you can not delete.")' style="padding-top:8px;padding-bottom:8px">
 			<% } %>
 		</div>
 		<div class="ui container">
-			<h1 style="text-align:center"><%= curTitle%></h1><br>
-			<div style="text-align:right">
+			<div style="text-align:right;padding-bottom:20px">
 				<a class="ui image small label">
 					Created_Date
 					<div class="detail"><%=formatDateHelper(curCreated_at)%></div>
@@ -68,43 +67,45 @@
 					Views
 					<div class="detail"><%= curViews%></div>
 				</a>
-				<h4 style="margin-top:0px"><%= curHowmanydays%><br>
-				Written by <img src="../flags-mini/<%=writtenTld%>.png"> <%= curNickname%> !</h4>
 			</div>
-		</div>
-		<h3>Post</h3>
-		<div class="ui container">
+			<h1 style="text-align:center"><%= curTitle%></h1><br>
+			<div style="text-align:right">
+				<h4 style="margin-top:0px"><%= curHowmanydays%><br>
+				Written by <img src="../flags-mini/<%=writtenTld%>.png"> <%= curNickname%> !
+				<br><label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+				</h4>
+			</div>
+			<br>
 			<div class="ui message" style="background-color:white">
 				<%- curPost%>
 			</div>
-		</div>
-		<h3>Tag</h3>
-		<div class="ui container">
+			<form method="post" action="/ajax" id="submit_getwant">
+				<input type="hidden" value="<%=curSigninId%>" name="curMemberId" id="curMemberId">
+				<input type="hidden" value="<%=curPostnum%>" name="curPostnum" id="curPostnum">
+				<input type="hidden" value="<%=curGetwant%>" name="curGetwant" id="curGetwant">
+				<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members" id="curGetwant_members">
+				<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip" id="curGetwant_ip">
+				<input type="hidden" value="<%=curIp%>" name="curIp" id="curIp">
+			</form>
+			<div class="ui form" style="text-align:right">
+				<div class="ui labeled button" tabindex="0" id="button_getwant" onClick="getwant()">
+					<div class="ui blue button">
+						<i class="plane icon"></i>GO
+					</div>
+					<a class="ui basic blue left pointing label" id="num">
+					<%=curGetwant%>
+					</a>
+				</div>
+			</div>
+			<div class="ui form">	
+			   	<div class="field">
+					<label>Tag</label>
+				</div>
+		   	</div>
 			<%for(var i =0; i < curTags.length -1; i++) {%>
 					<a href="/process/main/1?gettag=<%=curTags[i]%>" class="ui tag label" id="curTag<%=i%>" style="margin:10px 10px 0px 10px"><%= curTags[i]%></a>
 			<%}%>
-		</div>
-		<br>
-		<form method="post" action="/ajax" id="submit_getwant">
-			<input type="hidden" value="<%=curSigninId%>" name="curMemberId" id="curMemberId">
-			<input type="hidden" value="<%=curPostnum%>" name="curPostnum" id="curPostnum">
-			<input type="hidden" value="<%=curGetwant%>" name="curGetwant" id="curGetwant">
-			<input type="hidden" value="<%=curGetwant_members%>" name="curGetwant_members" id="curGetwant_members">
-			<input type="hidden" value="<%=curGetwant_ip%>" name="curGetwant_ip" id="curGetwant_ip">
-			<input type="hidden" value="<%=curIp%>" name="curIp" id="curIp">
-		</form>
-		<div class="ui labeled button" tabindex="0" id="button_getwant" onClick="getwant()">
-			<div class="ui blue button">
-				<i class="plane icon"></i> I wanna go
-			</div>
-			<a class="ui basic blue left pointing label" id="num">
-			<%=curGetwant%>
-			</a>
-
-		</div>
-		<h3>Instagram</h3>
-		<div class="ui container">
-			<label><a href="https://www.instagram.com/<%=curInsid%>" target="_blank"><i class="instagram icon"></i> <%= curInsid %></a></label>
+			<br>
 		</div>
 		<p>
 		<br>
