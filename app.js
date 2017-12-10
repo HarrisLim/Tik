@@ -204,7 +204,7 @@ app.get('/process/main/:page', function(req, res){
 				});
 			});
 		}
-
+	// 아래는 기본 페이지
 	} else if(req.user && req.user.email) { // Signin
 		var sql = 'SELECT p.title, p.p_created_at, p.views, p.getwant, p.postnum, p.picpath, p.hashtag, m.nickname, m.tld, m.permission FROM postings p JOIN members m ON m.id = p.members_id ORDER BY postnum DESC';
 		conn.query(sql, function(err, results) {
@@ -1287,9 +1287,9 @@ app.get('/process/ask', function(req, res) {
 	});
 });
 
-app.post('/process/addpost', upload.array('picpath', 1), function(req, res) { // 로그인한 아이디로 확인하려면 sessions아이디를 가져오는 건가 ?
+app.post('/process/addpost', upload.array('picpath', 1), function(req, res) {
 	var files = req.files;
-		console.dir('#===== 업로드된 첫번 째 파일 정보 =====#');
+		console.dir('#===== 업로드된 파일 정보 =====#');
 		console.dir(req.files[0]);
 		console.dir('#==============================#');
 	var tag = req.body.tag;

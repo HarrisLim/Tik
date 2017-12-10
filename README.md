@@ -9,7 +9,7 @@ TiK은 메일로 한 번에 문의하여 신청하고, 다른 비용없이 여�
 
 ## Project Period
 
-* 2017.09.18(Mon) ~ ing
+* 2017.09.18(Mon) ~ 2017.12.01(Fri)
 
 ## Built With
 
