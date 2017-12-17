@@ -23,7 +23,7 @@
 					startCalendar: $('#rangestart')
 				});
 
-				<%- include searchTag.js%>
+				<%#- include searchTag.js%>
 			};
 
 			function addpost() {
@@ -32,7 +32,9 @@
 				var endDate = $('#endDate').val();
 				var title = $('#title').val();
 				var editor1 = $('#editor1').val();
-				if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "")) {
+				var travelMap = $('#travelMap').val();
+
+				if((startDate === "") || (endDate === "") || (title === "") || (ckeditor.getData() === "") || (travelMap === "")) {
 					alert('Plz, Fill required box.');
 				} else {
 					$('#submit_addpost').submit();
@@ -103,7 +105,7 @@
 				<div class="ui form" style="padding-bottom:15px">
 					<div class="field required">
 						<label>Travel map (have got from manager)</label>
-						<input type="file" name="picpath" value="" placeholder="main picture(내(운영자)가 올리는 거야. 그 루트 짜준거 여기에 사진 하나 넣을 수 있도록 해.)"><br>
+						<input id="travelMap" type="file" name="picpath" value="" placeholder="main picture(내(운영자)가 올리는 거야. 그 루트 짜준거 여기에 사진 하나 넣을 수 있도록 해.)"><br>
 					</div>
 				</div>
 				<div class="ui form">
